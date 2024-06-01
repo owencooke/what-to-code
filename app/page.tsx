@@ -1,37 +1,29 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { buttonVariants } from "@/components/ui/button";
+import Link from "next/link";
 
 export default function Home() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [project, setProject] = useState<{
-    title: string;
-    description: string;
-  }>({ title: "", description: "" });
-
-  const getProjectIdea = async () => {
-    try {
-      const response = await fetch("/api/idea", { method: "GET" });
-      const data = await response.json();
-      setProject(data);
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-
   return (
-    <>
-      <h1>what to code</h1>
-      <Button onClick={getProjectIdea} disabled={isLoading}>
-        {isLoading ? "Loading..." : "Get project idea"}
-      </Button>
-      {project.title && (
-        <>
-          <h1>{project.title}</h1>
-          <p>{project.description}</p>
-        </>
-      )}
-    </>
+    <div className="flex flex-col items-center justify-center min-h-screen">
+      <h1 className="text-7xl">what to code</h1>
+      <p className="mb-4 text-center">
+        helping developers get off the ground running
+      </p>
+      <div className="flex items-center gap-8">
+        <Link
+          className={buttonVariants({ variant: "default", size: "lg" })}
+          href={"/idea"}
+        >
+          build something new
+        </Link>
+        <Link
+          className={buttonVariants({ variant: "secondary", size: "lg" })}
+          href={"/"}
+        >
+          find a project
+        </Link>
+      </div>
+    </div>
   );
 }
