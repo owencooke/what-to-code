@@ -22,13 +22,13 @@ export default function Home() {
 
   return (
     <>
-      <h1>WHAT TO CODE</h1>
+      <h1>what to code</h1>
       <Button onClick={getProjectIdea} disabled={isLoading}>
         {isLoading ? "Loading..." : "Get project idea"}
       </Button>
       {project.title && (
         <>
-          <p>{project.title}</p>
+          <h1>{project.title}</h1>
           <p>{project.description}</p>
         </>
       )}
