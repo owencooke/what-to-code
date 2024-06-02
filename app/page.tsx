@@ -5,9 +5,9 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen">
+    <div className="flex flex-col items-center justify-center h-screen">
       <h1 className="text-7xl">what to code</h1>
-      <p className="mb-4 text-center">
+      <p className="mb-6 text-center text-xl">
         helping developers get off the ground running
       </p>
       <div className="flex items-center gap-8">
@@ -21,7 +21,7 @@ export default function Home() {
           className={buttonVariants({ variant: "secondary", size: "lg" })}
           href={"/"}
         >
-          find a project
+          join a project
         </Link>
       </div>
     </div>

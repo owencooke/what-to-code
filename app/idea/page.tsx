@@ -1,37 +1,35 @@
 "use client";
 
+import { Idea } from "@/app/api/idea/logic";
 import { Button } from "@/components/ui/button";
+import { Card, CardHeader } from "@/components/ui/card";
 import { useState } from "react";
 
 export default function Home() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [project, setProject] = useState<{
-    title: string;
-    description: string;
-  }>({ title: "", description: "" });
+  const [idea, setIdea] = useState({
+    title: "Virtual Fitness Trainer",
+    description:
+      "An AI-powered virtual fitness trainer that creates personalized workout plans and provides real-time feedback and motivation to users.",
+  } as Idea);
 
-  const getProjectIdea = async () => {
-    try {
-      const response = await fetch("/api/idea", { method: "GET" });
-      const data = await response.json();
-      setProject(data);
-    } catch (error) {
-      console.error("Error:", error);
-    }
+  const handleNewIdea = async () => {
+    const response = await fetch("/api/idea");
+    const idea: Idea = await response.json();
+    setIdea(idea);
   };
 
   return (
-    <>
-      <h1>what to code</h1>
-      <Button onClick={getProjectIdea} disabled={isLoading}>
-        {isLoading ? "Loading..." : "Get project idea"}
-      </Button>
-      {project.title && (
-        <>
-          <h1>{project.title}</h1>
-          <p>{project.description}</p>
-        </>
-      )}
-    </>
+    <div className="flex flex-col items-center justify-center h-screen">
+      <div className="flex flex-col items-center justify-center gap-6">
+        <h1 className="text-7xl">hmm, what to code?</h1>
+        <Button onClick={handleNewIdea}>generate new</Button>
+      </div>
+      <Card className="mt-16">
+        <CardHeader>
+          <h1>{idea.title}</h1>
+          <p>{idea.description}</p>
+        </CardHeader>
+      </Card>
+    </div>
   );
 }
