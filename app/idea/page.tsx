@@ -3,46 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader } from "@/components/ui/card";
 import { useState } from "react";
-
-const defaultIdea = {
-  title: "Virtual Fitness Trainer",
-  description:
-    "An AI-powered virtual fitness trainer that creates personalized workout plans and provides real-time feedback and motivation to users.",
-  features: [
-    {
-      title: "Virtual Workout Partner Matching",
-      description:
-        "Match users with similar fitness goals and schedules to workout together virtually.",
-    },
-    {
-      title: "Progress Tracking",
-      description:
-        "Allow users to track and compare their workout progress, achievements, and goals.",
-    },
-    {
-      title: "Motivational Messaging",
-      description:
-        "Send motivational messages and reminders to users to keep them engaged and motivated in their fitness journey.",
-    },
-  ],
-  frameworks: [
-    {
-      title: "Virtual Workout Partner Matching",
-      description:
-        "Match users with similar fitness goals and schedules to workout together virtually.",
-    },
-    {
-      title: "Progress Tracking",
-      description:
-        "Allow users to track and compare their workout progress, achievements, and goals.",
-    },
-    {
-      title: "Motivational Messaging",
-      description:
-        "Send motivational messages and reminders to users to keep them engaged and motivated in their fitness journey.",
-    },
-  ],
-};
+import defaultIdea from "@/app/idea/demo";
 
 export default function Home() {
   const [idea, setIdea] = useState(defaultIdea);
@@ -70,9 +31,9 @@ export default function Home() {
             <h1>what to make</h1>
             <ol>
               {idea.features.map((feature, i) => (
-                <li key={`feature-${i}`}>
+                <li key={`feature-${i}`} className="font-bold">
                   {feature.title}
-                  <ul>
+                  <ul className="font-normal">
                     <li>{feature.description}</li>
                   </ul>
                 </li>
@@ -80,12 +41,12 @@ export default function Home() {
             </ol>
           </div>
           <div>
-            <h1>how to build</h1>
+            <h1>how to build it</h1>
             <ol>
               {idea.frameworks.map((framework, i) => (
-                <li key={`feature-${i}`}>
+                <li key={`framework-${i}`} className="font-bold">
                   {framework.title}
-                  <ul>
+                  <ul className="font-normal">
                     <li>{framework.description}</li>
                   </ul>
                 </li>
