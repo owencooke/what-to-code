@@ -25,6 +25,23 @@ const defaultIdea = {
         "Send motivational messages and reminders to users to keep them engaged and motivated in their fitness journey.",
     },
   ],
+  frameworks: [
+    {
+      title: "Virtual Workout Partner Matching",
+      description:
+        "Match users with similar fitness goals and schedules to workout together virtually.",
+    },
+    {
+      title: "Progress Tracking",
+      description:
+        "Allow users to track and compare their workout progress, achievements, and goals.",
+    },
+    {
+      title: "Motivational Messaging",
+      description:
+        "Send motivational messages and reminders to users to keep them engaged and motivated in their fitness journey.",
+    },
+  ],
 };
 
 export default function Home() {
@@ -38,7 +55,7 @@ export default function Home() {
   console.log(idea);
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen">
+    <div className="flex flex-col items-center justify-center">
       <div className="flex flex-col items-center justify-center gap-6">
         <h1 className="text-7xl">hmm, what to code?</h1>
         <Button onClick={handleNewIdea}>generate new</Button>
@@ -50,13 +67,26 @@ export default function Home() {
             <p>{idea.description}</p>
           </div>
           <div>
-            <h1>Major Features</h1>
+            <h1>what to make</h1>
             <ol>
               {idea.features.map((feature, i) => (
                 <li key={`feature-${i}`}>
                   {feature.title}
                   <ul>
                     <li>{feature.description}</li>
+                  </ul>
+                </li>
+              ))}
+            </ol>
+          </div>
+          <div>
+            <h1>how to build</h1>
+            <ol>
+              {idea.frameworks.map((framework, i) => (
+                <li key={`feature-${i}`}>
+                  {framework.title}
+                  <ul>
+                    <li>{framework.description}</li>
                   </ul>
                 </li>
               ))}
