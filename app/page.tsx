@@ -10,7 +10,7 @@ export default function Home() {
       <p className="mb-6 text-center text-xl">
         helping developers get off the ground running
       </p>
-      <div className="flex items-center gap-8">
+      <div className="flex items-center gap-8 mb-10">
         <Link
           className={buttonVariants({ variant: "default", size: "lg" })}
           href={"/idea"}
@@ -24,6 +24,12 @@ export default function Home() {
           join a project
         </Link>
       </div>
+      <Link
+        className={buttonVariants({ variant: "link", size: "lg" })}
+        href={"/login"}
+      >
+        login
+      </Link>
     </div>
   );
 }
