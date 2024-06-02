@@ -5,17 +5,18 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader } from "@/components/ui/card";
 import { useState } from "react";
 
+const defaultIdea: Idea = {
+  title: "Virtual Fitness Trainer",
+  description:
+    "An AI-powered virtual fitness trainer that creates personalized workout plans and provides real-time feedback and motivation to users.",
+};
+
 export default function Home() {
-  const [idea, setIdea] = useState({
-    title: "Virtual Fitness Trainer",
-    description:
-      "An AI-powered virtual fitness trainer that creates personalized workout plans and provides real-time feedback and motivation to users.",
-  } as Idea);
+  const [idea, setIdea] = useState(defaultIdea);
 
   const handleNewIdea = async () => {
     const response = await fetch("/api/idea");
-    const idea: Idea = await response.json();
-    setIdea(idea);
+    setIdea(await response.json());
   };
 
   return (
