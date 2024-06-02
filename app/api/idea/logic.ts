@@ -1,3 +1,4 @@
+import { z } from "zod";
 import { OpenAI } from "@langchain/openai";
 import { RunnableSequence } from "@langchain/core/runnables";
 import { StructuredOutputParser } from "langchain/output_parsers";
@@ -9,36 +10,60 @@ const IDEA_PROMPT_TEMPLATE = `
     Generate a random idea for a software project.
 `;
 
-const IDEA_PROMPT_OUTPUT = {
-  title: "name of the software project",
-  description: "brief overview of the software project",
-};
+const idea = z.object({
+  title: z.string().describe("name of the software project"),
+  description: z.string().describe("brief overview of the software project"),
+});
 
-export interface Idea {
-  title: string;
-  description: string;
-}
+const FEATURE_PROMPT_TEMPLATE = `
+    {format_instructions}
+    Based on the following software project, generate three major features to be developed.
+    Project Title: {title}
+    Project Description: {description}
+`;
+
+const features = z
+  .array(
+    z.object({
+      title: z.string().describe("title of the feature"),
+      description: z.string().describe("description of the feature"),
+    }),
+  )
+  .length(3)
+  .describe("list of three major features");
 
 /**
- * Initializes and calls a simple chain for generating a software project idea.
+ * Initializes and calls a simple chain for generating a software project idea and its major features.
  */
-export async function getNewIdea(): Promise<Idea> {
-  const parser =
-    StructuredOutputParser.fromNamesAndDescriptions(IDEA_PROMPT_OUTPUT);
-
-  const chain = RunnableSequence.from([
+export async function getNewIdea() {
+  // 1. Generating initial project idea
+  const ideaParser = StructuredOutputParser.fromZodSchema(idea);
+  const ideaChain = RunnableSequence.from([
     PromptTemplate.fromTemplate(IDEA_PROMPT_TEMPLATE),
     new OpenAI({ model: "gpt-3.5-turbo", temperature: 0.8 }),
-    parser,
+    ideaParser,
   ]);
-
-  // TODO: pass {list_of_idea_types} to the template here, from function arguments
-  const response = await chain.invoke({
-    format_instructions: parser.getFormatInstructions(),
+  const { title, description } = await ideaChain.invoke({
+    format_instructions: ideaParser.getFormatInstructions(),
   });
 
+  // 2. Major features to develop for project
+  const featureParser = StructuredOutputParser.fromZodSchema(features);
+  const featureChain = RunnableSequence.from([
+    PromptTemplate.fromTemplate(FEATURE_PROMPT_TEMPLATE),
+    new OpenAI({ model: "gpt-3.5-turbo", temperature: 0.8 }),
+    featureParser,
+  ]);
+  const featureResponse = await featureChain.invoke({
+    format_instructions: featureParser.getFormatInstructions(),
+    title,
+    description,
+  });
+
+  // Combine all results into final project idea
   return {
-    title: response.title,
-    description: response.description,
-  } as Idea;
+    title,
+    description,
+    features: featureResponse,
+  };
 }
