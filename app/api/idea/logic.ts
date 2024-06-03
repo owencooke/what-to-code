@@ -58,6 +58,11 @@ const frameworkParser = StructuredOutputParser.fromZodSchema(
           .describe(
             "description of programming languages, frameworks and/or tools used to build",
           ),
+        tools: z
+          .array(z.string())
+          .describe(
+            "names of programming languages, frameworks and/or tools mentioned in description",
+          ),
       }),
     )
     .length(3)
@@ -68,7 +73,7 @@ const frameworkParser = StructuredOutputParser.fromZodSchema(
  * Initializes and calls a simple chain for generating a software project idea and its major features.
  */
 export async function getNewIdea() {
-  const model = new OpenAI({ model: "gpt-3.5-turbo", temperature: 0.8 });
+  const model = new OpenAI({ model: "gpt-3.5-turbo-0125", temperature: 0.8 });
 
   // 1. Generating initial project idea
   const ideaChain = RunnableSequence.from([

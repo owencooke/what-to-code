@@ -24,16 +24,19 @@ const sampleIdea = {
       title: "Web Application",
       description:
         "Developed using React for the frontend, Node.js for the backend, and MySQL for database management",
+      tools: ["React", "Node.js", "MySQL"],
     },
     {
       title: "Mobile Application",
       description:
         "Built with Swift for iOS and Kotlin for Android, utilizing Firebase for real-time database updates",
+      tools: ["Swift", "Kotlin", "Firebase"],
     },
     {
       title: "CLI Tool",
       description:
         "Written in Python with the use of Google Cloud Speech-to-Text API for transcription and customization features",
+      tools: ["Python", "Google Cloud Speech-to-Text API"],
     },
   ],
 };

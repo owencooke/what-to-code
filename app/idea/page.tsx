@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader } from "@/components/ui/card";
 import { useState } from "react";
 import defaultIdea from "@/app/idea/demo";
+import Image from "next/image";
+import { Badge } from "@/components/ui/badge";
 
 export default function Home() {
   const [idea, setIdea] = useState(defaultIdea);
@@ -46,8 +48,37 @@ export default function Home() {
               {idea.frameworks.map((framework, i) => (
                 <li key={`framework-${i}`} className="font-bold">
                   {framework.title}
+                  {/* DISPLAYS ALL LOGOS NEXT TO FRAMEWORK IN TEXT
+                      TODOS:
+                        - how to get icon to always display (diff types)
+                        - how to deal with punctuation attached to framework name
+                        - make badges clickable and open resources?
+                  */}
                   <ul className="font-normal">
-                    <li>{framework.description}</li>
+                    <li>
+                      {framework.description.split(" ").map((word, index) => {
+                        const tool = framework.tools.find(
+                          (tool) => tool.toLowerCase() === word.toLowerCase(),
+                        );
+                        return tool ? (
+                          <Badge
+                            key={index}
+                            variant="secondary"
+                            className="ml-px mr-1"
+                          >
+                            {word}
+                            <i
+                              className={`ml-2
+                                devicon-${tool
+                                  .toLowerCase()
+                                  .replace(/[^a-z]/g, "")}-plain colored`}
+                            ></i>
+                          </Badge>
+                        ) : (
+                          word + " "
+                        );
+                      })}
+                    </li>
                   </ul>
                 </li>
               ))}
