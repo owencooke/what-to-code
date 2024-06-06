@@ -58,7 +58,7 @@ const featureParser = StructuredOutputParser.fromZodSchema(
 const FRAMEWORK_PROMPT = `
     Based on the following project and major features to be developed, generate three possible 
     types of software to be built. Each of the three suggested solutions should be unique categories
-    (e.g. web, mobile, desktop, CLI, tool, etc.) and their respective description should 
+    (e.g. web, mobile, desktop, CLI, plugin, extension, etc.) and their respective description should 
     specify the programming languages, frameworks, and tools necessary to build it.
     
     Project Title: {title}
@@ -74,12 +74,12 @@ const frameworkParser = StructuredOutputParser.fromZodSchema(
         description: z
           .string()
           .describe(
-            "description of programming languages, frameworks and/or tools used to build",
+            "description of programming languages, frameworks and/or tools used to build. Each tool should only be mentioned once.",
           ),
         tools: z
           .array(z.string())
           .describe(
-            "names of programming languages, frameworks and/or tools mentioned in description",
+            "names of programming languages, frameworks and/or tools mentioned in description. Names should be lowercase alphabetic or numeric characters only: no spaces or punctuation (like css3, html5, react, nodejs). ",
           ),
       }),
     )
