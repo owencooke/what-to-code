@@ -37,6 +37,7 @@ export default function Home() {
                   {feature.title}
                   <ul className="font-normal">
                     <li>{feature.description}</li>
+                    <li>{feature.story}</li>
                   </ul>
                 </li>
               ))}

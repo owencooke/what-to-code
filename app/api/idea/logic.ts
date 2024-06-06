@@ -4,9 +4,12 @@ import { RunnableSequence } from "@langchain/core/runnables";
 import { StructuredOutputParser } from "langchain/output_parsers";
 import { PromptTemplate } from "@langchain/core/prompts";
 
+function getJSONPrompt(prompt: string): PromptTemplate {
+  return PromptTemplate.fromTemplate(`{format_instructions} ${prompt}`);
+}
+
 // TODO: add {list_of_idea_types} to the template
 const IDEA_PROMPT = `
-    {format_instructions}
     You are a creative entrepreneur looking to generate a new, innovative product idea.
     The product will be built using software, not a service or physical good. 
     The ideas are just ideas. The product need not yet exist, nor may it necessarily be clearly feasible. 
@@ -19,7 +22,7 @@ const IDEA_PROMPT = `
     It is your job as the creative entrepreneur to generate the unique software project idea.
     It is CRITICAL that the description not discuss specific software or application features. 
     It should only describe the high level benefits of the project for potential users.
-    `;
+`;
 
 const ideaParser = StructuredOutputParser.fromZodSchema(
   z.object({
@@ -29,8 +32,8 @@ const ideaParser = StructuredOutputParser.fromZodSchema(
 );
 
 const FEATURES_PROMPT = `
-    {format_instructions}
-    Based on the following software project, generate three major features to be developed.
+    You are a software product manager and it is your job to outline the initial requirements 
+    for 3 major features to be developed for the following software project:
     Project Title: {title}
     Project Description: {description}
 `;
@@ -39,8 +42,13 @@ const featureParser = StructuredOutputParser.fromZodSchema(
   z
     .array(
       z.object({
-        title: z.string().describe("title of the feature"),
-        description: z.string().describe("description of the feature"),
+        title: z.string().describe("Title of the feature"),
+        description: z.string().describe("Description of the feature"),
+        story: z
+          .string()
+          .describe(
+            "User story for the feature in format: As a < type of user >, I want < some goal > so that < some reason >.",
+          ),
       }),
     )
     .length(3)
@@ -48,7 +56,6 @@ const featureParser = StructuredOutputParser.fromZodSchema(
 );
 
 const FRAMEWORK_PROMPT = `
-    {format_instructions}
     Based on the following project and major features to be developed, generate three possible 
     types of software to be built. Each of the three suggested solutions should be unique categories
     (e.g. web, mobile, desktop, CLI, tool, etc.) and their respective description should 
@@ -88,7 +95,7 @@ export async function getNewIdea() {
 
   // 1. Generating initial project idea
   const ideaChain = RunnableSequence.from([
-    PromptTemplate.fromTemplate(IDEA_PROMPT),
+    getJSONPrompt(IDEA_PROMPT),
     model,
     ideaParser,
   ]);
@@ -98,7 +105,7 @@ export async function getNewIdea() {
 
   // 2. Major features to develop for project
   const featureChain = RunnableSequence.from([
-    PromptTemplate.fromTemplate(FEATURES_PROMPT),
+    getJSONPrompt(FEATURES_PROMPT),
     model,
     featureParser,
   ]);
@@ -110,7 +117,7 @@ export async function getNewIdea() {
 
   // 3. Major features to develop for project
   const frameworkChain = RunnableSequence.from([
-    PromptTemplate.fromTemplate(FRAMEWORK_PROMPT),
+    getJSONPrompt(FRAMEWORK_PROMPT),
     model,
     frameworkParser,
   ]);

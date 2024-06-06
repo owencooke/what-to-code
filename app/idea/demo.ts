@@ -7,16 +7,22 @@ const sampleIdea = {
       title: "Virtual Workout Partner Matching",
       description:
         "Match users with similar fitness goals and schedules to workout together virtually.",
+      story:
+        "As a user, I want to be matched with a virtual workout partner so that I can stay motivated and accountable in my fitness journey.",
     },
     {
       title: "Progress Tracking",
       description:
         "Allow users to track and compare their workout progress, achievements, and goals.",
+      story:
+        "As a user, I want to track my workout progress and achievements so that I can see my improvements over time.",
     },
     {
       title: "Motivational Messaging",
       description:
         "Send motivational messages and reminders to users to keep them engaged and motivated in their fitness journey.",
+      story:
+        "As a user, I want to receive motivational messages and reminders so that I can stay motivated and committed to my fitness goals.",
     },
   ],
   frameworks: [
