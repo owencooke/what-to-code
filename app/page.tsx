@@ -1,6 +1,7 @@
 "use client";
 
 import { buttonVariants } from "@/components/ui/button";
+import CreateViteButton from "@/components/ui/createViteButton";
 import Link from "next/link";
 
 export default function Home() {
@@ -30,6 +31,7 @@ export default function Home() {
       >
         login
       </Link>
+      <CreateViteButton />
     </div>
   );
 }
