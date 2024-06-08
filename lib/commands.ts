@@ -1,6 +1,6 @@
 import os from "os";
 
-function viteReactCommands(repoFullName: string): string[] {
+export function viteReactCommands(repoFullName: string): string[] {
   const commands = [
     `npm create vite@latest my-vite-app -- --template react`,
     `cd my-vite-app && git init`,
@@ -14,7 +14,7 @@ function viteReactCommands(repoFullName: string): string[] {
   return commands;
 }
 
-function viteVueCommands(repoFullName: string): string[] {
+export function viteVueCommands(repoFullName: string): string[] {
   const commands = [
     `npm create vite@latest my-vite-app -- --template vue`,
     `cd my-vite-app && git init`,
