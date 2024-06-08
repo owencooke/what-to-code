@@ -30,9 +30,10 @@ export default function Home() {
       });
       alert(response.data.message);
       window.open(response.data.url, "_blank");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error creating repository:", error);
-      alert("Failed to create and push project");
+      const errorMessage = error.response?.data?.message || "Unknown error";
+      alert(`Error: ${errorMessage}`);
     }
   };
 
