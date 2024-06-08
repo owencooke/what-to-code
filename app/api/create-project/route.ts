@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
       `cd my-vite-app && git commit -m "Initial commit"`,
       `cd my-vite-app && git branch -M main`,
       `cd my-vite-app && git push -u origin main`,
-      os.platform() === "win32" ? `rd /s /q my-vite-app` : `rm -rf my-vite-app`, // kinda sketchy
+      os.platform() === "win32" ? `rd /s /q my-vite-app` : `rm -rf my-vite-app`, // kinda sketchy, look at later
     ];
 
     for (const command of commands) {
