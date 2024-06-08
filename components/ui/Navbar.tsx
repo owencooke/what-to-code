@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { UserCircleIcon } from "@heroicons/react/24/solid";
 
 interface NavbarProps {
   isSignedIn: boolean;
@@ -20,14 +21,12 @@ export default function Navbar({
   return (
     <nav className="p-4 flex justify-end items-center">
       <div className="relative">
-        <button
+        <UserCircleIcon
           onClick={() => setDropdownOpen(!dropdownOpen)}
           className={`w-10 h-10 ${
-            isSignedIn ? "bg-green-500" : "bg-black"
-          } rounded-full flex items-center justify-center focus:outline-none`}
-        >
-          <div className="rounded-full" />
-        </button>
+            isSignedIn ? "bg-green-500" : "bg-white"
+          } rounded-full flex items-center justify-center  cursor-pointer`}
+        />
         {dropdownOpen && (
           <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg">
             {isSignedIn && (
