@@ -29,6 +29,7 @@ export default function Home() {
         accessToken: session.accessToken,
       });
       alert(response.data.message);
+      window.open(response.data.url, "_blank");
     } catch (error) {
       console.error("Error creating repository:", error);
       alert("Failed to create and push project");
