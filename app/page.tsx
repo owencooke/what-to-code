@@ -41,7 +41,7 @@ export default function Home() {
     <div className="min-h-screen flex flex-col">
       <Navbar
         isSignedIn={!!session}
-        username={session?.user?.email ?? undefined}
+        user={session?.user}
         onAuthAction={handleAuthAction}
         onCreateRepo={handleCreateRepo}
       />
