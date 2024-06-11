@@ -63,7 +63,7 @@ export default function Navbar({
                 setDropdownOpen(false); // Close the dropdown after action
               }}
             >
-              {isSignedIn ? "Sign Out" : "Sign In"}
+              {isSignedIn ? "Sign Out" : "Sign in with GitHub"}
             </button>
           </div>
         )}
