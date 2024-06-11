@@ -1,11 +1,11 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { Card, CardHeader } from "@/components/ui/card";
 import { useState } from "react";
-import defaultIdea from "@/app/idea/demo";
+import defaultIdea from "@/app/idea/data/demo";
 import { Badge } from "@/components/ui/badge";
-import tools from "./tools";
+import tools from "./data/tools";
+import { IdeaForm } from "./form";
 
 const toAlphaLowerCase = (str: string) =>
   str.replace(/[^a-zA-Z]/g, "").toLowerCase();
@@ -13,18 +13,13 @@ const toAlphaLowerCase = (str: string) =>
 export default function Home() {
   const [idea, setIdea] = useState(defaultIdea);
 
-  const handleNewIdea = async () => {
-    const response = await fetch("/api/idea");
-    setIdea(await response.json());
-  };
-
-  console.log(idea);
-
   return (
     <div className="flex flex-col items-center justify-center">
       <div className="flex flex-col items-center justify-center gap-6">
         <h1 className="text-7xl">hmm, what to code?</h1>
-        <Button onClick={handleNewIdea}>generate new</Button>
+        <div className="flex gap-8">
+          <IdeaForm onSubmit={setIdea} />
+        </div>
       </div>
       <Card className="mt-16">
         <CardHeader className="gap-8">
@@ -58,7 +53,7 @@ export default function Home() {
                   */}
                   <ul className="font-normal">
                     <li>
-                      {framework.description.split(" ").map((word, index) => {
+                      {framework.description.split(" ").map((word, j) => {
                         const tool = framework.tools.find(
                           (tool) =>
                             toAlphaLowerCase(tool) === toAlphaLowerCase(word),
@@ -67,12 +62,8 @@ export default function Home() {
                           const punctuation =
                             word.match(/[^a-zA-Z0-9]+$/)?.[0] || "";
                           return (
-                            <>
-                              <Badge
-                                key={index}
-                                variant="secondary"
-                                className="ml-px mr-1"
-                              >
+                            <span key={`tool-${i}-${j}`}>
+                              <Badge variant="secondary" className="ml-px mr-1">
                                 {punctuation
                                   ? word.slice(0, -punctuation.length)
                                   : word}
@@ -81,7 +72,7 @@ export default function Home() {
                                 ></i>
                               </Badge>
                               {punctuation && punctuation + " "}
-                            </>
+                            </span>
                           );
                         }
                         return word + " ";
