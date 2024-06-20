@@ -58,7 +58,7 @@ export function IdeaForm(props: { onSubmit: (idea: Idea) => void }) {
           <Command>
             <CommandInput placeholder="search topic..." className="h-9" />
             <CommandList>
-              <CommandEmpty>No framework found.</CommandEmpty>
+              <CommandEmpty>No topic found.</CommandEmpty>
               <CommandGroup>
                 {categories.map((category) => (
                   <CommandItem

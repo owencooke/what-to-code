@@ -6,7 +6,7 @@ import defaultIdea from "@/app/idea/data/demo";
 import { Badge } from "@/components/ui/badge";
 import tools from "./data/tools";
 import { IdeaForm } from "./form";
-import { ButtonWithLoading } from "@/components/ui/button";
+import { Button, ButtonWithLoading } from "@/components/ui/button";
 import { toAlphaLowerCase } from "@/lib/utils";
 
 export default function Home() {
@@ -42,7 +42,16 @@ export default function Home() {
             <h1>{idea.title}</h1>
             <p>{idea.description}</p>
           </div>
-          {idea.features && idea.frameworks ? (
+          {!idea.features ? (
+            <div className="flex justify-center">
+              <ButtonWithLoading
+                onClick={expandIdea}
+                loadingText="expanding your idea..."
+              >
+                {"i'm interested"}
+              </ButtonWithLoading>
+            </div>
+          ) : (
             <>
               <div>
                 <h1>what to make</h1>
@@ -64,10 +73,6 @@ export default function Home() {
                   {idea.frameworks?.map((framework, i) => (
                     <li key={`framework-${i}`} className="font-bold">
                       {framework.title}
-                      {/* DISPLAYS ALL LOGOS NEXT TO FRAMEWORK IN TEXT
-                    TODOS:
-                        - make badges clickable and open resources?
-                  */}
                       <ul className="font-normal">
                         <li>
                           {framework.description.split(" ").map((word, j) => {
@@ -104,16 +109,9 @@ export default function Home() {
                   ))}
                 </ol>
               </div>
+              {/* TODO: link to "Create Project" page here */}
+              <Button>start building</Button>
             </>
-          ) : (
-            <div className="flex justify-center">
-              <ButtonWithLoading
-                onClick={expandIdea}
-                loadingText="expanding your idea..."
-              >
-                {"i'm interested"}
-              </ButtonWithLoading>
-            </div>
           )}
         </CardHeader>
       </Card>
