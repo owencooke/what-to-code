@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
+import { Button, ButtonWithLoading } from "@/components/ui/button";
 import {
   Command,
   CommandEmpty,
@@ -25,12 +25,10 @@ export function IdeaForm(props: { onSubmit: (idea: Idea) => void }) {
   const [open, setOpen] = useState(false);
   const [topic, setTopic] = useState("");
 
-  const handleNewIdea = async (topic: string) => {
-    if (!topic) {
-      topic = selectRandom(categories);
-    }
+  const handleNewIdea = async () => {
+    let newTopic = topic || selectRandom(categories);
     const response = await fetch(
-      `/api/idea?topic=${encodeURIComponent(topic)}`,
+      `/api/idea?topic=${encodeURIComponent(newTopic)}`,
     );
     if (!response.ok) {
       console.error("Failed to fetch new idea:", response.statusText);
@@ -41,13 +39,7 @@ export function IdeaForm(props: { onSubmit: (idea: Idea) => void }) {
   };
 
   return (
-    <form
-      className="flex gap-8"
-      onSubmit={(e) => {
-        e.preventDefault();
-        handleNewIdea(topic);
-      }}
-    >
+    <div className="flex gap-8">
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
@@ -91,7 +83,13 @@ export function IdeaForm(props: { onSubmit: (idea: Idea) => void }) {
           </Command>
         </PopoverContent>
       </Popover>
-      <Button type="submit">generate</Button>
-    </form>
+      <ButtonWithLoading
+        type="submit"
+        onClick={handleNewIdea}
+        loadingText="brainstorming..."
+      >
+        generate
+      </ButtonWithLoading>
+    </div>
   );
 }

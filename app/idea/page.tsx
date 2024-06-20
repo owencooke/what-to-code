@@ -6,7 +6,7 @@ import defaultIdea from "@/app/idea/data/demo";
 import { Badge } from "@/components/ui/badge";
 import tools from "./data/tools";
 import { IdeaForm } from "./form";
-import { Button } from "@/components/ui/button";
+import { ButtonWithLoading } from "@/components/ui/button";
 import { toAlphaLowerCase } from "@/lib/utils";
 
 export default function Home() {
@@ -107,9 +107,12 @@ export default function Home() {
             </>
           ) : (
             <div className="flex justify-center">
-              <Button className="" onClick={expandIdea}>
-                i'm interested
-              </Button>
+              <ButtonWithLoading
+                onClick={expandIdea}
+                loadingText="expanding your idea..."
+              >
+                {"i'm interested"}
+              </ButtonWithLoading>
             </div>
           )}
         </CardHeader>
