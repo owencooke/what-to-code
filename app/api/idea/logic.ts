@@ -3,6 +3,7 @@ import { OpenAI } from "@langchain/openai";
 import { RunnableSequence } from "@langchain/core/runnables";
 import { StructuredOutputParser } from "langchain/output_parsers";
 import { PromptTemplate } from "@langchain/core/prompts";
+import { features } from "process";
 
 function getJSONPrompt(prompt: string): PromptTemplate {
   return PromptTemplate.fromTemplate(`{format_instructions} ${prompt}`);
@@ -87,13 +88,11 @@ const frameworkParser = StructuredOutputParser.fromZodSchema(
     .describe("list of three types of software platforms to build project on"),
 );
 
-/**
- * Initializes and calls a simple chain for generating a software project idea and its major features.
- */
-export async function getNewIdea(topic: string | null) {
+// Generate Idea Title and Description
+export async function generateIdea(topic: string | null) {
   const model = new OpenAI({ model: "gpt-3.5-turbo-0125", temperature: 0.8 });
 
-  // 1. Generating initial project idea
+  // Generating initial project idea
   const ideaChain = RunnableSequence.from([
     getJSONPrompt(IDEA_PROMPT),
     model,
@@ -104,36 +103,38 @@ export async function getNewIdea(topic: string | null) {
     format_instructions: ideaParser.getFormatInstructions(),
   });
 
-  // 2. Major features to develop for project
+  return { title, description };
+}
+
+// Expand Initial Idea with Features and Frameworks
+export async function expandIdea(title: string, description: string) {
+  const model = new OpenAI({ model: "gpt-3.5-turbo-0125", temperature: 0.8 });
+
+  // Major features to develop for project
   const featureChain = RunnableSequence.from([
     getJSONPrompt(FEATURES_PROMPT),
     model,
     featureParser,
   ]);
-  const featureResponse = await featureChain.invoke({
+  const features = await featureChain.invoke({
     format_instructions: featureParser.getFormatInstructions(),
     title,
     description,
   });
 
-  // 3. Major features to develop for project
+  // Frameworks to build project on
   const frameworkChain = RunnableSequence.from([
     getJSONPrompt(FRAMEWORK_PROMPT),
     model,
     frameworkParser,
   ]);
-  const frameworkResponse = await frameworkChain.invoke({
+
+  const frameworks = await frameworkChain.invoke({
     format_instructions: frameworkParser.getFormatInstructions(),
     title,
     description,
-    features: JSON.stringify(featureResponse),
+    features,
   });
 
-  // Combine all results into final project idea
-  return {
-    title,
-    description,
-    features: featureResponse,
-    frameworks: frameworkResponse,
-  };
+  return { features, frameworks };
 }

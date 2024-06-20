@@ -1,3 +1,5 @@
+import { Idea } from "../types";
+
 const sampleIdea = {
   title: "Virtual Fitness Trainer",
   description:
@@ -47,4 +49,4 @@ const sampleIdea = {
   ],
 };
 
-export default sampleIdea;
+export default sampleIdea as Idea;

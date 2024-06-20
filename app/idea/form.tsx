@@ -20,7 +20,6 @@ import {
 import { selectRandom } from "@/lib/utils";
 import categories from "./data/categories";
 import { Idea } from "./types";
-
 export function IdeaForm(props: { onSubmit: (idea: Idea) => void }) {
   const { onSubmit } = props;
   const [open, setOpen] = useState(false);
@@ -30,7 +29,6 @@ export function IdeaForm(props: { onSubmit: (idea: Idea) => void }) {
     if (!topic) {
       topic = selectRandom(categories);
     }
-    console.log(topic);
     const response = await fetch(
       `/api/idea?topic=${encodeURIComponent(topic)}`,
     );
@@ -47,7 +45,6 @@ export function IdeaForm(props: { onSubmit: (idea: Idea) => void }) {
       className="flex gap-8"
       onSubmit={(e) => {
         e.preventDefault();
-        console.log(topic);
         handleNewIdea(topic);
       }}
     >
@@ -67,7 +64,7 @@ export function IdeaForm(props: { onSubmit: (idea: Idea) => void }) {
         </PopoverTrigger>
         <PopoverContent className="w-[200px] p-0">
           <Command>
-            <CommandInput placeholder="Search framework..." className="h-9" />
+            <CommandInput placeholder="search topic..." className="h-9" />
             <CommandList>
               <CommandEmpty>No framework found.</CommandEmpty>
               <CommandGroup>

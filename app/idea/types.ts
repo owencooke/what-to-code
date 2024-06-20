@@ -13,8 +13,8 @@ type Framework = {
 type Idea = {
   title: string;
   description: string;
-  features: Feature[];
-  frameworks: Framework[];
+  features?: Feature[];
+  frameworks?: Framework[];
 };
 
 export type { Idea, Feature, Framework };

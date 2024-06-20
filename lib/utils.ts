@@ -8,3 +8,6 @@ export function cn(...inputs: ClassValue[]) {
 export const selectRandom = (arr: string[]) => {
   return arr[Math.floor(Math.random() * arr.length)];
 };
+
+export const toAlphaLowerCase = (str: string) =>
+  str.replace(/[^a-zA-Z]/g, "").toLowerCase();
