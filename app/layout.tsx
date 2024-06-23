@@ -17,6 +17,11 @@ export default function RootLayout({
       <head>
         <title>what to code?</title>
         <link rel="shortcut icon" href="/images/favicon.ico" />
+        <link
+          rel="stylesheet"
+          type="text/css"
+          href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css"
+        />
       </head>
       <body className={publicSans.className}>
         <SessionProvider>
