@@ -6,8 +6,9 @@ import defaultIdea from "@/app/idea/data/demo";
 import { Badge } from "@/components/ui/badge";
 import tools from "./data/tools";
 import { IdeaForm } from "./form";
-import { Button, ButtonWithLoading } from "@/components/ui/button";
+import { ButtonWithLoading, buttonVariants } from "@/components/ui/button";
 import { toAlphaLowerCase } from "@/lib/utils";
+import Link from "next/link";
 
 export default function Home() {
   const [idea, setIdea] = useState(defaultIdea);
@@ -110,7 +111,14 @@ export default function Home() {
                 </ol>
               </div>
               {/* TODO: link to "Create Project" page here */}
-              <Button>start building</Button>
+              <Link
+                className={buttonVariants({ variant: "default", size: "lg" })}
+                href={`/project/create?idea=${encodeURIComponent(
+                  JSON.stringify(idea),
+                )}`}
+              >
+                create project
+              </Link>
             </>
           )}
         </CardHeader>
