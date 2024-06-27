@@ -1,7 +1,7 @@
 type Feature = {
   title: string;
-  description: string;
-  story: string;
+  userStory: string;
+  acceptanceCriteria: string[];
 };
 
 type Framework = {

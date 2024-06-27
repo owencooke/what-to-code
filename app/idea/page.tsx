@@ -9,6 +9,8 @@ import { IdeaForm } from "./form";
 import { ButtonWithLoading, buttonVariants } from "@/components/ui/button";
 import { toAlphaLowerCase } from "@/lib/utils";
 import Link from "next/link";
+import FeatureCard from "@/components/FeatureCard";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 export default function Home() {
   const [idea, setIdea] = useState(defaultIdea);
@@ -37,7 +39,7 @@ export default function Home() {
           <IdeaForm onSubmit={setIdea} />
         </div>
       </div>
-      <Card className="mt-16">
+      <Card className="mt-16 w-4/5">
         <CardHeader className="gap-8">
           <div>
             <h1>{idea.title}</h1>
@@ -56,17 +58,14 @@ export default function Home() {
             <>
               <div>
                 <h1>what to make</h1>
-                <ol>
-                  {idea.features?.map((feature, i) => (
-                    <li key={`feature-${i}`} className="font-bold">
-                      {feature.title}
-                      <ul className="font-normal">
-                        <li>{feature.description}</li>
-                        <li>{feature.story}</li>
-                      </ul>
-                    </li>
-                  ))}
-                </ol>
+                <ScrollArea className="mt-8">
+                  <div className="flex gap-12">
+                    {idea.features?.map((feature, i) => (
+                      <FeatureCard key={i} feature={feature} />
+                    ))}
+                  </div>
+                  <ScrollBar orientation="horizontal" />
+                </ScrollArea>
               </div>
               <div>
                 <h1>how to build it</h1>

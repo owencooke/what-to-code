@@ -1,7 +1,7 @@
 "use client";
 
 import { buttonVariants } from "@/components/ui/button";
-import Navbar from "@/components/ui/Navbar";
+import Navbar from "@/components/Navbar";
 import Link from "next/link";
 import axios from "axios";
 
