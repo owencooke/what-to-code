@@ -43,7 +43,9 @@ const featureParser = StructuredOutputParser.fromZodSchema(
   z
     .array(
       z.object({
-        title: z.string().describe("Short description of the feature"),
+        title: z
+          .string()
+          .describe("Short description of the single feature to make"),
         userStory: z
           .string()
           .describe(
@@ -51,7 +53,8 @@ const featureParser = StructuredOutputParser.fromZodSchema(
           ),
         acceptanceCriteria: z
           .array(z.string())
-          .describe("List of acceptance criteria for the feature"),
+          .describe("List of acceptance criteria for the feature")
+          .length(2),
       }),
     )
     .length(3)

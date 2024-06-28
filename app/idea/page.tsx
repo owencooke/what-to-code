@@ -11,6 +11,7 @@ import { toAlphaLowerCase } from "@/lib/utils";
 import Link from "next/link";
 import FeatureCard from "@/components/FeatureCard";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import FrameworkCard from "@/components/FrameworkCard";
 
 export default function Home() {
   const [idea, setIdea] = useState(defaultIdea);
@@ -69,45 +70,14 @@ export default function Home() {
               </div>
               <div>
                 <h1>how to build it</h1>
-                <ol>
-                  {idea.frameworks?.map((framework, i) => (
-                    <li key={`framework-${i}`} className="font-bold">
-                      {framework.title}
-                      <ul className="font-normal">
-                        <li>
-                          {framework.description.split(" ").map((word, j) => {
-                            const tool = framework.tools.find(
-                              (tool) =>
-                                toAlphaLowerCase(tool) ===
-                                toAlphaLowerCase(word),
-                            );
-                            if (tool && tools.includes(tool)) {
-                              const punctuation =
-                                word.match(/[^a-zA-Z0-9]+$/)?.[0] || "";
-                              return (
-                                <span key={`tool-${i}-${j}`}>
-                                  <Badge
-                                    variant="secondary"
-                                    className="ml-px mr-1"
-                                  >
-                                    {punctuation
-                                      ? word.slice(0, -punctuation.length)
-                                      : word}
-                                    <i
-                                      className={`ml-2 devicon-${tool}-original ml-2 devicon-${tool}-plain colored`}
-                                    ></i>
-                                  </Badge>
-                                  {punctuation && punctuation + " "}
-                                </span>
-                              );
-                            }
-                            return word + " ";
-                          })}
-                        </li>
-                      </ul>
-                    </li>
-                  ))}
-                </ol>
+                <ScrollArea className="mt-8">
+                  <div className="flex gap-12">
+                    {idea.frameworks?.map((framework, i) => (
+                      <FrameworkCard key={i} framework={framework} />
+                    ))}
+                  </div>
+                  <ScrollBar orientation="horizontal" />
+                </ScrollArea>
               </div>
               {/* TODO: link to "Create Project" page here */}
               <Link
