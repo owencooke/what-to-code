@@ -8,9 +8,12 @@ import {
   FormDescription,
   FormMessage,
 } from "./ui/form";
-import { Input } from "./ui/input";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 interface FormInputProps {
+  className?: string;
+  type?: "input" | "area";
   form: UseFormReturn<any>;
   name: string;
   label: string;
@@ -19,6 +22,8 @@ interface FormInputProps {
 }
 
 const FormInput: React.FC<FormInputProps> = ({
+  className,
+  type = "input",
   form,
   name,
   label,
@@ -33,7 +38,19 @@ const FormInput: React.FC<FormInputProps> = ({
         <FormItem>
           <FormLabel>{label}</FormLabel>
           <FormControl>
-            <Input placeholder={placeholder} {...field} />
+            {type === "input" ? (
+              <Input
+                className={className}
+                placeholder={placeholder}
+                {...field}
+              />
+            ) : (
+              <Textarea
+                className={className}
+                placeholder={placeholder}
+                {...field}
+              />
+            )}
           </FormControl>
           {description && <FormDescription>{description}</FormDescription>}
           <FormMessage />

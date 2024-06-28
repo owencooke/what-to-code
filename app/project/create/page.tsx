@@ -17,8 +17,8 @@ const FormSchema = z.object({
   title: z.string().min(2, {
     message: "Title must be at least 2 characters.",
   }),
-  description: z.string().min(2, {
-    message: "Description must be at least 2 characters.",
+  description: z.string().max(350, {
+    message: "Description must be less than 350 characters.",
   }),
 });
 
@@ -60,6 +60,8 @@ export default function Home() {
                 placeholder="name your project!"
               />
               <FormInput
+                className="max-h-32"
+                type="area"
                 form={form}
                 name="description"
                 label="Project Description"
