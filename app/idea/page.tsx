@@ -36,7 +36,7 @@ export default function Home() {
     <div className="flex flex-col items-center justify-center">
       <h1 className="text-7xl mt-16 mb-6">hmm, what to code?</h1>
       <IdeaForm onSubmit={setIdea} />
-      <Card className="mt-16 w-4/5">
+      <Card className="mt-8 w-4/5">
         <CardHeader className="gap-8">
           <div>
             <h1>{idea.title}</h1>
