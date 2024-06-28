@@ -34,12 +34,8 @@ export default function Home() {
 
   return (
     <div className="flex flex-col items-center justify-center">
-      <div className="flex flex-col items-center justify-center gap-6">
-        <h1 className="text-7xl">hmm, what to code?</h1>
-        <div className="flex gap-8">
-          <IdeaForm onSubmit={setIdea} />
-        </div>
-      </div>
+      <h1 className="text-7xl mt-16 mb-6">hmm, what to code?</h1>
+      <IdeaForm onSubmit={setIdea} />
       <Card className="mt-16 w-4/5">
         <CardHeader className="gap-8">
           <div>
