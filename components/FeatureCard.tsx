@@ -36,39 +36,39 @@ export default function FeatureCard({
 
   return (
     <Card
-      className={`w-[350px] text-sm flex ${className} ${
-        selected ? "[border-color:var(--border)]" : ""
+      className={`min-w-[350px] text-sm ${className} ${
+        selected ? "[border-color:var(--accent)]" : ""
       } ${isSelectable ? "cursor-pointer" : ""}`}
       onClick={handleClick}
     >
-      <div>
-        <CardHeader>
-          <CardTitle>{feature.title}</CardTitle>
-          <CardDescription>{feature.userStory}</CardDescription>
-        </CardHeader>
-        <CardContent className="break-words hyphens-auto">
-          <ul>
-            {feature.acceptanceCriteria.map((criteria, i) => (
-              <li key={i}>{criteria}</li>
-            ))}
-          </ul>
-        </CardContent>
-        {/* <CardFooter className="flex justify-between">
+      <CardHeader>
+        <CardTitle className="flex justify-between items-start gap-2">
+          {feature.title}
+          {isSelectable && (
+            <Button
+              className="w-9"
+              size="icon"
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+            >
+              <Edit className="h-4 w-4" />
+            </Button>
+          )}
+        </CardTitle>
+        <CardDescription>{feature.userStory}</CardDescription>
+      </CardHeader>
+      <CardContent className="break-words hyphens-auto">
+        <ul>
+          {feature.acceptanceCriteria.map((criteria, i) => (
+            <li key={i}>{criteria}</li>
+          ))}
+        </ul>
+      </CardContent>
+      {/* <CardFooter className="flex justify-between">
         <Button variant="outline">Cancel</Button>
         <Button>Deploy</Button>
       </CardFooter> */}
-      </div>
-      {isSelectable && (
-        <Button
-          className="min-w-[36px] mt-4 mr-4"
-          size="icon"
-          onClick={(e) => {
-            e.stopPropagation();
-          }}
-        >
-          <Edit className="h-4 w-4" />
-        </Button>
-      )}
     </Card>
   );
 }
