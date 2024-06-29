@@ -7,11 +7,13 @@ import { Badge } from "./ui/badge";
 type FrameworkCardProps = {
   className?: string;
   framework: Framework;
+  selected?: boolean;
 };
 
 export default function FrameworkCard({
   className,
   framework,
+  selected,
 }: FrameworkCardProps) {
   return (
     <Card className={`w-[350px] text-sm ${className}`}>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
-import { Idea } from "@/app/idea/types";
+import { Feature, Idea } from "@/app/idea/types";
 import { Card, CardHeader } from "@/components/ui/card";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import FeatureCard from "@/components/FeatureCard";
@@ -14,6 +14,12 @@ import FormInput from "@/components/FormInput";
 import { Form } from "@/components/ui/form";
 import { Label } from "@/components/ui/label";
 
+const FeatureSchema = z.object({
+  title: z.string(),
+  userStory: z.string(),
+  acceptanceCriteria: z.array(z.string()),
+});
+
 const FormSchema = z.object({
   title: z.string().min(2, {
     message: "Title must be at least 2 characters.",
@@ -21,15 +27,8 @@ const FormSchema = z.object({
   description: z.string().max(350, {
     message: "Description must be less than 350 characters.",
   }),
-  features: z
-    .array(
-      z.object({
-        title: z.string(),
-        userStory: z.string(),
-        acceptanceCriteria: z.array(z.string()),
-      }),
-    )
-    .optional(),
+  features: z.array(FeatureSchema).optional(),
+  framework: z.string(),
 });
 
 export default function Home() {
@@ -46,12 +45,31 @@ export default function Home() {
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
-    defaultValues: idea,
+    defaultValues: {
+      title: idea?.title,
+      description: idea?.description,
+      features: [],
+      framework: "",
+    },
   });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
     console.log(data);
   }
+
+  const selectedFeatures = form.watch("features");
+
+  const handleToggleFeature = (feature: Feature) => {
+    const updatedFeatures = selectedFeatures?.some(
+      (f) => f.title === feature.title,
+    )
+      ? selectedFeatures?.filter((f) => f.title !== feature.title)
+      : [...(selectedFeatures || []), feature];
+
+    form.setValue("features", updatedFeatures);
+  };
+
+  console.log(form.getValues());
 
   return (
     <Form {...form}>
@@ -81,7 +99,7 @@ export default function Home() {
                 form={form}
                 name="features"
                 label="Project Features"
-                placeholder="select 1 or more features to build"
+                placeholder="pick 1 or more features to build"
                 type={(field) => (
                   <ScrollArea>
                     <div className="flex">
@@ -93,6 +111,7 @@ export default function Home() {
                           selected={field.value
                             ?.map((f: { title: string }) => f.title)
                             .includes(feature.title)}
+                          onClick={() => handleToggleFeature(feature)}
                         />
                       ))}
                     </div>
@@ -100,19 +119,27 @@ export default function Home() {
                   </ScrollArea>
                 )}
               />
-              <Label>Project Implementation</Label>
-              <ScrollArea>
-                <div className="flex">
-                  {idea.frameworks?.map((framework, i) => (
-                    <FrameworkCard
-                      key={i}
-                      framework={framework}
-                      className="scale-90"
-                    />
-                  ))}
-                </div>
-                <ScrollBar orientation="horizontal" />
-              </ScrollArea>
+              <FormInput
+                form={form}
+                name="framework"
+                label="Project Implementation"
+                placeholder="pick the type of project to build"
+                type={(field) => (
+                  <ScrollArea>
+                    <div className="flex">
+                      {idea.frameworks?.map((framework, i) => (
+                        <FrameworkCard
+                          key={i}
+                          framework={framework}
+                          className="scale-90"
+                          selected={field.value === framework.title}
+                        />
+                      ))}
+                    </div>
+                    <ScrollBar orientation="horizontal" />
+                  </ScrollArea>
+                )}
+              />
               <Button type="submit">Submit</Button>
             </CardHeader>
           </Card>

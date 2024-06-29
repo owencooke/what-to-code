@@ -14,16 +14,18 @@ type FeatureCardProps = {
   className?: string;
   feature: Feature;
   selected?: boolean;
+  onClick?: () => void;
 };
 
 export default function FeatureCard({
   className,
   feature,
   selected,
+  onClick,
 }: FeatureCardProps) {
   return (
     // <Toggle variant="outline" className="p-0 m-0 text-left">
-    <Card className={`w-[350px] text-sm ${className}`}>
+    <Card className={`w-[350px] text-sm ${className}`} onClick={onClick}>
       <CardHeader>
         <CardTitle>{feature.title}</CardTitle>
         <CardDescription>{feature.userStory}</CardDescription>

@@ -34,33 +34,30 @@ const FormInput: React.FC<FormInputProps> = ({
     <FormField
       control={form.control}
       name={name}
-      render={({ field }) => {
-        console.log(field);
-        return (
-          <FormItem>
-            <FormLabel>{label}</FormLabel>
-            <FormControl>
-              {typeof type === "function" ? (
-                type(field)
-              ) : type === "input" ? (
-                <Input
-                  className={className}
-                  placeholder={placeholder}
-                  {...field}
-                />
-              ) : (
-                <Textarea
-                  className={className}
-                  placeholder={placeholder}
-                  {...field}
-                />
-              )}
-            </FormControl>
-            {description && <FormDescription>{description}</FormDescription>}
-            <FormMessage />
-          </FormItem>
-        );
-      }}
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>{label}</FormLabel>
+          <FormControl>
+            {typeof type === "function" ? (
+              type(field)
+            ) : type === "input" ? (
+              <Input
+                className={className}
+                placeholder={placeholder}
+                {...field}
+              />
+            ) : (
+              <Textarea
+                className={className}
+                placeholder={placeholder}
+                {...field}
+              />
+            )}
+          </FormControl>
+          {description && <FormDescription>{description}</FormDescription>}
+          <FormMessage />
+        </FormItem>
+      )}
     />
   );
 };
