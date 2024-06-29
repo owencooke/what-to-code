@@ -21,6 +21,15 @@ const FormSchema = z.object({
   description: z.string().max(350, {
     message: "Description must be less than 350 characters.",
   }),
+  features: z
+    .array(
+      z.object({
+        title: z.string(),
+        userStory: z.string(),
+        acceptanceCriteria: z.array(z.string()),
+      }),
+    )
+    .optional(),
 });
 
 export default function Home() {
@@ -68,19 +77,29 @@ export default function Home() {
                 label="Project Description"
                 placeholder="describe your project!"
               />
-              <Label>Project Features</Label>
-              <ScrollArea>
-                <div className="flex">
-                  {idea.features?.map((feature, i) => (
-                    <FeatureCard
-                      key={i}
-                      feature={feature}
-                      className="scale-90"
-                    />
-                  ))}
-                </div>
-                <ScrollBar orientation="horizontal" />
-              </ScrollArea>
+              <FormInput
+                form={form}
+                name="features"
+                label="Project Features"
+                placeholder="select 1 or more features to build"
+                type={(field) => (
+                  <ScrollArea>
+                    <div className="flex">
+                      {idea.features?.map((feature, i) => (
+                        <FeatureCard
+                          key={i}
+                          feature={feature}
+                          className="scale-90"
+                          selected={field.value
+                            ?.map((f: { title: string }) => f.title)
+                            .includes(feature.title)}
+                        />
+                      ))}
+                    </div>
+                    <ScrollBar orientation="horizontal" />
+                  </ScrollArea>
+                )}
+              />
               <Label>Project Implementation</Label>
               <ScrollArea>
                 <div className="flex">

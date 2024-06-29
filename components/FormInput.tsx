@@ -1,5 +1,5 @@
 import React from "react";
-import { UseFormReturn } from "react-hook-form";
+import { ControllerRenderProps, UseFormReturn } from "react-hook-form";
 import {
   FormField,
   FormItem,
@@ -7,13 +7,13 @@ import {
   FormControl,
   FormDescription,
   FormMessage,
-} from "./ui/form";
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
 interface FormInputProps {
   className?: string;
-  type?: "input" | "area";
+  type?: "input" | "area" | ((field: ControllerRenderProps) => React.ReactNode);
   form: UseFormReturn<any>;
   name: string;
   label: string;
@@ -34,28 +34,33 @@ const FormInput: React.FC<FormInputProps> = ({
     <FormField
       control={form.control}
       name={name}
-      render={({ field }) => (
-        <FormItem>
-          <FormLabel>{label}</FormLabel>
-          <FormControl>
-            {type === "input" ? (
-              <Input
-                className={className}
-                placeholder={placeholder}
-                {...field}
-              />
-            ) : (
-              <Textarea
-                className={className}
-                placeholder={placeholder}
-                {...field}
-              />
-            )}
-          </FormControl>
-          {description && <FormDescription>{description}</FormDescription>}
-          <FormMessage />
-        </FormItem>
-      )}
+      render={({ field }) => {
+        console.log(field);
+        return (
+          <FormItem>
+            <FormLabel>{label}</FormLabel>
+            <FormControl>
+              {typeof type === "function" ? (
+                type(field)
+              ) : type === "input" ? (
+                <Input
+                  className={className}
+                  placeholder={placeholder}
+                  {...field}
+                />
+              ) : (
+                <Textarea
+                  className={className}
+                  placeholder={placeholder}
+                  {...field}
+                />
+              )}
+            </FormControl>
+            {description && <FormDescription>{description}</FormDescription>}
+            <FormMessage />
+          </FormItem>
+        );
+      }}
     />
   );
 };

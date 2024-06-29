@@ -5,17 +5,24 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "./ui/card";
-import { Button } from "./ui/button";
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Feature } from "@/app/idea/types";
+import { Toggle } from "@/components/ui/toggle";
 
 type FeatureCardProps = {
   className?: string;
   feature: Feature;
+  selected?: boolean;
 };
 
-export default function FeatureCard({ className, feature }: FeatureCardProps) {
+export default function FeatureCard({
+  className,
+  feature,
+  selected,
+}: FeatureCardProps) {
   return (
+    // <Toggle variant="outline" className="p-0 m-0 text-left">
     <Card className={`w-[350px] text-sm ${className}`}>
       <CardHeader>
         <CardTitle>{feature.title}</CardTitle>
@@ -33,5 +40,6 @@ export default function FeatureCard({ className, feature }: FeatureCardProps) {
         <Button>Deploy</Button>
       </CardFooter> */}
     </Card>
+    // </Toggle>
   );
 }
