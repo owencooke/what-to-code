@@ -81,6 +81,7 @@ export default function Home() {
         {idea && (
           <Card className="mt-8 w-4/5">
             <CardHeader className="gap-4">
+              {/* TODO: AI generated unique name button */}
               <FormInput
                 form={form}
                 name="title"
@@ -98,8 +99,9 @@ export default function Home() {
               <FormInput
                 form={form}
                 name="features"
-                label="Features"
-                description="pick 1 or more that you want to develop"
+                label="What To Develop"
+                description={`${selectedFeatures?.length || 0}/${idea.features
+                  ?.length} features selected`}
                 type={(field) => (
                   <ScrollArea>
                     <div className="flex">
@@ -119,8 +121,8 @@ export default function Home() {
               <FormInput
                 form={form}
                 name="framework"
-                label="Implementation"
-                description="choose the type of project you want to build"
+                label="How to Build It"
+                description="choose the type of platform to build and tech stack to use"
                 type={(field) => (
                   <ScrollArea>
                     <div className="flex">
