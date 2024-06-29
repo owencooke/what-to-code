@@ -37,6 +37,7 @@ const FormInput: React.FC<FormInputProps> = ({
       render={({ field }) => (
         <FormItem>
           <FormLabel>{label}</FormLabel>
+          {description && <FormDescription>{description}</FormDescription>}
           <FormControl>
             {typeof type === "function" ? (
               type(field)
@@ -54,7 +55,6 @@ const FormInput: React.FC<FormInputProps> = ({
               />
             )}
           </FormControl>
-          {description && <FormDescription>{description}</FormDescription>}
           <FormMessage />
         </FormItem>
       )}

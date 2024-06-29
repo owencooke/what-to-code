@@ -84,22 +84,22 @@ export default function Home() {
               <FormInput
                 form={form}
                 name="title"
-                label="Project Title"
-                placeholder="name your project!"
+                label="Project Name"
+                placeholder="insert cool name here"
               />
               <FormInput
                 className="max-h-32"
                 type="area"
                 form={form}
                 name="description"
-                label="Project Description"
-                placeholder="describe your project!"
+                label="Description"
+                placeholder="what is your project and what does it do"
               />
               <FormInput
                 form={form}
                 name="features"
-                label="Project Features"
-                placeholder="pick 1 or more features to build"
+                label="Features"
+                description="pick 1 or more that you want to develop"
                 type={(field) => (
                   <ScrollArea>
                     <div className="flex">
@@ -119,8 +119,8 @@ export default function Home() {
               <FormInput
                 form={form}
                 name="framework"
-                label="Project Implementation"
-                placeholder="pick the type of project to build"
+                label="Implementation"
+                description="choose the type of project you want to build"
                 type={(field) => (
                   <ScrollArea>
                     <div className="flex">
