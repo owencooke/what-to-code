@@ -12,6 +12,7 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import FormInput from "@/components/FormInput";
 import { Form } from "@/components/ui/form";
+import { Label } from "@/components/ui/label";
 
 const FormSchema = z.object({
   title: z.string().min(2, {
@@ -67,28 +68,32 @@ export default function Home() {
                 label="Project Description"
                 placeholder="describe your project!"
               />
-              <div>
-                <h1>what to make</h1>
-                <ScrollArea className="mt-8">
-                  <div className="flex gap-12">
-                    {idea.features?.map((feature, i) => (
-                      <FeatureCard key={i} feature={feature} />
-                    ))}
-                  </div>
-                  <ScrollBar orientation="horizontal" />
-                </ScrollArea>
-              </div>
-              <div>
-                <h1>how to build it</h1>
-                <ScrollArea className="mt-8">
-                  <div className="flex gap-12">
-                    {idea.frameworks?.map((framework, i) => (
-                      <FrameworkCard key={i} framework={framework} />
-                    ))}
-                  </div>
-                  <ScrollBar orientation="horizontal" />
-                </ScrollArea>
-              </div>
+              <Label>Project Features</Label>
+              <ScrollArea>
+                <div className="flex">
+                  {idea.features?.map((feature, i) => (
+                    <FeatureCard
+                      key={i}
+                      feature={feature}
+                      className="scale-90"
+                    />
+                  ))}
+                </div>
+                <ScrollBar orientation="horizontal" />
+              </ScrollArea>
+              <Label>Project Implementation</Label>
+              <ScrollArea>
+                <div className="flex">
+                  {idea.frameworks?.map((framework, i) => (
+                    <FrameworkCard
+                      key={i}
+                      framework={framework}
+                      className="scale-90"
+                    />
+                  ))}
+                </div>
+                <ScrollBar orientation="horizontal" />
+              </ScrollArea>
               <Button type="submit">Submit</Button>
             </CardHeader>
           </Card>

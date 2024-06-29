@@ -1,4 +1,3 @@
-import { Feature } from "@/app/idea/types";
 import {
   Card,
   CardContent,
@@ -8,15 +7,21 @@ import {
   CardTitle,
 } from "./ui/card";
 import { Button } from "./ui/button";
+import { Feature } from "@/app/idea/types";
 
-export default function FeatureCard({ feature }: { feature: Feature }) {
+type FeatureCardProps = {
+  className?: string;
+  feature: Feature;
+};
+
+export default function FeatureCard({ className, feature }: FeatureCardProps) {
   return (
-    <Card className="w-[350px]">
+    <Card className={`w-[350px] text-sm ${className}`}>
       <CardHeader>
         <CardTitle>{feature.title}</CardTitle>
-        <CardDescription> {feature.userStory}</CardDescription>
+        <CardDescription>{feature.userStory}</CardDescription>
       </CardHeader>
-      <CardContent className="break-words  hyphens-auto">
+      <CardContent className="break-words hyphens-auto">
         <ul>
           {feature.acceptanceCriteria.map((criteria, i) => (
             <li key={i}>{criteria}</li>

@@ -3,11 +3,8 @@
 import { Card, CardHeader } from "@/components/ui/card";
 import { useState } from "react";
 import defaultIdea from "@/app/idea/data/demo";
-import { Badge } from "@/components/ui/badge";
-import tools from "./data/tools";
 import { IdeaForm } from "./form";
 import { ButtonWithLoading, buttonVariants } from "@/components/ui/button";
-import { toAlphaLowerCase } from "@/lib/utils";
 import Link from "next/link";
 import FeatureCard from "@/components/FeatureCard";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";

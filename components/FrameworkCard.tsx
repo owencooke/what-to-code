@@ -4,13 +4,21 @@ import { toAlphaLowerCase } from "@/lib/utils";
 import tools from "@/app/idea/data/tools";
 import { Badge } from "./ui/badge";
 
-export default function FrameworkCard({ framework }: { framework: Framework }) {
+type FrameworkCardProps = {
+  className?: string;
+  framework: Framework;
+};
+
+export default function FrameworkCard({
+  className,
+  framework,
+}: FrameworkCardProps) {
   return (
-    <Card className="w-[350px]">
+    <Card className={`w-[350px] text-sm ${className}`}>
       <CardHeader>
         <CardTitle>{framework.title}</CardTitle>
       </CardHeader>
-      <CardContent className="break-words  hyphens-auto">
+      <CardContent className="break-words hyphens-auto">
         {framework.description.split(" ").map((word, j) => {
           const tool = framework.tools.find(
             (tool) => toAlphaLowerCase(tool) === toAlphaLowerCase(word),
