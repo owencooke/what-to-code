@@ -9,23 +9,35 @@ import {
 import { Button } from "@/components/ui/button";
 import { Feature } from "@/app/idea/types";
 import { Toggle } from "@/components/ui/toggle";
+import { useState } from "react";
 
 type FeatureCardProps = {
   className?: string;
   feature: Feature;
-  selected?: boolean;
   onClick?: () => void;
 };
 
 export default function FeatureCard({
-  className,
+  className = "",
   feature,
-  selected,
   onClick,
 }: FeatureCardProps) {
+  const [selected, setSelected] = useState(false);
+
+  const handleClick = () => {
+    if (typeof onClick === "function") {
+      setSelected(!selected);
+      onClick();
+    }
+  };
+
   return (
-    // <Toggle variant="outline" className="p-0 m-0 text-left">
-    <Card className={`w-[350px] text-sm ${className}`} onClick={onClick}>
+    <Card
+      className={`w-[350px] text-sm ${className} ${
+        selected ? "[border-color:var(--border)]" : ""
+      } ${typeof onClick === "function" ? "cursor-pointer" : ""}`}
+      onClick={handleClick}
+    >
       <CardHeader>
         <CardTitle>{feature.title}</CardTitle>
         <CardDescription>{feature.userStory}</CardDescription>
@@ -42,6 +54,5 @@ export default function FeatureCard({
         <Button>Deploy</Button>
       </CardFooter> */}
     </Card>
-    // </Toggle>
   );
 }

@@ -108,9 +108,6 @@ export default function Home() {
                           key={i}
                           feature={feature}
                           className="scale-90"
-                          selected={field.value
-                            ?.map((f: { title: string }) => f.title)
-                            .includes(feature.title)}
                           onClick={() => handleToggleFeature(feature)}
                         />
                       ))}
