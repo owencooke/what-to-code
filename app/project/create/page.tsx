@@ -11,19 +11,14 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import FormInput from "@/components/FormInput";
 import { Form } from "@/components/ui/form";
-import { IdeaSchema, Feature, FrameworkSchema, Framework } from "@/types/idea";
+import { IdeaSchema, Feature, Framework } from "@/types/idea";
 import { useEffect, useMemo } from "react";
-
-const ProjectSchema = IdeaSchema.pick({
-  title: true,
-  description: true,
-}).extend({
-  features: IdeaSchema.shape.features.optional(),
-  framework: FrameworkSchema,
-});
+import { useSession } from "next-auth/react";
+import { ProjectSchema } from "@/types/project";
 
 export default function Home() {
   const router = useRouter();
+  const { data: session } = useSession();
 
   const idea = useMemo(() => {
     const storedIdea = sessionStorage.getItem("idea");
@@ -68,14 +63,27 @@ export default function Home() {
     form.setValue("framework", framework);
   };
 
-  function onSubmit(data: z.infer<typeof ProjectSchema>) {
-    console.log("SUBMIT", data);
-  }
+  const handleSubmit = async (data: z.infer<typeof ProjectSchema>) => {
+    const response = await fetch(`/api/project`, {
+      method: "POST",
+      headers: {
+        Authorization: "token " + session?.accessToken,
+      },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+      // TODO: Display error message using toast? alert?
+      console.error("Failed to create project", response.statusText);
+      return;
+    }
+    const { id } = await response.json();
+    router.push(`/project${id}`);
+  };
 
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={form.handleSubmit(handleSubmit)}
         className="flex flex-col items-center justify-center"
       >
         {idea && (
@@ -90,6 +98,7 @@ export default function Home() {
                   label="Project Name"
                   placeholder="insert cool name here"
                 />
+                {/* TODO: Display GitHub integration / future repo name */}
                 <FormInput
                   className="max-h-32"
                   type="area"
