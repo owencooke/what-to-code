@@ -1,4 +1,4 @@
-import { Framework } from "@/app/idea/types";
+import { Framework } from "@/types/idea";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { toAlphaLowerCase } from "@/lib/utils";
 import tools from "@/app/idea/data/tools";

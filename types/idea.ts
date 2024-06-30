@@ -1,6 +1,7 @@
 import { z } from "zod";
 
-const Feature = z.object({
+// Create schemas for software project idea generation
+const FeatureSchema = z.object({
   title: z.string().describe("Short title of the single feature to make"),
   userStory: z
     .string()
@@ -12,7 +13,7 @@ const Feature = z.object({
     .describe("List of acceptance criteria for the feature"),
 });
 
-const Framework = z.object({
+const FrameworkSchema = z.object({
   title: z.string().describe("category of software to be built"),
   description: z
     .string()
@@ -26,7 +27,7 @@ const Framework = z.object({
     ),
 });
 
-const Idea = z.object({
+const IdeaSchema = z.object({
   title: z
     .string()
     .min(2, {
@@ -39,12 +40,20 @@ const Idea = z.object({
       message: "Description must be 350 characters or less.",
     })
     .describe("Brief overview of the software project"),
-  features: z.array(Feature).describe("List of major features to develop"),
+  features: z
+    .array(FeatureSchema)
+    .describe("List of major features to develop"),
   frameworks: z
-    .array(Framework)
+    .array(FrameworkSchema)
     .describe(
       "List of types of platforms to build/tech stack to use for project",
     ),
 });
 
-export { Idea, Feature, Framework };
+// Define TS types from schemas
+type Feature = z.infer<typeof FeatureSchema>;
+type Framework = z.infer<typeof FrameworkSchema>;
+type Idea = z.infer<typeof IdeaSchema>;
+
+export { IdeaSchema, FeatureSchema, FrameworkSchema };
+export type { Idea, Feature, Framework };

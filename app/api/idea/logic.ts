@@ -2,7 +2,7 @@ import { OpenAI } from "@langchain/openai";
 import { RunnableSequence } from "@langchain/core/runnables";
 import { StructuredOutputParser } from "langchain/output_parsers";
 import { PromptTemplate } from "@langchain/core/prompts";
-import { Idea } from "@/types/idea";
+import { IdeaSchema } from "@/types/idea";
 
 const MODEL = "gpt-3.5-turbo-0125";
 
@@ -26,7 +26,7 @@ const IDEA_PROMPT = `
 `;
 
 const ideaParser = StructuredOutputParser.fromZodSchema(
-  Idea.pick({ title: true, description: true }),
+  IdeaSchema.pick({ title: true, description: true }),
 );
 
 const FEATURES_PROMPT = `
@@ -37,7 +37,7 @@ const FEATURES_PROMPT = `
 `;
 
 const featureParser = StructuredOutputParser.fromZodSchema(
-  Idea.shape.features.length(3),
+  IdeaSchema.shape.features.length(3),
 );
 
 const FRAMEWORK_PROMPT = `
@@ -52,10 +52,10 @@ const FRAMEWORK_PROMPT = `
 `;
 
 const frameworkParser = StructuredOutputParser.fromZodSchema(
-  Idea.shape.frameworks.length(3),
+  IdeaSchema.shape.frameworks.length(3),
 );
 
-// Generate Idea Title and Description
+// Generate IdeaSchema Title and Description
 export async function generateIdea(topic: string | null) {
   const model = new OpenAI({ model: MODEL, temperature: 0.8 });
 
@@ -73,7 +73,7 @@ export async function generateIdea(topic: string | null) {
   return { title, description };
 }
 
-// Expand Initial Idea with Features and Frameworks
+// Expand Initial IdeaSchema with Features and Frameworks
 export async function expandIdea(title: string, description: string) {
   const model = new OpenAI({ model: MODEL, temperature: 0.8 });
 

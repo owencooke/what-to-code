@@ -7,11 +7,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Feature } from "@/app/idea/types";
-import { Toggle } from "@/components/ui/toggle";
+import { Feature } from "@/types/idea";
 import { useMemo, useState } from "react";
-import { Edit, Edit2, Edit3, EditIcon } from "lucide-react";
-import { ChevronRightIcon } from "@radix-ui/react-icons";
+import { Edit } from "lucide-react";
 
 type FeatureCardProps = {
   className?: string;

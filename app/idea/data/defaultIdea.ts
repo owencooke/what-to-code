@@ -1,6 +1,6 @@
-import { Idea } from "@/types/idea";
+import { IdeaSchema } from "@/types/idea";
 
-export default Idea.parse({
+export default IdeaSchema.parse({
   title: "Virtual Fitness Trainer",
   description:
     "An AI-powered virtual fitness trainer that creates personalized workout plans and provides real-time feedback and motivation. The app helps users stay motivated and accountable in their fitness journey.",

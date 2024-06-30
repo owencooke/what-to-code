@@ -11,15 +11,15 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import FormInput from "@/components/FormInput";
 import { Form } from "@/components/ui/form";
-import { Idea, Feature, Framework } from "@/types/idea";
+import { IdeaSchema, Feature, FrameworkSchema } from "@/types/idea";
 import { useEffect, useMemo } from "react";
 
-const ProjectSchema = Idea.pick({
+const ProjectSchema = IdeaSchema.pick({
   title: true,
   description: true,
 }).extend({
-  features: Idea.shape.features.optional(),
-  framework: Framework,
+  features: IdeaSchema.shape.features.optional(),
+  framework: FrameworkSchema,
 });
 
 export default function Home() {
@@ -29,7 +29,7 @@ export default function Home() {
     const storedIdea = sessionStorage.getItem("idea");
     if (storedIdea) {
       try {
-        return Idea.safeParse(JSON.parse(storedIdea)).data;
+        return IdeaSchema.safeParse(JSON.parse(storedIdea)).data;
       } catch (error) {}
     }
     return null;
@@ -58,7 +58,7 @@ export default function Home() {
 
   const selectedFeatures = form.watch("features");
 
-  const handleToggleFeature = (feature: z.infer<typeof Feature>) => {
+  const handleToggleFeature = (feature: Feature) => {
     const updatedFeatures = selectedFeatures?.some(
       (f) => f.title === feature.title,
     )
