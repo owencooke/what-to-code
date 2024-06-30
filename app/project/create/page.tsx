@@ -3,15 +3,15 @@
 import { useRouter } from "next/navigation";
 import { Card, CardHeader } from "@/components/ui/card";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import FeatureCard from "@/components/FeatureCard";
-import FrameworkCard from "@/components/FrameworkCard";
+import FeatureCard from "@/components/cards/FeatureCard";
+import FrameworkCard from "@/components/cards/FrameworkCard";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import FormInput from "@/components/FormInput";
 import { Form } from "@/components/ui/form";
-import { IdeaSchema, Feature, FrameworkSchema } from "@/types/idea";
+import { IdeaSchema, Feature, FrameworkSchema, Framework } from "@/types/idea";
 import { useEffect, useMemo } from "react";
 
 const ProjectSchema = IdeaSchema.pick({
@@ -52,10 +52,6 @@ export default function Home() {
     },
   });
 
-  function onSubmit(data: z.infer<typeof ProjectSchema>) {
-    console.log(data);
-  }
-
   const selectedFeatures = form.watch("features");
 
   const handleToggleFeature = (feature: Feature) => {
@@ -67,6 +63,14 @@ export default function Home() {
 
     form.setValue("features", updatedFeatures);
   };
+
+  const handleSelectFramework = (framework: Framework) => {
+    form.setValue("framework", framework);
+  };
+
+  function onSubmit(data: z.infer<typeof ProjectSchema>) {
+    console.log("SUBMIT", data);
+  }
 
   return (
     <Form {...form}>
@@ -100,7 +104,7 @@ export default function Home() {
                   label="What To Develop"
                   description={`${selectedFeatures?.length || 0}/${idea.features
                     ?.length} features selected`}
-                  type={(field) => (
+                  type={() => (
                     <ScrollArea>
                       <div className="flex">
                         {idea.features?.map((feature, i) => (
@@ -109,6 +113,9 @@ export default function Home() {
                             feature={feature}
                             className="scale-90"
                             onClick={() => handleToggleFeature(feature)}
+                            selected={selectedFeatures
+                              ?.map((f) => f.title)
+                              .includes(feature.title)}
                           />
                         ))}
                       </div>
@@ -129,7 +136,8 @@ export default function Home() {
                             key={i}
                             framework={framework}
                             className="scale-90"
-                            selected={field.value === framework.title}
+                            onClick={() => handleSelectFramework(framework)}
+                            selected={field.value.title === framework.title}
                           />
                         ))}
                       </div>

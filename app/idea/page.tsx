@@ -6,9 +6,9 @@ import { useState } from "react";
 import defaultIdea from "@/app/idea/data/defaultIdea";
 import { IdeaForm } from "./form";
 import { Button, ButtonWithLoading } from "@/components/ui/button";
-import FeatureCard from "@/components/FeatureCard";
+import FeatureCard from "@/components/cards/FeatureCard";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import FrameworkCard from "@/components/FrameworkCard";
+import FrameworkCard from "@/components/cards/FrameworkCard";
 
 export default function Home() {
   const router = useRouter();

@@ -7,66 +7,73 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Feature } from "@/types/idea";
-import { useMemo, useState } from "react";
+import { useMemo, useState, ReactNode } from "react";
 import { Edit } from "lucide-react";
 
-type FeatureCardProps = {
+type SelectableCardProps = {
   className?: string;
-  feature: Feature;
-  onClick?: () => void;
+  title: string;
+  description: string;
+  selected?: boolean;
+  onSelect?: () => void;
+  renderContent?: () => ReactNode;
+  renderFooter?: () => ReactNode;
 };
 
-export default function FeatureCard({
+export default function CustomizableCard({
   className = "",
-  feature,
-  onClick,
-}: FeatureCardProps) {
-  const [selected, setSelected] = useState(false);
-  const isSelectable = useMemo(() => typeof onClick === "function", [onClick]);
+  title,
+  description,
+  selected = false,
+  onSelect,
+  renderContent,
+  renderFooter,
+}: SelectableCardProps) {
+  const isSelectable = useMemo(
+    () => typeof onSelect === "function",
+    [onSelect],
+  );
 
   const handleClick = () => {
     if (isSelectable) {
-      setSelected(!selected);
-      onClick && onClick();
+      onSelect && onSelect();
     }
   };
 
   return (
     <Card
-      className={`min-w-[350px] text-sm ${className} ${
+      className={`min-w-[24rem] text-sm ${className} ${
         selected ? "[border-color:var(--accent)]" : ""
       } ${isSelectable ? "cursor-pointer" : ""}`}
       onClick={handleClick}
     >
       <CardHeader>
         <CardTitle className="flex justify-between items-start gap-2">
-          {feature.title}
+          {title}
           {isSelectable && (
             <Button
-              className="w-9"
+              type="button"
+              className="flex-shrink-0 flex-grow-0 w-9 h-9"
               size="icon"
               onClick={(e) => {
                 e.stopPropagation();
+                console.log("edit");
               }}
             >
               <Edit className="h-4 w-4" />
             </Button>
           )}
         </CardTitle>
-        <CardDescription>{feature.userStory}</CardDescription>
+        <CardDescription>{description}</CardDescription>
       </CardHeader>
       <CardContent className="break-words hyphens-auto">
-        <ul>
-          {feature.acceptanceCriteria.map((criteria, i) => (
-            <li key={i}>{criteria}</li>
-          ))}
-        </ul>
+        {renderContent && renderContent()}
       </CardContent>
-      {/* <CardFooter className="flex justify-between">
-        <Button variant="outline">Cancel</Button>
-        <Button>Deploy</Button>
-      </CardFooter> */}
+      {renderFooter && (
+        <CardFooter className="flex justify-between">
+          {renderFooter()}
+        </CardFooter>
+      )}
     </Card>
   );
 }
