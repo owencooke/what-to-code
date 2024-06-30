@@ -1,6 +1,6 @@
-import { Idea } from "../types";
+import { Idea } from "@/types/idea";
 
-const sampleIdea = {
+export default Idea.parse({
   title: "Virtual Fitness Trainer",
   description:
     "An AI-powered virtual fitness trainer that creates personalized workout plans and provides real-time feedback and motivation. The app helps users stay motivated and accountable in their fitness journey.",
@@ -53,6 +53,4 @@ const sampleIdea = {
       tools: ["python", "googlecloud"],
     },
   ],
-};
-
-export default sampleIdea as Idea;
+});

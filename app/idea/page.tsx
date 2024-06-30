@@ -2,7 +2,7 @@
 
 import { Card, CardHeader } from "@/components/ui/card";
 import { useState } from "react";
-import defaultIdea from "@/app/idea/data/demo";
+import defaultIdea from "@/app/idea/data/defaultIdea";
 import { IdeaForm } from "./form";
 import { ButtonWithLoading, buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
@@ -72,7 +72,6 @@ export default function Home() {
                   <ScrollBar orientation="horizontal" />
                 </ScrollArea>
               </div>
-              {/* TODO: link to "Create Project" page here */}
               <Link
                 className={buttonVariants({ variant: "default", size: "lg" })}
                 href={`/project/create?idea=${encodeURIComponent(

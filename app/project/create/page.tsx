@@ -1,7 +1,6 @@
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
-import { Feature, Idea } from "@/app/idea/types";
 import { Card, CardHeader } from "@/components/ui/card";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import FeatureCard from "@/components/FeatureCard";
@@ -12,54 +11,50 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import FormInput from "@/components/FormInput";
 import { Form } from "@/components/ui/form";
-import { Label } from "@/components/ui/label";
+import { Idea, Feature, Framework } from "@/types/idea";
+import { useEffect, useMemo } from "react";
 
-const FeatureSchema = z.object({
-  title: z.string(),
-  userStory: z.string(),
-  acceptanceCriteria: z.array(z.string()),
-});
-
-const FormSchema = z.object({
-  title: z.string().min(2, {
-    message: "Title must be at least 2 characters.",
-  }),
-  description: z.string().max(350, {
-    message: "Description must be less than 350 characters.",
-  }),
-  features: z.array(FeatureSchema).optional(),
-  framework: z.string(),
+const ProjectSchema = Idea.pick({
+  title: true,
+  description: true,
+}).extend({
+  features: Idea.shape.features.optional(),
+  framework: Framework,
 });
 
 export default function Home() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  // Redirect back to generate idea page if no valid idea
-  let idea: Idea | undefined;
-  try {
-    idea = JSON.parse(searchParams.get("idea") || "");
-  } catch (error) {
-    router.push("/idea");
-  }
+  const idea = useMemo(() => {
+    return Idea.safeParse(JSON.parse(searchParams.get("idea") || ""));
+  }, [searchParams]);
 
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
+  // Redirect back to idea generation page, if no valid idea to create project from
+  useEffect(() => {
+    if (!idea.success) {
+      console.log(idea.error);
+      router.push("/idea");
+    }
+  }, [idea, router]);
+
+  const form = useForm<z.infer<typeof ProjectSchema>>({
+    resolver: zodResolver(ProjectSchema),
     defaultValues: {
-      title: idea?.title,
-      description: idea?.description,
+      title: idea.success ? idea.data.title : "",
+      description: idea.success ? idea.data.description : "",
       features: [],
-      framework: "",
+      framework: idea.success ? idea.data.frameworks[0] : undefined,
     },
   });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
+  function onSubmit(data: z.infer<typeof ProjectSchema>) {
     console.log(data);
   }
 
   const selectedFeatures = form.watch("features");
 
-  const handleToggleFeature = (feature: Feature) => {
+  const handleToggleFeature = (feature: z.infer<typeof Feature>) => {
     const updatedFeatures = selectedFeatures?.some(
       (f) => f.title === feature.title,
     )
@@ -68,8 +63,6 @@ export default function Home() {
 
     form.setValue("features", updatedFeatures);
   };
-
-  console.log(form.getValues());
 
   return (
     <Form {...form}>
