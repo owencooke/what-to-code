@@ -2,26 +2,6 @@ import { Feature, Framework } from "@/types/idea";
 import { Project } from "@/types/project";
 import axios from "axios";
 
-const composeIssueMarkdown = (feature: Feature) => `
-## Feature: ${feature.title}
-
-### User Story
-
-As a **${feature.userStory.split(" ")[2]}**, I want **${
-  feature.userStory.split(" ")[5]
-}** so that **${feature.userStory.split(" ")[8]}**.
-
-### Acceptance Criteria
-
-${feature.acceptanceCriteria
-  .map((criterion) => `- [ ] ${criterion}`)
-  .join("\n")}
-
-### Additional Information
-
-_Provide any additional information or context about the feature here._
-`;
-
 const getRepoFromTitle = (title: string) =>
   title.toLowerCase().replace(/\s/g, "-");
 
@@ -66,6 +46,26 @@ async function createRepoFromTemplate(project: Project, authHeader: string) {
   return response.data;
 }
 
+const composeIssueMarkdown = (feature: Feature) => {
+  const [_, userRole, action, goal] = feature.userStory
+    .split(/As an?|I want|so that/)
+    .map((str) => str.trim().replace(/^[^\w\s]+|[^\w\s]+$/g, ""));
+  const article = userRole.charAt(0).match(/[aeiou]/i) ? "an" : "a";
+  return `
+# ${feature.title}
+
+## User Story
+
+_**As ${article}** ${userRole}, **I want** ${action} **so that** ${goal}._
+
+## Acceptance Criteria
+
+${feature.acceptanceCriteria
+  .map((criterion) => `- [ ] ${criterion}`)
+  .join("\n")}
+`;
+};
+
 async function createIssue(
   repoName: string,
   feature: Feature,
@@ -76,7 +76,7 @@ async function createIssue(
   const url = `https://api.github.com/repos/${REPO_OWNER}/${repoName}/issues`;
 
   const body = {
-    title: `FEAT: ${feature.title}`,
+    title: `[STORY] ${feature.title}`,
     body: composeIssueMarkdown(feature),
     labels: ["enhancement"],
   };
@@ -90,4 +90,4 @@ async function createIssue(
   return response.data;
 }
 
-export { createRepoFromTemplate, createIssue };
+export { createRepoFromTemplate, createIssue, composeIssueMarkdown };
