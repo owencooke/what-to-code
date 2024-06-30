@@ -1,19 +1,20 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { Card, CardHeader } from "@/components/ui/card";
 import { useState } from "react";
 import defaultIdea from "@/app/idea/data/defaultIdea";
 import { IdeaForm } from "./form";
-import { ButtonWithLoading, buttonVariants } from "@/components/ui/button";
-import Link from "next/link";
+import { Button, ButtonWithLoading } from "@/components/ui/button";
 import FeatureCard from "@/components/FeatureCard";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import FrameworkCard from "@/components/FrameworkCard";
 
 export default function Home() {
+  const router = useRouter();
   const [idea, setIdea] = useState(defaultIdea);
 
-  const expandIdea = async () => {
+  const handleExpandIdea = async () => {
     const response = await fetch(`/api/idea`, {
       method: "POST",
       body: JSON.stringify({
@@ -29,6 +30,11 @@ export default function Home() {
     setIdea({ ...idea, ...data });
   };
 
+  const handleCreateProject = async () => {
+    sessionStorage.setItem("idea", JSON.stringify(idea));
+    router.push("/project/create");
+  };
+
   return (
     <div className="flex flex-col items-center justify-center">
       <h1 className="text-7xl mt-16 mb-6">hmm, what to code?</h1>
@@ -42,7 +48,7 @@ export default function Home() {
           {!idea.features ? (
             <div className="flex justify-center">
               <ButtonWithLoading
-                onClick={expandIdea}
+                onClick={handleExpandIdea}
                 loadingText="expanding your idea..."
               >
                 {"i'm interested"}
@@ -72,14 +78,9 @@ export default function Home() {
                   <ScrollBar orientation="horizontal" />
                 </ScrollArea>
               </div>
-              <Link
-                className={buttonVariants({ variant: "default", size: "lg" })}
-                href={`/project/create?idea=${encodeURIComponent(
-                  JSON.stringify(idea),
-                )}`}
-              >
+              <Button size="lg" onClick={handleCreateProject}>
                 create project
-              </Link>
+              </Button>
             </>
           )}
         </CardHeader>

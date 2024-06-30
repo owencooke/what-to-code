@@ -1,6 +1,6 @@
 "use client";
 
-import { useSearchParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Card, CardHeader } from "@/components/ui/card";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import FeatureCard from "@/components/FeatureCard";
@@ -23,17 +23,21 @@ const ProjectSchema = Idea.pick({
 });
 
 export default function Home() {
-  const searchParams = useSearchParams();
   const router = useRouter();
 
   const idea = useMemo(() => {
-    return Idea.safeParse(JSON.parse(searchParams.get("idea") || ""));
-  }, [searchParams]);
+    const storedIdea = sessionStorage.getItem("idea");
+    if (storedIdea) {
+      try {
+        return Idea.safeParse(JSON.parse(storedIdea)).data;
+      } catch (error) {}
+    }
+    return null;
+  }, []);
 
   // Redirect back to idea generation page, if no valid idea to create project from
   useEffect(() => {
-    if (!idea.success) {
-      console.log(idea.error);
+    if (!idea) {
       router.push("/idea");
     }
   }, [idea, router]);
@@ -41,10 +45,10 @@ export default function Home() {
   const form = useForm<z.infer<typeof ProjectSchema>>({
     resolver: zodResolver(ProjectSchema),
     defaultValues: {
-      title: idea.success ? idea.data.title : "",
-      description: idea.success ? idea.data.description : "",
+      title: idea?.title,
+      description: idea?.description,
       features: [],
-      framework: idea.success ? idea.data.frameworks[0] : undefined,
+      framework: idea?.frameworks[0],
     },
   });
 
@@ -70,71 +74,73 @@ export default function Home() {
         onSubmit={form.handleSubmit(onSubmit)}
         className="flex flex-col items-center justify-center"
       >
-        <h1 className="text-7xl mt-16">kickstart your project</h1>
         {idea && (
-          <Card className="mt-8 w-4/5">
-            <CardHeader className="gap-4">
-              {/* TODO: AI generated unique name button */}
-              <FormInput
-                form={form}
-                name="title"
-                label="Project Name"
-                placeholder="insert cool name here"
-              />
-              <FormInput
-                className="max-h-32"
-                type="area"
-                form={form}
-                name="description"
-                label="Description"
-                placeholder="what is your project and what does it do"
-              />
-              <FormInput
-                form={form}
-                name="features"
-                label="What To Develop"
-                description={`${selectedFeatures?.length || 0}/${idea.features
-                  ?.length} features selected`}
-                type={(field) => (
-                  <ScrollArea>
-                    <div className="flex">
-                      {idea.features?.map((feature, i) => (
-                        <FeatureCard
-                          key={i}
-                          feature={feature}
-                          className="scale-90"
-                          onClick={() => handleToggleFeature(feature)}
-                        />
-                      ))}
-                    </div>
-                    <ScrollBar orientation="horizontal" />
-                  </ScrollArea>
-                )}
-              />
-              <FormInput
-                form={form}
-                name="framework"
-                label="How to Build It"
-                description="choose the type of platform to build and tech stack to use"
-                type={(field) => (
-                  <ScrollArea>
-                    <div className="flex">
-                      {idea.frameworks?.map((framework, i) => (
-                        <FrameworkCard
-                          key={i}
-                          framework={framework}
-                          className="scale-90"
-                          selected={field.value === framework.title}
-                        />
-                      ))}
-                    </div>
-                    <ScrollBar orientation="horizontal" />
-                  </ScrollArea>
-                )}
-              />
-              <Button type="submit">Submit</Button>
-            </CardHeader>
-          </Card>
+          <>
+            <h1 className="text-7xl mt-16">kickstart your project</h1>
+            <Card className="mt-8 w-4/5">
+              <CardHeader className="gap-4">
+                {/* TODO: AI generated unique name button */}
+                <FormInput
+                  form={form}
+                  name="title"
+                  label="Project Name"
+                  placeholder="insert cool name here"
+                />
+                <FormInput
+                  className="max-h-32"
+                  type="area"
+                  form={form}
+                  name="description"
+                  label="Description"
+                  placeholder="what is your project and what does it do"
+                />
+                <FormInput
+                  form={form}
+                  name="features"
+                  label="What To Develop"
+                  description={`${selectedFeatures?.length || 0}/${idea.features
+                    ?.length} features selected`}
+                  type={(field) => (
+                    <ScrollArea>
+                      <div className="flex">
+                        {idea.features?.map((feature, i) => (
+                          <FeatureCard
+                            key={i}
+                            feature={feature}
+                            className="scale-90"
+                            onClick={() => handleToggleFeature(feature)}
+                          />
+                        ))}
+                      </div>
+                      <ScrollBar orientation="horizontal" />
+                    </ScrollArea>
+                  )}
+                />
+                <FormInput
+                  form={form}
+                  name="framework"
+                  label="How to Build It"
+                  description="choose the type of platform to build and tech stack to use"
+                  type={(field) => (
+                    <ScrollArea>
+                      <div className="flex">
+                        {idea.frameworks?.map((framework, i) => (
+                          <FrameworkCard
+                            key={i}
+                            framework={framework}
+                            className="scale-90"
+                            selected={field.value === framework.title}
+                          />
+                        ))}
+                      </div>
+                      <ScrollBar orientation="horizontal" />
+                    </ScrollArea>
+                  )}
+                />
+                <Button type="submit">Submit</Button>
+              </CardHeader>
+            </Card>
+          </>
         )}
       </form>
     </Form>
