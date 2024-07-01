@@ -11,11 +11,11 @@ import { Button } from "@/components/ui/button";
 import FormInput from "@/components/FormInput";
 import { Form } from "@/components/ui/form";
 import { Idea, Feature, Framework, IdeaSchema } from "@/types/idea";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSession, signIn } from "next-auth/react";
 import { ProjectSchema, Project } from "@/types/project";
 import GitHubAvatar from "@/components/GitHubAvatar";
-import { getRepoFromTitle } from "@/app/api/project/github";
+import { getRepoFromTitle, getUsername } from "@/app/api/project/github";
 import { Github } from "lucide-react";
 
 export default function Home() {
@@ -90,7 +90,20 @@ export default function Home() {
     router.push(`/project/`);
   };
 
-  console.log(session);
+  const [username, setUsername] = useState("");
+
+  useEffect(() => {
+    const fetchUsername = async () => {
+      if (session?.accessToken) {
+        const fetchedUsername = await getUsername(
+          `token ${session.accessToken}`,
+        );
+        setUsername(fetchedUsername);
+      }
+    };
+
+    fetchUsername();
+  }, [session?.accessToken]);
 
   return (
     <Form {...form}>
@@ -110,7 +123,7 @@ export default function Home() {
                     <span className="font-semibold">Repository Name</span>
                     <div className="flex items-center">
                       <GitHubAvatar className="w-8 h-8" />
-                      <span className="ml-2">owencooke </span>
+                      <span className="ml-2">{username}</span>
                       <span className="ml-2 font-bold text-xl">/</span>
                     </div>
                     <span className="content-center">

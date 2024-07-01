@@ -31,7 +31,10 @@ const IdeaSchema = z.object({
   title: z
     .string()
     .min(2, {
-      message: "Title must be at least 2 characters.",
+      message: "Project name must be at least 2 characters.",
+    })
+    .max(100, {
+      message: "Project name must be 100 characters or less.",
     })
     .describe("Name of the software project"),
   description: z

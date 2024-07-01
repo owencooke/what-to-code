@@ -90,4 +90,4 @@ async function createIssue(
   return response.data;
 }
 
-export { createRepoFromTemplate, createIssue, getRepoFromTitle };
+export { createRepoFromTemplate, createIssue, getRepoFromTitle, getUsername };
