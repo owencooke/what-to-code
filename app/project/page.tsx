@@ -10,28 +10,29 @@ import {
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import FeatureCard from "@/components/cards/FeatureCard";
 import FrameworkCard from "@/components/cards/FrameworkCard";
-import { useEffect, useMemo } from "react";
-import { ProjectSchema } from "@/types/project";
+import { useEffect, useState } from "react";
+import { Project, ProjectSchema } from "@/types/project";
 
 export default function Home() {
   const router = useRouter();
+  const [project, setProject] = useState<Project>();
 
-  const project = useMemo(() => {
-    const storedProject = sessionStorage.getItem("project");
-    if (storedProject) {
-      try {
-        return ProjectSchema.safeParse(JSON.parse(storedProject)).data;
-      } catch (error) {}
-    }
-    return null;
-  }, []);
-
-  // Redirect back to landing page, if no valid project
+  // Redirect back to landing page, if no valid project in sessionStorage
+  // TODO: fetch from project DB instead of storage, based on route ID
   useEffect(() => {
-    if (!project) {
-      router.push("/");
+    const redirect = () => router.push("/");
+    try {
+      const parsedProject = ProjectSchema.safeParse(
+        JSON.parse(sessionStorage.getItem("project") || ""),
+      );
+      setProject(parsedProject.data);
+      if (!parsedProject.success) {
+        redirect();
+      }
+    } catch (error) {
+      redirect();
     }
-  }, [project, router]);
+  }, [router]);
 
   return (
     project && (

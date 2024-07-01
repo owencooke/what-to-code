@@ -7,45 +7,47 @@ import FeatureCard from "@/components/cards/FeatureCard";
 import FrameworkCard from "@/components/cards/FrameworkCard";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import FormInput from "@/components/FormInput";
 import { Form } from "@/components/ui/form";
-import { IdeaSchema, Feature, Framework } from "@/types/idea";
-import { useEffect, useMemo } from "react";
+import { Idea, Feature, Framework, IdeaSchema } from "@/types/idea";
+import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import { ProjectSchema } from "@/types/project";
+import { ProjectSchema, Project } from "@/types/project";
 
 export default function Home() {
   const router = useRouter();
   const { data: session } = useSession();
 
-  const idea = useMemo(() => {
-    const storedIdea = sessionStorage.getItem("idea");
-    if (storedIdea) {
-      try {
-        return IdeaSchema.safeParse(JSON.parse(storedIdea)).data;
-      } catch (error) {}
-    }
-    return null;
-  }, []);
+  const [idea, setIdea] = useState<Idea>();
+
+  const form = useForm<Project>({
+    resolver: zodResolver(ProjectSchema),
+    defaultValues: {},
+  });
 
   // Redirect back to idea generation page, if no valid idea to create project from
   useEffect(() => {
-    if (!idea) {
-      router.push("/idea");
+    const redirect = () => router.push("/");
+    try {
+      const parsedIdea = IdeaSchema.safeParse(
+        JSON.parse(sessionStorage.getItem("idea") || ""),
+      );
+      setIdea(parsedIdea.data);
+      if (parsedIdea.success) {
+        form.reset({
+          title: parsedIdea.data?.title,
+          description: parsedIdea.data?.description,
+          features: [],
+          framework: parsedIdea.data?.frameworks[0],
+        });
+      } else {
+        redirect();
+      }
+    } catch (error) {
+      redirect();
     }
-  }, [idea, router]);
-
-  const form = useForm<z.infer<typeof ProjectSchema>>({
-    resolver: zodResolver(ProjectSchema),
-    defaultValues: {
-      title: idea?.title,
-      description: idea?.description,
-      features: [],
-      framework: idea?.frameworks[0],
-    },
-  });
+  }, [router, form]);
 
   const selectedFeatures = form.watch("features");
 
@@ -63,7 +65,7 @@ export default function Home() {
     form.setValue("framework", framework);
   };
 
-  const handleSubmit = async (data: z.infer<typeof ProjectSchema>) => {
+  const handleSubmit = async (data: Project) => {
     const response = await fetch(`/api/project`, {
       method: "POST",
       headers: {
@@ -150,7 +152,7 @@ export default function Home() {
                             framework={framework}
                             className="scale-90"
                             onClick={() => handleSelectFramework(framework)}
-                            selected={field.value.title === framework.title}
+                            selected={field.value?.title === framework.title}
                           />
                         ))}
                       </div>
