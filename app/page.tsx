@@ -1,13 +1,11 @@
 "use client";
 
 import { buttonVariants } from "@/components/ui/button";
-import Navbar from "@/components/Navbar";
 import Link from "next/link";
 
 export default function Home() {
   return (
     <div className="min-h-screen flex flex-col">
-      <Navbar />
       <div className="flex flex-1 flex-col items-center justify-center">
         <h1 className="text-7xl">what to code</h1>
         <p className="mb-6 text-center text-xl">
