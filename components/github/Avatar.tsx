@@ -1,5 +1,5 @@
 import React, { forwardRef } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { CircleUser } from "lucide-react";
 import { useSession } from "next-auth/react";
 

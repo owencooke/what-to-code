@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useSession, signIn, signOut } from "next-auth/react";
-import GitHubAvatar from "./GitHubAvatar";
+import GitHubAvatar from "./github/Avatar";
 
 export default function Navbar() {
   const { data: session } = useSession();

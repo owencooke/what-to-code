@@ -11,12 +11,13 @@ import { Button } from "@/components/ui/button";
 import FormInput from "@/components/FormInput";
 import { Form } from "@/components/ui/form";
 import { Idea, Feature, Framework, IdeaSchema } from "@/types/idea";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSession, signIn } from "next-auth/react";
 import { ProjectSchema, Project } from "@/types/project";
-import GitHubAvatar from "@/components/GitHubAvatar";
-import { getRepoFromTitle, getUsername } from "@/app/api/project/github";
+import { getRepoFromTitle } from "@/app/api/project/github";
 import { Github } from "lucide-react";
+import RepoDisplay from "@/components/github/Repo";
+import { Modal } from "@/components/Modal";
 
 export default function Home() {
   const router = useRouter();
@@ -90,25 +91,10 @@ export default function Home() {
     router.push(`/project/`);
   };
 
-  const [username, setUsername] = useState("");
-
-  useEffect(() => {
-    const fetchUsername = async () => {
-      if (session?.accessToken) {
-        const fetchedUsername = await getUsername(
-          `token ${session.accessToken}`,
-        );
-        setUsername(fetchedUsername);
-      }
-    };
-
-    fetchUsername();
-  }, [session?.accessToken]);
-
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(handleSubmit)}
+        onSubmit={() => {}} // Submit handled in modal below
         className="flex flex-col items-center justify-center"
       >
         {idea && (
@@ -116,23 +102,12 @@ export default function Home() {
             <h1 className="text-7xl mt-16">finalize your idea</h1>
             <Card className="mt-8 w-4/5">
               <CardHeader className="gap-4">
-                {/* TODO: Display GitHub integration / future repo name */}
                 {session ? (
-                  <div className="grid grid-cols-[auto_1fr] gap-2 text-sm">
-                    <span className="font-semibold">GitHub</span>
-                    <span className="font-semibold">Repository Name</span>
-                    <div className="flex items-center">
-                      <GitHubAvatar className="w-8 h-8" />
-                      <span className="ml-2">{username}</span>
-                      <span className="ml-2 font-bold text-xl">/</span>
-                    </div>
-                    <span className="content-center">
-                      {getRepoFromTitle(title)}
-                    </span>
-                  </div>
+                  <RepoDisplay name={getRepoFromTitle(title)} />
                 ) : (
                   <Button
                     className="w-fit"
+                    type="button"
                     onClick={() => !session && signIn("github")}
                   >
                     <Github className="mr-2 h-4 w-4" /> Sign in with GitHub to
@@ -202,7 +177,27 @@ export default function Home() {
                     </ScrollArea>
                   )}
                 />
-                <Button type="submit">kickstart this project</Button>
+
+                <Modal
+                  title="Are you sure you want to create this project?"
+                  description={`
+                    A new GitHub repository will be created with your selected features 
+                    as GitHub Issues. We'll also try to kickstart your project 
+                    using a template based on your chosen framework (if one can be found)!
+                  `}
+                  renderTrigger={() => (
+                    <Button type="button" disabled={!session}>
+                      kickstart this project
+                    </Button>
+                  )}
+                  onSubmit={form.handleSubmit(handleSubmit)}
+                  actionText="Create"
+                >
+                  <RepoDisplay
+                    className="pt-4"
+                    name={getRepoFromTitle(title)}
+                  />
+                </Modal>
               </CardHeader>
             </Card>
           </>
