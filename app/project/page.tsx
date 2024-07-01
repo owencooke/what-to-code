@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import {
   Card,
+  CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
@@ -12,6 +13,8 @@ import FeatureCard from "@/components/cards/FeatureCard";
 import FrameworkCard from "@/components/cards/FrameworkCard";
 import { useEffect, useState } from "react";
 import { Project, ProjectSchema } from "@/types/project";
+import RepoDisplay from "@/components/github/Repo";
+import { getRepoFromTitle } from "../api/project/github";
 
 export default function Home() {
   const router = useRouter();
@@ -36,20 +39,30 @@ export default function Home() {
 
   return (
     project && (
-      <div className="flex flex-col items-center justify-center">
-        <h1 className="text-7xl mt-16">{project.title}</h1>
-        <Card className="mt-8 w-4/5">
-          <CardHeader className="gap-4">
-            <CardTitle></CardTitle>
-            <CardDescription>{project.description}</CardDescription>
+      <div className="flex gap-8 m-8">
+        <Card className="w-2/5">
+          <CardHeader>
+            <h1 className="text-6xl mt-16">{project.title}</h1>
+            <p>{project.description}</p>
+            <RepoDisplay
+              className="pt-4"
+              name={getRepoFromTitle(project.title)}
+              isClickable
+            />
+          </CardHeader>
+        </Card>
+        <Card className="w-3/5">
+          <CardHeader className="gap-4 p-4">
+            <h2 className="text-2xl">Features</h2>
             <ScrollArea>
-              <div className="flex">
+              <div className="flex gap-4">
                 {project.features?.map((feature, i) => (
                   <FeatureCard key={i} feature={feature} className="scale-90" />
                 ))}
               </div>
               <ScrollBar orientation="horizontal" />
             </ScrollArea>
+            <h2 className="text-2xl mt-8">Project Type</h2>
             <FrameworkCard framework={project.framework} className="scale-90" />
           </CardHeader>
         </Card>

@@ -42,7 +42,7 @@ export default function Home() {
       <Card className="mt-8 w-4/5">
         <CardHeader className="gap-8">
           <div>
-            <h1>{idea.title}</h1>
+            <h2>{idea.title}</h2>
             <p>{idea.description}</p>
           </div>
           {!idea.features ? (
@@ -57,8 +57,8 @@ export default function Home() {
           ) : (
             <>
               <div>
-                <h1>what to make</h1>
-                <ScrollArea className="mt-8">
+                <h3>what to build</h3>
+                <ScrollArea className="mt-4">
                   <div className="flex gap-12">
                     {idea.features?.map((feature, i) => (
                       <FeatureCard key={i} feature={feature} />
@@ -68,8 +68,8 @@ export default function Home() {
                 </ScrollArea>
               </div>
               <div>
-                <h1>how to build it</h1>
-                <ScrollArea className="mt-8">
+                <h3>how to build it</h3>
+                <ScrollArea className="mt-4">
                   <div className="flex gap-12">
                     {idea.frameworks?.map((framework, i) => (
                       <FrameworkCard key={i} framework={framework} />
@@ -79,7 +79,7 @@ export default function Home() {
                 </ScrollArea>
               </div>
               <Button size="lg" onClick={handleCreateProject}>
-                help me build this
+                help me get started
               </Button>
             </>
           )}

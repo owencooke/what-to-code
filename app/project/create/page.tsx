@@ -71,18 +71,18 @@ export default function Home() {
   };
 
   const handleSubmit = async (data: Project) => {
-    const response = await fetch(`/api/project`, {
-      method: "POST",
-      headers: {
-        Authorization: "token " + session?.accessToken,
-      },
-      body: JSON.stringify(data),
-    });
-    if (!response.ok) {
-      // TODO: Display error message using toast? alert?
-      console.error("Failed to create project", response.statusText);
-      return;
-    }
+    // const response = await fetch(`/api/project`, {
+    //   method: "POST",
+    //   headers: {
+    //     Authorization: "token " + session?.accessToken,
+    //   },
+    //   body: JSON.stringify(data),
+    // });
+    // if (!response.ok) {
+    //   // TODO: Display error message using toast? alert?
+    //   console.error("Failed to create project", response.statusText);
+    //   return;
+    // }
     // TODO:
     //  - store project in our DB
     //  - redirect to "/project/{projectId}"
@@ -99,7 +99,7 @@ export default function Home() {
       >
         {idea && (
           <>
-            <h1 className="text-7xl mt-16">finalize your idea</h1>
+            <h1 className="text-7xl mt-16">kickstart your idea</h1>
             <Card className="mt-8 w-4/5">
               <CardHeader className="gap-4">
                 {session ? (
@@ -186,8 +186,11 @@ export default function Home() {
                     using a template based on your chosen framework (if one can be found)!
                   `}
                   renderTrigger={() => (
-                    <Button type="button" disabled={!session}>
-                      kickstart this project
+                    <Button
+                      type="button"
+                      // disabled={!session}
+                    >
+                      create project
                     </Button>
                   )}
                   onSubmit={form.handleSubmit(handleSubmit)}
