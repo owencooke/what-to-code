@@ -79,7 +79,7 @@ export default function Home() {
                 </ScrollArea>
               </div>
               <Button size="lg" onClick={handleCreateProject}>
-                create project
+                help me build this
               </Button>
             </>
           )}

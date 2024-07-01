@@ -76,8 +76,12 @@ export default function Home() {
       console.error("Failed to create project", response.statusText);
       return;
     }
-    const { id } = await response.json();
-    router.push(`/project/${id}`);
+    // TODO:
+    //  - store project in our DB
+    //  - redirect to "/project/{projectId}"
+    //  - load from DB instead of sessionStorage
+    sessionStorage.setItem("project", JSON.stringify(data));
+    router.push(`/project/`);
   };
 
   return (
@@ -88,7 +92,7 @@ export default function Home() {
       >
         {idea && (
           <>
-            <h1 className="text-7xl mt-16">kickstart your project</h1>
+            <h1 className="text-7xl mt-16">finalize your idea</h1>
             <Card className="mt-8 w-4/5">
               <CardHeader className="gap-4">
                 {/* TODO: AI generated unique name button */}
@@ -154,7 +158,7 @@ export default function Home() {
                     </ScrollArea>
                   )}
                 />
-                <Button type="submit">Submit</Button>
+                <Button type="submit">kickstart this project</Button>
               </CardHeader>
             </Card>
           </>
