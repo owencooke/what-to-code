@@ -18,10 +18,13 @@ import { getRepoFromTitle } from "@/app/api/project/github";
 import { Github } from "lucide-react";
 import RepoDisplay from "@/components/github/Repo";
 import { Modal } from "@/components/Modal";
+import { useToast } from "@/components/ui/use-toast";
+import { ToastAction } from "@/components/ui/toast";
 
 export default function Home() {
   const router = useRouter();
   const { data: session } = useSession();
+  const { toast } = useToast();
 
   const [idea, setIdea] = useState<Idea>();
 
@@ -71,32 +74,53 @@ export default function Home() {
   };
 
   const handleSubmit = async (data: Project) => {
-    // const response = await fetch(`/api/project`, {
-    //   method: "POST",
-    //   headers: {
-    //     Authorization: "token " + session?.accessToken,
-    //   },
-    //   body: JSON.stringify(data),
-    // });
-    // if (!response.ok) {
-    //   // TODO: Display error message using toast? alert?
-    //   console.error("Failed to create project", response.statusText);
-    //   return;
-    // }
+    const response = await fetch(`/api/project`, {
+      method: "POST",
+      headers: {
+        Authorization: "token " + session?.accessToken,
+      },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: "There was a problem with creating your project.",
+        action: (
+          <ToastAction
+            altText="Try again"
+            onClick={form.handleSubmit(handleSubmit)}
+          >
+            Try again
+          </ToastAction>
+        ),
+      });
+      return;
+    }
+    const { url } = await response.json();
+
     // TODO:
     //  - store project in our DB
     //  - redirect to "/project/{projectId}"
     //  - load from DB instead of sessionStorage
     sessionStorage.setItem("project", JSON.stringify(data));
+    toast({
+      title: "Congrats, you're ready to go 🚀",
+      description: "Your project's GitHub repository is looking great!",
+      action: (
+        <ToastAction altText="View on GitHub">
+          <a href={url} target="_blank" rel="noopener noreferrer">
+            View
+          </a>
+        </ToastAction>
+      ),
+    });
     router.push(`/project/`);
   };
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={() => {}} // Submit handled in modal below
-        className="flex flex-col items-center justify-center"
-      >
+      <form className="flex flex-col items-center justify-center">
         {idea && (
           <>
             <h1 className="text-7xl mt-16">kickstart your idea</h1>
