@@ -1,7 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { UserCircleIcon } from "@heroicons/react/24/solid";
+import {
+  DropdownMenu,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+} from "@/components/ui/dropdown-menu";
+import { CircleUser, Code2, MessageCircleQuestion } from "lucide-react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 interface NavbarProps {
   isSignedIn: boolean;
@@ -19,44 +29,43 @@ export default function Navbar({
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   return (
-    <nav className="p-4 flex justify-end items-center">
-      <div className="relative">
-        <UserCircleIcon
-          onClick={() => setDropdownOpen(!dropdownOpen)}
-          className={`w-10 h-10 ${
-            isSignedIn ? "bg-green-500" : "bg-white"
-          } rounded-full flex items-center justify-center  cursor-pointer`}
-        />
-        {dropdownOpen && (
-          <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg">
-            {isSignedIn && (
-              <div>
-                <div className="block px-4 py-2 text-gray-800 w-full text-left">
-                  {username}
-                </div>
-                <button
-                  className="block px-4 py-2 text-gray-800 hover:bg-gray-200 w-full text-left"
-                  onClick={() => {
-                    onCreateRepo();
-                    setDropdownOpen(false);
-                  }}
-                >
-                  Create Repository
-                </button>
-              </div>
-            )}
-            <button
-              className="block px-4 py-2 text-gray-800 hover:bg-gray-200 w-full text-left"
-              onClick={() => {
-                onAuthAction();
-                setDropdownOpen(false); // Close the dropdown after action
-              }}
-            >
-              {isSignedIn ? "Sign Out" : "Sign In"}
-            </button>
+    <header className="sticky top-0 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
+      <nav className="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
+        <Link
+          href="#"
+          className="flex items-center gap-2 text-lg font-semibold md:text-base"
+        >
+          <div className="relative w-10 h-9 min-w-10">
+            <Code2 className="h-5 absolute bottom-0 left-0" />
+            <MessageCircleQuestion className="h-5 absolute top-0 right-0" />
           </div>
-        )}
+          <span>what to code?</span>
+        </Link>
+        <Link
+          href="/idea"
+          className="text-muted-foreground transition-colors hover:text-foreground"
+        >
+          Generate Idea
+        </Link>
+      </nav>
+      <div className="flex w-10 items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="secondary" size="icon" className="rounded-full">
+              <CircleUser className="h-5 w-5" />
+              <span className="sr-only">Toggle user menu</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>Settings</DropdownMenuItem>
+            <DropdownMenuItem>Support</DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>Logout</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
-    </nav>
+    </header>
   );
 }

@@ -77,7 +77,7 @@ export default function Home() {
       return;
     }
     const { id } = await response.json();
-    router.push(`/project${id}`);
+    router.push(`/project/${id}`);
   };
 
   return (
