@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/popover";
 import { selectRandom } from "@/lib/utils";
 import categories from "./data/categories";
-import { Idea } from "./types";
+import { Idea } from "@/types/idea";
 export function IdeaForm(props: { onSubmit: (idea: Idea) => void }) {
   const { onSubmit } = props;
   const [open, setOpen] = useState(false);

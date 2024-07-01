@@ -1,30 +1,36 @@
-import { Idea } from "../types";
+import { IdeaSchema } from "@/types/idea";
 
-const sampleIdea = {
+export default IdeaSchema.parse({
   title: "Virtual Fitness Trainer",
   description:
-    "An AI-powered virtual fitness trainer that creates personalized workout plans and provides real-time feedback and motivation to users.",
+    "An AI-powered virtual fitness trainer that creates personalized workout plans and provides real-time feedback and motivation. The app helps users stay motivated and accountable in their fitness journey.",
   features: [
     {
       title: "Virtual Workout Partner Matching",
-      description:
-        "Match users with similar fitness goals and schedules to workout together virtually.",
-      story:
+      userStory:
         "As a user, I want to be matched with a virtual workout partner so that I can stay motivated and accountable in my fitness journey.",
+      acceptanceCriteria: [
+        "Match users with similar fitness goals and schedules to workout together virtually.",
+        "Notify users when a suitable workout partner is found.",
+      ],
     },
     {
       title: "Progress Tracking",
-      description:
-        "Allow users to track and compare their workout progress, achievements, and goals.",
-      story:
+      userStory:
         "As a user, I want to track my workout progress and achievements so that I can see my improvements over time.",
+      acceptanceCriteria: [
+        "Allow users to log their workouts and track their progress over time.",
+        "Allow users to set goals and track their progress towards those goals.",
+      ],
     },
     {
       title: "Motivational Messaging",
-      description:
-        "Send motivational messages and reminders to users to keep them engaged and motivated in their fitness journey.",
-      story:
+      userStory:
         "As a user, I want to receive motivational messages and reminders so that I can stay motivated and committed to my fitness goals.",
+      acceptanceCriteria: [
+        "Send motivational messages and reminders to users at regular intervals.",
+        "Allow users to customize the frequency and content of motivational messages.",
+      ],
     },
   ],
   frameworks: [
@@ -47,6 +53,4 @@ const sampleIdea = {
       tools: ["python", "googlecloud"],
     },
   ],
-};
-
-export default sampleIdea as Idea;
+});

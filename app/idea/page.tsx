@@ -1,18 +1,20 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { Card, CardHeader } from "@/components/ui/card";
 import { useState } from "react";
-import defaultIdea from "@/app/idea/data/demo";
-import { Badge } from "@/components/ui/badge";
-import tools from "./data/tools";
+import defaultIdea from "@/app/idea/data/defaultIdea";
 import { IdeaForm } from "./form";
 import { Button, ButtonWithLoading } from "@/components/ui/button";
-import { toAlphaLowerCase } from "@/lib/utils";
+import FeatureCard from "@/components/cards/FeatureCard";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import FrameworkCard from "@/components/cards/FrameworkCard";
 
 export default function Home() {
+  const router = useRouter();
   const [idea, setIdea] = useState(defaultIdea);
 
-  const expandIdea = async () => {
+  const handleExpandIdea = async () => {
     const response = await fetch(`/api/idea`, {
       method: "POST",
       body: JSON.stringify({
@@ -28,15 +30,16 @@ export default function Home() {
     setIdea({ ...idea, ...data });
   };
 
+  const handleCreateProject = async () => {
+    sessionStorage.setItem("idea", JSON.stringify(idea));
+    router.push("/project/create");
+  };
+
   return (
     <div className="flex flex-col items-center justify-center">
-      <div className="flex flex-col items-center justify-center gap-6">
-        <h1 className="text-7xl">hmm, what to code?</h1>
-        <div className="flex gap-8">
-          <IdeaForm onSubmit={setIdea} />
-        </div>
-      </div>
-      <Card className="mt-16">
+      <h1 className="text-7xl mt-16 mb-6">hmm, what to code?</h1>
+      <IdeaForm onSubmit={setIdea} />
+      <Card className="mt-8 w-4/5">
         <CardHeader className="gap-8">
           <div>
             <h1>{idea.title}</h1>
@@ -45,7 +48,7 @@ export default function Home() {
           {!idea.features ? (
             <div className="flex justify-center">
               <ButtonWithLoading
-                onClick={expandIdea}
+                onClick={handleExpandIdea}
                 loadingText="expanding your idea..."
               >
                 {"i'm interested"}
@@ -55,62 +58,29 @@ export default function Home() {
             <>
               <div>
                 <h1>what to make</h1>
-                <ol>
-                  {idea.features?.map((feature, i) => (
-                    <li key={`feature-${i}`} className="font-bold">
-                      {feature.title}
-                      <ul className="font-normal">
-                        <li>{feature.description}</li>
-                        <li>{feature.story}</li>
-                      </ul>
-                    </li>
-                  ))}
-                </ol>
+                <ScrollArea className="mt-8">
+                  <div className="flex gap-12">
+                    {idea.features?.map((feature, i) => (
+                      <FeatureCard key={i} feature={feature} />
+                    ))}
+                  </div>
+                  <ScrollBar orientation="horizontal" />
+                </ScrollArea>
               </div>
               <div>
                 <h1>how to build it</h1>
-                <ol>
-                  {idea.frameworks?.map((framework, i) => (
-                    <li key={`framework-${i}`} className="font-bold">
-                      {framework.title}
-                      <ul className="font-normal">
-                        <li>
-                          {framework.description.split(" ").map((word, j) => {
-                            const tool = framework.tools.find(
-                              (tool) =>
-                                toAlphaLowerCase(tool) ===
-                                toAlphaLowerCase(word),
-                            );
-                            if (tool && tools.includes(tool)) {
-                              const punctuation =
-                                word.match(/[^a-zA-Z0-9]+$/)?.[0] || "";
-                              return (
-                                <span key={`tool-${i}-${j}`}>
-                                  <Badge
-                                    variant="secondary"
-                                    className="ml-px mr-1"
-                                  >
-                                    {punctuation
-                                      ? word.slice(0, -punctuation.length)
-                                      : word}
-                                    <i
-                                      className={`ml-2 devicon-${tool}-original ml-2 devicon-${tool}-plain colored`}
-                                    ></i>
-                                  </Badge>
-                                  {punctuation && punctuation + " "}
-                                </span>
-                              );
-                            }
-                            return word + " ";
-                          })}
-                        </li>
-                      </ul>
-                    </li>
-                  ))}
-                </ol>
+                <ScrollArea className="mt-8">
+                  <div className="flex gap-12">
+                    {idea.frameworks?.map((framework, i) => (
+                      <FrameworkCard key={i} framework={framework} />
+                    ))}
+                  </div>
+                  <ScrollBar orientation="horizontal" />
+                </ScrollArea>
               </div>
-              {/* TODO: link to "Create Project" page here */}
-              <Button>start building</Button>
+              <Button size="lg" onClick={handleCreateProject}>
+                help me build this
+              </Button>
             </>
           )}
         </CardHeader>

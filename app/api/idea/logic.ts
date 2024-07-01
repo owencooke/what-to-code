@@ -1,18 +1,17 @@
-import { z } from "zod";
 import { OpenAI } from "@langchain/openai";
 import { RunnableSequence } from "@langchain/core/runnables";
 import { StructuredOutputParser } from "langchain/output_parsers";
 import { PromptTemplate } from "@langchain/core/prompts";
-import { features } from "process";
+import { IdeaSchema } from "@/types/idea";
+
+const MODEL = "gpt-3.5-turbo-0125";
 
 function getJSONPrompt(prompt: string): PromptTemplate {
   return PromptTemplate.fromTemplate(`{format_instructions} ${prompt}`);
 }
 
-// TODO: add {list_of_idea_types} to the template
 const IDEA_PROMPT = `
-    You are a creative entrepreneur looking to generate a new, innovative product idea.
-    The product will be built using software, not a service or physical good. 
+    You are a creative entrepreneur looking to generate a new, innovative software product idea. 
     The product should be related to the overall topic of {topic}.
 
     An example of what the output should look like is provided below:
@@ -23,13 +22,11 @@ const IDEA_PROMPT = `
     It is your job as the creative entrepreneur to generate the unique software project idea related to {topic}.
     It is CRITICAL that the description not discuss specific software or application features. 
     It should only describe the high level benefits of the project for potential users.
+    It is also CRITICAL that the description be less than 300 characters.
 `;
 
 const ideaParser = StructuredOutputParser.fromZodSchema(
-  z.object({
-    title: z.string().describe("name of the software project"),
-    description: z.string().describe("brief overview of the software project"),
-  }),
+  IdeaSchema.pick({ title: true, description: true }),
 );
 
 const FEATURES_PROMPT = `
@@ -40,26 +37,13 @@ const FEATURES_PROMPT = `
 `;
 
 const featureParser = StructuredOutputParser.fromZodSchema(
-  z
-    .array(
-      z.object({
-        title: z.string().describe("Title of the feature"),
-        description: z.string().describe("Description of the feature"),
-        story: z
-          .string()
-          .describe(
-            "User story for the feature in format: As a < type of user >, I want < some goal > so that < some reason >.",
-          ),
-      }),
-    )
-    .length(3)
-    .describe("list of three major features"),
+  IdeaSchema.shape.features.length(3),
 );
 
 const FRAMEWORK_PROMPT = `
     Based on the following project and major features to be developed, generate three possible 
     types of software to be built. Each of the three suggested solutions should be unique categories
-    (e.g. web, mobile, desktop, CLI, plugin, extension, etc.) and their respective description should 
+    (ex: web, mobile, desktop, CLI, plugin, extension, etc) and their respective description should 
     specify the programming languages, frameworks, and tools necessary to build it.
     
     Project Title: {title}
@@ -68,29 +52,12 @@ const FRAMEWORK_PROMPT = `
 `;
 
 const frameworkParser = StructuredOutputParser.fromZodSchema(
-  z
-    .array(
-      z.object({
-        title: z.string().describe("category of software to be built"),
-        description: z
-          .string()
-          .describe(
-            "description of programming languages, frameworks and/or tools used to build. Each tool should only be mentioned once.",
-          ),
-        tools: z
-          .array(z.string())
-          .describe(
-            "names of programming languages, frameworks and/or tools mentioned in description. Names should be lowercase alphabetic or numeric characters only: no spaces or punctuation (like css3, html5, react, nodejs). ",
-          ),
-      }),
-    )
-    .length(3)
-    .describe("list of three types of software platforms to build project on"),
+  IdeaSchema.shape.frameworks.length(3),
 );
 
-// Generate Idea Title and Description
+// Generate IdeaSchema Title and Description
 export async function generateIdea(topic: string | null) {
-  const model = new OpenAI({ model: "gpt-3.5-turbo-0125", temperature: 0.8 });
+  const model = new OpenAI({ model: MODEL, temperature: 0.8 });
 
   // Generating initial project idea
   const ideaChain = RunnableSequence.from([
@@ -106,9 +73,9 @@ export async function generateIdea(topic: string | null) {
   return { title, description };
 }
 
-// Expand Initial Idea with Features and Frameworks
+// Expand Initial IdeaSchema with Features and Frameworks
 export async function expandIdea(title: string, description: string) {
-  const model = new OpenAI({ model: "gpt-3.5-turbo-0125", temperature: 0.8 });
+  const model = new OpenAI({ model: MODEL, temperature: 0.8 });
 
   // Major features to develop for project
   const featureChain = RunnableSequence.from([
