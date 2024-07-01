@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo } from "react";
 import {
   DropdownMenu,
   DropdownMenuItem,
@@ -9,24 +9,35 @@ import {
   DropdownMenuContent,
   DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
-import { CircleUser, Code2, MessageCircleQuestion } from "lucide-react";
+import {
+  CircleUser,
+  Code2,
+  LogOut,
+  MessageCircleQuestion,
+  Settings,
+  User,
+  LogIn,
+} from "lucide-react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { useSession, signIn, signOut } from "next-auth/react";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
-interface NavbarProps {
-  isSignedIn: boolean;
-  username?: string; // Optional username prop
-  onAuthAction: () => void;
-  onCreateRepo: () => void;
-}
+export default function Navbar() {
+  const { data: session } = useSession();
+  const isSignedIn = useMemo(() => !!session, [session]);
 
-export default function Navbar({
-  isSignedIn,
-  username,
-  onAuthAction,
-  onCreateRepo,
-}: NavbarProps) {
-  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const handleAuthAction = () => {
+    if (session) {
+      signOut();
+    } else {
+      signIn("github");
+    }
+  };
+
+  const greetUser = () => {
+    const firstName = session?.user?.name?.split(" ")[0];
+    return firstName ? `Hi, ${firstName}!` : "My Account";
+  };
 
   return (
     <header className="sticky top-0 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
@@ -39,7 +50,7 @@ export default function Navbar({
             <Code2 className="h-5 absolute bottom-0 left-0" />
             <MessageCircleQuestion className="h-5 absolute top-0 right-0" />
           </div>
-          <span>what to code?</span>
+          <span>what to code</span>
         </Link>
         <Link
           href="/idea"
@@ -51,18 +62,40 @@ export default function Navbar({
       <div className="flex w-10 items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="secondary" size="icon" className="rounded-full">
-              <CircleUser className="h-5 w-5" />
-              <span className="sr-only">Toggle user menu</span>
-            </Button>
+            <Avatar className="cursor-pointer">
+              <AvatarImage
+                src={session?.user?.image || undefined}
+                alt="GitHub Profile Picture"
+              />
+              <AvatarFallback>
+                <CircleUser className="h-6 w-6" />
+              </AvatarFallback>
+            </Avatar>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Settings</DropdownMenuItem>
-            <DropdownMenuItem>Support</DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Logout</DropdownMenuItem>
+          <DropdownMenuContent className="w-40" align="end">
+            {isSignedIn && (
+              <>
+                <DropdownMenuLabel>{greetUser()}</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>
+                  <User className="mr-2 h-4 w-4" />
+                  <span>Profile</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Settings className="mr-2 h-4 w-4" />
+                  <span>Settings</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+              </>
+            )}
+            <DropdownMenuItem onClick={handleAuthAction}>
+              {isSignedIn ? (
+                <LogOut className="mr-2 h-4 w-4" />
+              ) : (
+                <LogIn className="mr-2 h-4 w-4" />
+              )}
+              <span>{isSignedIn ? "Sign Out" : "Sign In"}</span>
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
