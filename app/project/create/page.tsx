@@ -12,8 +12,11 @@ import FormInput from "@/components/FormInput";
 import { Form } from "@/components/ui/form";
 import { Idea, Feature, Framework, IdeaSchema } from "@/types/idea";
 import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
+import { useSession, signIn } from "next-auth/react";
 import { ProjectSchema, Project } from "@/types/project";
+import GitHubAvatar from "@/components/GitHubAvatar";
+import { getRepoFromTitle } from "@/app/api/project/github";
+import { Github } from "lucide-react";
 
 export default function Home() {
   const router = useRouter();
@@ -49,6 +52,7 @@ export default function Home() {
     }
   }, [router, form]);
 
+  const title = form.watch("title");
   const selectedFeatures = form.watch("features");
 
   const handleToggleFeature = (feature: Feature) => {
@@ -86,6 +90,8 @@ export default function Home() {
     router.push(`/project/`);
   };
 
+  console.log(session);
+
   return (
     <Form {...form}>
       <form
@@ -97,14 +103,37 @@ export default function Home() {
             <h1 className="text-7xl mt-16">finalize your idea</h1>
             <Card className="mt-8 w-4/5">
               <CardHeader className="gap-4">
+                {/* TODO: Display GitHub integration / future repo name */}
+                {session ? (
+                  <div className="grid grid-cols-[auto_1fr] gap-2 text-sm">
+                    <span className="font-semibold">GitHub</span>
+                    <span className="font-semibold">Repository Name</span>
+                    <div className="flex items-center">
+                      <GitHubAvatar className="w-8 h-8" />
+                      <span className="ml-2">owencooke </span>
+                      <span className="ml-2 font-bold text-xl">/</span>
+                    </div>
+                    <span className="content-center">
+                      {getRepoFromTitle(title)}
+                    </span>
+                  </div>
+                ) : (
+                  <Button
+                    className="w-fit"
+                    onClick={() => !session && signIn("github")}
+                  >
+                    <Github className="mr-2 h-4 w-4" /> Sign in with GitHub to
+                    Create a Repository
+                  </Button>
+                )}
                 {/* TODO: AI generated unique name button */}
                 <FormInput
+                  className="flex-grow"
                   form={form}
                   name="title"
                   label="Project Name"
                   placeholder="insert cool name here"
                 />
-                {/* TODO: Display GitHub integration / future repo name */}
                 <FormInput
                   className="max-h-32"
                   type="area"

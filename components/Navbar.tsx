@@ -10,7 +10,6 @@ import {
   DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
 import {
-  CircleUser,
   Code2,
   LogOut,
   MessageCircleQuestion,
@@ -20,7 +19,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useSession, signIn, signOut } from "next-auth/react";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import GitHubAvatar from "./GitHubAvatar";
 
 export default function Navbar() {
   const { data: session } = useSession();
@@ -40,7 +39,7 @@ export default function Navbar() {
   };
 
   return (
-    <header className="sticky top-0 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
+    <header className="sticky top-0 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6 z-20">
       <nav className="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
         <Link
           href="/"
@@ -62,15 +61,7 @@ export default function Navbar() {
       <div className="flex w-10 items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Avatar className="cursor-pointer">
-              <AvatarImage
-                src={session?.user?.image || undefined}
-                alt="GitHub Profile Picture"
-              />
-              <AvatarFallback>
-                <CircleUser className="h-6 w-6" />
-              </AvatarFallback>
-            </Avatar>
+            <GitHubAvatar className="cursor-pointer" />
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-40" align="end">
             {isSignedIn && (
