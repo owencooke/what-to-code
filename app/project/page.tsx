@@ -39,10 +39,10 @@ export default function Home() {
 
   return (
     project && (
-      <div className="flex gap-8 m-8">
-        <Card className="w-2/5">
+      <div className="flex flex-col lg:flex-row gap-8 m-6">
+        <Card className="w-full lg:w-2/5">
           <CardHeader>
-            <h1 className="text-6xl mt-16">{project.title}</h1>
+            <h1 className="text-5xl mt-16">{project.title}</h1>
             <p>{project.description}</p>
             <RepoDisplay
               className="pt-4"
@@ -51,19 +51,19 @@ export default function Home() {
             />
           </CardHeader>
         </Card>
-        <Card className="w-3/5">
+        <Card className="w-full h-full lg:w-3/5">
           <CardHeader className="gap-4 p-4">
-            <h2 className="text-2xl">Features</h2>
+            <h2 className="text-xl">Features</h2>
             <ScrollArea>
               <div className="flex gap-4">
                 {project.features?.map((feature, i) => (
-                  <FeatureCard key={i} feature={feature} className="scale-90" />
+                  <FeatureCard key={i} feature={feature} />
                 ))}
               </div>
               <ScrollBar orientation="horizontal" />
             </ScrollArea>
-            <h2 className="text-2xl mt-8">Project Type</h2>
-            <FrameworkCard framework={project.framework} className="scale-90" />
+            <h2 className="text-xl mt-4">Project Type</h2>
+            <FrameworkCard framework={project.framework} />
           </CardHeader>
         </Card>
       </div>
