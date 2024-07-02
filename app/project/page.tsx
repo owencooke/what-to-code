@@ -1,13 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardHeader } from "@/components/ui/card";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import FeatureCard from "@/components/cards/FeatureCard";
 import FrameworkCard from "@/components/cards/FrameworkCard";
@@ -42,8 +36,8 @@ export default function Home() {
       <div className="flex flex-col lg:flex-row gap-8 m-6">
         <Card className="w-full lg:w-2/5">
           <CardHeader>
-            <h1 className="text-5xl mt-16">{project.title}</h1>
-            <p>{project.description}</p>
+            <h1 className="text-5xl my-4">{project.title}</h1>
+            <h4>{project.description}</h4>
             <RepoDisplay
               className="pt-4"
               name={getRepoFromTitle(project.title)}
@@ -62,7 +56,7 @@ export default function Home() {
               </div>
               <ScrollBar orientation="horizontal" />
             </ScrollArea>
-            <h2 className="text-xl mt-4">Project Type</h2>
+            <h2 className="text-xl mt-4">Type of Project</h2>
             <FrameworkCard framework={project.framework} />
           </CardHeader>
         </Card>
