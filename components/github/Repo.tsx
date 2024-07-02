@@ -51,10 +51,10 @@ const RepoDisplay: React.FC<RepoDisplayProps> = ({
         {isClickable ? (
           <Link
             href={`https://github.com/${username}`}
-            className={`w-fit px-0 ${buttonVariants({
+            className={`w-fit ${buttonVariants({
               variant: "link",
               size: "sm",
-            })}`}
+            })} !px-0`}
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -63,15 +63,15 @@ const RepoDisplay: React.FC<RepoDisplayProps> = ({
         ) : (
           <>{avatarAndUsername}</>
         )}
-        <span className="font-bold text-xl">/</span>
+        <span className="font-medium text-xl">/</span>
       </div>
       {isClickable ? (
         <Link
           href={`https://github.com/${username}/${name}`}
-          className={`w-fit px-0 ${buttonVariants({
+          className={`w-fit ${buttonVariants({
             variant: "link",
             size: "sm",
-          })}`}
+          })} !px-0`}
           target="_blank"
           rel="noopener noreferrer"
         >
