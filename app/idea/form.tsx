@@ -20,12 +20,18 @@ import {
 import { selectRandom } from "@/lib/utils";
 import categories from "./data/categories";
 import { Idea } from "@/types/idea";
-export function IdeaForm(props: { onSubmit: (idea: Idea) => void }) {
-  const { onSubmit } = props;
+
+interface IdeaFormProps {
+  onSubmit: (idea: Idea) => void;
+  onClick: () => void;
+}
+
+export function IdeaForm({ onSubmit, onClick }: IdeaFormProps) {
   const [open, setOpen] = useState(false);
   const [topic, setTopic] = useState("");
 
   const handleNewIdea = async () => {
+    onClick();
     let newTopic = topic || selectRandom(categories);
     const response = await fetch(
       `/api/idea?topic=${encodeURIComponent(newTopic)}`,
