@@ -2,9 +2,9 @@
 
 import "./globals.css";
 import { Public_Sans } from "next/font/google";
-
 import { SessionProvider } from "next-auth/react";
 import Navbar from "@/components/Navbar";
+import { Toaster } from "@/components/ui/toaster";
 
 const publicSans = Public_Sans({ subsets: ["latin"] });
 
@@ -28,6 +28,7 @@ export default function RootLayout({
         <SessionProvider>
           <Navbar />
           <div className="flex flex-col">{children}</div>
+          <Toaster />
         </SessionProvider>
       </body>
     </html>

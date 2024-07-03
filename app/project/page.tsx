@@ -1,17 +1,14 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import {
-  Card,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardHeader } from "@/components/ui/card";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import FeatureCard from "@/components/cards/FeatureCard";
 import FrameworkCard from "@/components/cards/FrameworkCard";
 import { useEffect, useState } from "react";
 import { Project, ProjectSchema } from "@/types/project";
+import RepoDisplay from "@/components/github/Repo";
+import { getRepoFromTitle } from "../api/project/github";
 
 export default function Home() {
   const router = useRouter();
@@ -36,21 +33,31 @@ export default function Home() {
 
   return (
     project && (
-      <div className="flex flex-col items-center justify-center">
-        <h1 className="text-7xl mt-16">{project.title}</h1>
-        <Card className="mt-8 w-4/5">
-          <CardHeader className="gap-4">
-            <CardTitle></CardTitle>
-            <CardDescription>{project.description}</CardDescription>
+      <div className="flex flex-col lg:flex-row gap-8 m-6">
+        <Card className="w-full lg:w-2/5">
+          <CardHeader>
+            <h1 className="text-5xl my-4">{project.title}</h1>
+            <h4>{project.description}</h4>
+            <RepoDisplay
+              className="pt-4"
+              name={getRepoFromTitle(project.title)}
+              isClickable
+            />
+          </CardHeader>
+        </Card>
+        <Card className="w-full h-full lg:w-3/5">
+          <CardHeader className="gap-4 p-4">
+            <h2 className="text-xl">Features</h2>
             <ScrollArea>
-              <div className="flex">
+              <div className="flex gap-4">
                 {project.features?.map((feature, i) => (
-                  <FeatureCard key={i} feature={feature} className="scale-90" />
+                  <FeatureCard key={i} feature={feature} />
                 ))}
               </div>
               <ScrollBar orientation="horizontal" />
             </ScrollArea>
-            <FrameworkCard framework={project.framework} className="scale-90" />
+            <h2 className="text-xl mt-4">Type of Project</h2>
+            <FrameworkCard framework={project.framework} />
           </CardHeader>
         </Card>
       </div>
