@@ -4,7 +4,7 @@ import { buttonVariants } from "@/components/ui/button";
 
 export default function Footer() {
   return (
-    <div className="flex flex-col-reverse md:flex-row justify-between items-center px-8 py-4 bg-accent mt-4">
+    <div className="flex flex-col-reverse md:flex-row justify-between items-center px-8 py-4 border-t">
       <div className="text-sm">
         being 🔨 by{" "}
         <Link

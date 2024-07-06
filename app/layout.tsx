@@ -15,7 +15,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className="h-full">
       <head>
         <title>what to code?</title>
         <link rel="shortcut icon" href="/images/favicon.ico" />
@@ -25,10 +25,10 @@ export default function RootLayout({
           href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css"
         />
       </head>
-      <body className={publicSans.className}>
+      <body className={`h-full flex flex-col ${publicSans.className}`}>
         <SessionProvider>
           <Navbar />
-          <div className="flex flex-col">{children}</div>
+          <div className="flex-grow">{children}</div>
           <Footer />
           <Toaster />
         </SessionProvider>
