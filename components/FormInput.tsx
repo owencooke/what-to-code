@@ -16,7 +16,7 @@ interface FormInputProps {
   type?: "input" | "area" | ((field: ControllerRenderProps) => React.ReactNode);
   form: UseFormReturn<any>;
   name: string;
-  label: string;
+  label?: string;
   placeholder?: string;
   description?: string;
 }
@@ -36,7 +36,7 @@ const FormInput: React.FC<FormInputProps> = ({
       name={name}
       render={({ field }) => (
         <FormItem>
-          <FormLabel>{label}</FormLabel>
+          {label && <FormLabel>{label}</FormLabel>}
           {description && <FormDescription>{description}</FormDescription>}
           <FormControl>
             {typeof type === "function" ? (

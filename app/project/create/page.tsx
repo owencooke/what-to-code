@@ -118,6 +118,8 @@ export default function Home() {
     router.push(`/project/`);
   };
 
+  console.log(session);
+
   return (
     <Form {...form}>
       <form className="flex flex-col items-center justify-center">
