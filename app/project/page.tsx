@@ -33,7 +33,7 @@ export default function Home() {
 
   return (
     project && (
-      <div className="flex flex-col lg:flex-row gap-8 m-6">
+      <div className="flex flex-col lg:flex-row gap-8">
         <Card className="w-full lg:w-2/5">
           <CardHeader>
             <h1 className="text-5xl my-4">{project.title}</h1>

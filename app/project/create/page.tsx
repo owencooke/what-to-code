@@ -125,7 +125,7 @@ export default function Home() {
       <form className="flex flex-col items-center justify-center">
         {idea && (
           <>
-            <h1 className="text-7xl mt-12">kickstart your idea</h1>
+            <h1 className="text-7xl">kickstart your idea</h1>
             <Card className="mt-8 w-4/5">
               <CardHeader className="gap-4">
                 {session ? (

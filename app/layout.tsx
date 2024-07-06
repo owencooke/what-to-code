@@ -28,7 +28,7 @@ export default function RootLayout({
       <body className={`h-full flex flex-col ${publicSans.className}`}>
         <SessionProvider>
           <Navbar />
-          <div className="flex-grow">{children}</div>
+          <div className="flex-grow m-4 md:m-8 lg:m-12">{children}</div>
           <Footer />
           <Toaster />
         </SessionProvider>
