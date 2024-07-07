@@ -4,10 +4,10 @@ import { Form } from "@/components/ui/form";
 import { useSession } from "next-auth/react";
 import { useToast } from "@/components/ui/use-toast";
 import { z } from "zod";
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import FormInput from "@/components/FormInput";
 
-// Assuming FormSchema is defined elsewhere and includes an email field
 const FormSchema = z.object({
   email: z.string().email(),
 });
@@ -19,18 +19,32 @@ export default function Waitlist() {
   const form = useForm({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      // Prefill email from Github login
-      email: session?.user?.email || "",
+      email: "",
     },
   });
 
+  useEffect(() => {
+    if (session?.user?.email) {
+      form.setValue("email", session.user.email);
+    }
+  }, [session, form]);
+
   const handleSubmit = async (data: z.infer<typeof FormSchema>) => {
-    // Handle form submission, e.g., sign up the user with the provided email
-    console.log(data);
-    toast({
-      title: "Signed up successfully.",
-      description: "We've received your email.",
+    const response = await fetch(`/api/subscribe?email=${data.email}`, {
+      method: "POST",
     });
+    if (response.ok) {
+      toast({
+        title: "Thanks for subscribing 💌",
+        description: "We've got your email. Stay tuned for updates!",
+      });
+    } else {
+      toast({
+        title: "Email subscription signup failed.",
+        description: "Please try again later.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
