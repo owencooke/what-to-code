@@ -1,43 +1,46 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { Card, CardHeader } from "@/components/ui/card";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import FeatureCard from "@/components/cards/FeatureCard";
 import FrameworkCard from "@/components/cards/FrameworkCard";
 import { useEffect, useState } from "react";
-import { Project, ProjectSchema } from "@/types/project";
+import { Project } from "@/types/project";
 import RepoDisplay from "@/components/github/Repo";
-import { getRepoFromTitle } from "../api/project/github";
+import { getRepoFromTitle } from "../../api/project/github";
+import { useRouter } from "next/navigation";
 
-export default function Home() {
+export default function Home({ params }: { params: { id: string } }) {
   const router = useRouter();
+  const { id } = params;
   const [project, setProject] = useState<Project>();
 
-  // Redirect back to landing page, if no valid project in sessionStorage
-  // TODO: fetch from project DB instead of storage, based on route ID
   useEffect(() => {
     const redirect = () => router.push("/");
-    try {
-      const parsedProject = ProjectSchema.safeParse(
-        JSON.parse(sessionStorage.getItem("project") || ""),
-      );
-      setProject(parsedProject.data);
-      if (!parsedProject.success) {
+    const fetchProject = async () => {
+      try {
+        const response = await fetch(`/api/project/${id}`);
+        if (!response.ok) {
+          redirect();
+          return;
+        }
+        const projectData = await response.json();
+        setProject(projectData);
+      } catch (error) {
         redirect();
       }
-    } catch (error) {
-      redirect();
-    }
-  }, [router]);
+    };
+    fetchProject();
+  }, [id, router]);
 
   return (
     project && (
-      <div className="flex flex-col lg:flex-row gap-8 m-6">
+      <div className="flex flex-col lg:flex-row gap-8">
         <Card className="w-full lg:w-2/5">
           <CardHeader>
             <h1 className="text-5xl my-4">{project.title}</h1>
             <h4>{project.description}</h4>
+            {/* FIXME: repo display needs to display user from project, not necessarily current active user */}
             <RepoDisplay
               className="pt-4"
               name={getRepoFromTitle(project.title)}

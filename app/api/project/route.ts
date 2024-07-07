@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { ProjectSchema } from "@/types/project";
 import { createIssue, createRepoFromTemplate } from "./github";
 import { Feature } from "@/types/idea";
+import { createProject } from "./db";
 
 export async function POST(req: NextRequest) {
   const project = await req.json();
@@ -16,6 +17,8 @@ export async function POST(req: NextRequest) {
   }
 
   try {
+    const projectId = await createProject(project, authHeader);
+
     // Create new GitHub repo for user based on selected framework
     const repo = await createRepoFromTemplate(project, authHeader);
 
@@ -25,8 +28,9 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json({
-      message: `Repository created and project pushed successfully!`,
+      message: `Project created and repository pushed successfully!`,
       url: repo.html_url,
+      projectId,
     });
   } catch (error: any) {
     return NextResponse.json(
