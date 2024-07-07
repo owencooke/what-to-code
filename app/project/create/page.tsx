@@ -98,13 +98,7 @@ export default function Home() {
       });
       return;
     }
-    const { url } = await response.json();
-
-    // TODO:
-    //  - store project in our DB
-    //  - redirect to "/project/{projectId}"
-    //  - load from DB instead of sessionStorage
-    sessionStorage.setItem("project", JSON.stringify(data));
+    const { url, projectId } = await response.json();
     toast({
       title: "Congrats, you're ready to go 🚀",
       description: "Your project's GitHub repository is looking great!",
@@ -116,10 +110,8 @@ export default function Home() {
         </ToastAction>
       ),
     });
-    router.push(`/project/`);
+    router.push(`/project/${projectId}`);
   };
-
-  console.log(session);
 
   return (
     <Form {...form}>

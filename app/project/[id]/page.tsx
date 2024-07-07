@@ -1,35 +1,39 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { Card, CardHeader } from "@/components/ui/card";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import FeatureCard from "@/components/cards/FeatureCard";
 import FrameworkCard from "@/components/cards/FrameworkCard";
 import { useEffect, useState } from "react";
-import { Project, ProjectSchema } from "@/types/project";
+import { Project } from "@/types/project";
 import RepoDisplay from "@/components/github/Repo";
-import { getRepoFromTitle } from "../api/project/github";
+import { getRepoFromTitle } from "../../api/project/github";
+import { useRouter } from "next/navigation";
 
-export default function Home() {
+export default function Home({ params }: { params: { id: string } }) {
   const router = useRouter();
+  const { id } = params;
   const [project, setProject] = useState<Project>();
 
-  // Redirect back to landing page, if no valid project in sessionStorage
-  // TODO: fetch from project DB instead of storage, based on route ID
+  console.log(params.id);
+
   useEffect(() => {
     const redirect = () => router.push("/");
-    try {
-      const parsedProject = ProjectSchema.safeParse(
-        JSON.parse(sessionStorage.getItem("project") || ""),
-      );
-      setProject(parsedProject.data);
-      if (!parsedProject.success) {
+    const fetchProject = async () => {
+      try {
+        const response = await fetch(`/api/project/${id}`);
+        if (!response.ok) {
+          redirect();
+          return;
+        }
+        const projectData = await response.json();
+        setProject(projectData);
+      } catch (error) {
         redirect();
       }
-    } catch (error) {
-      redirect();
-    }
-  }, [router]);
+    };
+    fetchProject();
+  }, [id, router]);
 
   return (
     project && (
