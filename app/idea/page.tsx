@@ -52,7 +52,7 @@ export default function Home() {
 
   return (
     <div className="flex flex-col items-center justify-center">
-      <h1 className="text-7xl mt-12 mb-6">hmm, what to code?</h1>
+      <h1 className="text-7xl mb-6">hmm, what to code?</h1>
       <IdeaForm
         onClick={() => setIsIdeaLoading(true)}
         onSubmit={(idea) => {

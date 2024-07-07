@@ -5,6 +5,8 @@ import { Public_Sans } from "next/font/google";
 import { SessionProvider } from "next-auth/react";
 import Navbar from "@/components/Navbar";
 import { Toaster } from "@/components/ui/toaster";
+import Footer from "@/components/Footer";
+import { Analytics } from "@vercel/analytics/react";
 
 const publicSans = Public_Sans({ subsets: ["latin"] });
 
@@ -14,7 +16,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className="h-full">
       <head>
         <title>what to code?</title>
         <link rel="shortcut icon" href="/images/favicon.ico" />
@@ -24,11 +26,13 @@ export default function RootLayout({
           href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css"
         />
       </head>
-      <body className={publicSans.className}>
+      <body className={`h-full flex flex-col ${publicSans.className}`}>
         <SessionProvider>
           <Navbar />
-          <div className="flex flex-col">{children}</div>
+          <div className="flex-grow m-4 md:m-8 lg:m-12">{children}</div>
+          <Footer />
           <Toaster />
+          <Analytics />
         </SessionProvider>
       </body>
     </html>
