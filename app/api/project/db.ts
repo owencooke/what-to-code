@@ -1,14 +1,13 @@
-import { supabase } from "@/lib/db";
+import { supabase, generateId } from "@/lib/db";
 import { Project } from "@/types/project";
-import { nanoid } from "nanoid";
 import { getUsername } from "./github";
 
 async function createProject(
   project: Project,
   authHeader: string,
 ): Promise<string> {
-  const id = nanoid();
-  const { data, error } = await supabase
+  const id = generateId();
+  const { error } = await supabase
     .from("projects")
     .insert([
       {
@@ -20,7 +19,7 @@ async function createProject(
     .single();
 
   if (error) {
-    console.error("Error inserting project:", error);
+    console.error("Error inserting project to Supabase:", error);
     throw error;
   }
 

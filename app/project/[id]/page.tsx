@@ -15,8 +15,6 @@ export default function Home({ params }: { params: { id: string } }) {
   const { id } = params;
   const [project, setProject] = useState<Project>();
 
-  console.log(params.id);
-
   useEffect(() => {
     const redirect = () => router.push("/");
     const fetchProject = async () => {
@@ -42,6 +40,7 @@ export default function Home({ params }: { params: { id: string } }) {
           <CardHeader>
             <h1 className="text-5xl my-4">{project.title}</h1>
             <h4>{project.description}</h4>
+            {/* FIXME: repo display needs to display user from project, not necessarily current active user */}
             <RepoDisplay
               className="pt-4"
               name={getRepoFromTitle(project.title)}
