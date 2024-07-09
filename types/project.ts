@@ -7,6 +7,7 @@ const ProjectSchema = IdeaSchema.pick({
 }).extend({
   features: IdeaSchema.shape.features.optional(),
   framework: FrameworkSchema,
+  github_user: z.string(),
 });
 
 type Project = z.infer<typeof ProjectSchema>;

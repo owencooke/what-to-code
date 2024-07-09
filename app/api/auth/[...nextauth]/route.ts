@@ -1,8 +1,8 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
 import GithubProvider from "next-auth/providers/github";
+import axios from "axios";
 
 const authOptions: NextAuthOptions = {
-  // Configure one or more authentication providers
   secret: process.env.NEXTAUTH_SECRET,
   providers: [
     GithubProvider({
@@ -17,15 +17,24 @@ const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async jwt({ token, account }) {
-      // Persist the OAuth access token to the token right after signin
       if (account) {
         token.accessToken = account.access_token;
+
+        // Fetch GitHub username
+        const url = "https://api.github.com/user";
+        const response = await axios.get(url, {
+          headers: {
+            Authorization: `Bearer ${token.accessToken}`,
+            Accept: "application/vnd.github.v3+json",
+          },
+        });
+        token.username = response.data.login;
       }
       return token;
     },
     async session({ session, token }) {
-      // Send properties to the client, like an access_token from a provider.
       session.accessToken = token.accessToken as string;
+      session.username = token.username as string;
 
       return session;
     },
