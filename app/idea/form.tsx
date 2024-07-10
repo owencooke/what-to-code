@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { selectRandom } from "@/lib/utils";
+import { selectRandom, shuffleArray } from "@/lib/utils";
 import categories from "./data/categories";
 import { Idea } from "@/types/idea";
 import { ChevronDown, ChevronRight } from "lucide-react";
@@ -18,6 +18,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import Autoplay from "embla-carousel-autoplay";
 import { Badge } from "@/components/ui/badge";
 
 interface IdeaFormProps {
@@ -31,11 +32,15 @@ const FormSchema = z.object({
 
 export function IdeaForm({ onSubmit, onClick }: IdeaFormProps) {
   const [showMore, setShowMore] = useState(false);
-  const [topic, setTopic] = useState("");
+  const [topics, setTopics] = useState(categories);
+
+  useEffect(() => {
+    setTopics(shuffleArray([...categories]));
+  }, []);
 
   const handleSubmit = async () => {
     onClick();
-    let newTopic = topic || selectRandom(categories);
+    let newTopic = selectRandom(topics);
     const response = await fetch(
       `/api/idea?topic=${encodeURIComponent(newTopic)}`,
     );
@@ -95,15 +100,22 @@ export function IdeaForm({ onSubmit, onClick }: IdeaFormProps) {
                 align: "start",
                 loop: true,
               }}
+              plugins={[
+                Autoplay({
+                  delay: 3000,
+                }) as any,
+              ]}
             >
               <CarouselContent className="">
-                {categories.map((category) => (
+                {topics.map((topic) => (
                   <CarouselItem
-                    key={category}
+                    key={topic}
                     className="pl-1 sm:basis-1/2 md:basis-1/4 lg:basis-1/6"
                   >
                     <div className="flex justify-center items-center h-full w-full">
-                      <Badge variant="outline">{category}</Badge>
+                      <Badge variant="outline" className="text-center">
+                        {topic}
+                      </Badge>
                     </div>
                   </CarouselItem>
                 ))}
