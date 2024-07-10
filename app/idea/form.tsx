@@ -1,36 +1,39 @@
 "use client";
 
 import { useState } from "react";
-import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
-import { cn } from "@/lib/utils";
-import { Button, ButtonWithLoading } from "@/components/ui/button";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
 import { selectRandom } from "@/lib/utils";
 import categories from "./data/categories";
 import { Idea } from "@/types/idea";
+import { ChevronDown, ChevronRight } from "lucide-react";
+import FormInput from "@/components/FormInput";
+import { Form } from "@/components/ui/form";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import { Badge } from "@/components/ui/badge";
 
 interface IdeaFormProps {
   onSubmit: (idea: Idea) => void;
   onClick: () => void;
 }
 
+const FormSchema = z.object({
+  idea: z.string().optional(),
+});
+
 export function IdeaForm({ onSubmit, onClick }: IdeaFormProps) {
-  const [open, setOpen] = useState(false);
+  const [showMore, setShowMore] = useState(false);
   const [topic, setTopic] = useState("");
 
-  const handleNewIdea = async () => {
+  const handleSubmit = async () => {
     onClick();
     let newTopic = topic || selectRandom(categories);
     const response = await fetch(
@@ -44,58 +47,73 @@ export function IdeaForm({ onSubmit, onClick }: IdeaFormProps) {
     onSubmit(data);
   };
 
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
+    defaultValues: {},
+  });
+
   return (
-    <div className="flex gap-8">
-      <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger asChild>
-          <Button
-            variant="outline"
-            role="combobox"
-            aria-expanded={open}
-            className="w-[200px] justify-between"
-          >
-            {topic
-              ? categories.find((category) => category === topic)
-              : "any topic is fine!"}
-            <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-[200px] p-0">
-          <Command>
-            <CommandInput placeholder="search topic..." className="h-9" />
-            <CommandList>
-              <CommandEmpty>No topic found.</CommandEmpty>
-              <CommandGroup>
-                {categories.map((category) => (
-                  <CommandItem
-                    key={category}
-                    value={category}
-                    onSelect={(currenttopic) => {
-                      setTopic(currenttopic === topic ? "" : currenttopic);
-                      setOpen(false);
-                    }}
-                  >
-                    {category}
-                    <CheckIcon
-                      className={cn(
-                        "ml-auto h-4 w-4",
-                        topic === category ? "opacity-100" : "opacity-0",
-                      )}
-                    />
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-            </CommandList>
-          </Command>
-        </PopoverContent>
-      </Popover>
-      <ButtonWithLoading
-        type="submit"
-        onClick={handleNewIdea}
-        loadingText="brainstorming..."
+    <Form {...form}>
+      <form
+        className="flex flex-col gap-8 items-center"
+        onSubmit={form.handleSubmit(handleSubmit)}
       >
-        generate
-      </ButtonWithLoading>
-    </div>
+        <div className="flex gap-8">
+          <Button
+            type="button"
+            variant="secondary"
+            size="lg"
+            onClick={() => setShowMore(!showMore)}
+          >
+            {showMore ? (
+              <>
+                <ChevronRight className="mr-2 h-4 w-4" />
+                any idea is great
+              </>
+            ) : (
+              <>
+                <ChevronDown className="mr-2 h-4 w-4" />
+                use my ideas
+              </>
+            )}
+          </Button>
+          <Button type="submit" size="lg">
+            generate
+          </Button>
+        </div>
+        {!showMore && (
+          <div className="flex flex-col gap-4">
+            <FormInput
+              className="w-full"
+              form={form}
+              name="idea"
+              placeholder="start brainstorming here..."
+            />
+            <Carousel
+              className="max-w-[50vw]"
+              opts={{
+                align: "start",
+                loop: true,
+              }}
+            >
+              <CarouselContent className="">
+                {categories.map((category) => (
+                  <CarouselItem
+                    key={category}
+                    className="pl-1 sm:basis-1/2 md:basis-1/4 lg:basis-1/6"
+                  >
+                    <div className="flex justify-center items-center h-full w-full">
+                      <Badge variant="outline">{category}</Badge>
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious type="button" />
+              <CarouselNext type="button" />
+            </Carousel>
+          </div>
+        )}
+      </form>
+    </Form>
   );
 }
