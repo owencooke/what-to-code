@@ -43,9 +43,9 @@ export function IdeaForm({ onSubmit, onClick }: IdeaFormProps) {
     setTopics(shuffleArray([...categories]));
   }, []);
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (data: z.infer<typeof FormSchema>) => {
     onClick();
-    let newTopic = selectRandom(topics);
+    let newTopic = data.idea || selectRandom(topics);
     const response = await fetch(
       `/api/idea?topic=${encodeURIComponent(newTopic)}`,
     );
@@ -53,8 +53,7 @@ export function IdeaForm({ onSubmit, onClick }: IdeaFormProps) {
       console.error("Failed to fetch new idea:", response.statusText);
       return;
     }
-    const data = await response.json();
-    onSubmit(data);
+    onSubmit(await response.json());
   };
 
   const handleBadgeClick = (topic: string) =>
@@ -114,11 +113,12 @@ export function IdeaForm({ onSubmit, onClick }: IdeaFormProps) {
                     key={topic}
                     className="pl-1 sm:basis-1/2 md:basis-1/4 lg:basis-1/6"
                   >
-                    <div
-                      className="flex justify-center items-center h-full w-full"
-                      onClick={() => handleBadgeClick(topic)}
-                    >
-                      <Badge variant="outline" className="text-center">
+                    <div className="flex justify-center items-center h-full w-full">
+                      <Badge
+                        variant="outline"
+                        className="text-center cursor-pointer"
+                        onClick={() => handleBadgeClick(topic)}
+                      >
                         {topic}
                       </Badge>
                     </div>
