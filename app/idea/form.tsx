@@ -32,7 +32,12 @@ const FormSchema = z.object({
 
 export function IdeaForm({ onSubmit, onClick }: IdeaFormProps) {
   const [showMore, setShowMore] = useState(false);
-  const [topics, setTopics] = useState(categories);
+  const [topics, setTopics] = useState<string[]>([]);
+
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
+    defaultValues: { idea: "" },
+  });
 
   useEffect(() => {
     setTopics(shuffleArray([...categories]));
@@ -52,10 +57,8 @@ export function IdeaForm({ onSubmit, onClick }: IdeaFormProps) {
     onSubmit(data);
   };
 
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
-    defaultValues: {},
-  });
+  const handleBadgeClick = (topic: string) =>
+    form.setValue("idea", `${form.getValues("idea")} ${topic}`);
 
   return (
     <Form {...form}>
@@ -72,13 +75,13 @@ export function IdeaForm({ onSubmit, onClick }: IdeaFormProps) {
           >
             {showMore ? (
               <>
-                <ChevronRight className="mr-2 h-4 w-4" />
-                any idea is great
+                <ChevronDown className="mr-2 h-4 w-4" />
+                use my ideas
               </>
             ) : (
               <>
-                <ChevronDown className="mr-2 h-4 w-4" />
-                use my ideas
+                <ChevronRight className="mr-2 h-4 w-4" />
+                any idea is great
               </>
             )}
           </Button>
@@ -86,8 +89,8 @@ export function IdeaForm({ onSubmit, onClick }: IdeaFormProps) {
             generate
           </Button>
         </div>
-        {!showMore && (
-          <div className="flex flex-col gap-4">
+        {showMore && (
+          <div className="flex flex-col gap-4 w-[50vw]">
             <FormInput
               className="w-full"
               form={form}
@@ -95,7 +98,6 @@ export function IdeaForm({ onSubmit, onClick }: IdeaFormProps) {
               placeholder="start brainstorming here..."
             />
             <Carousel
-              className="max-w-[50vw]"
               opts={{
                 align: "start",
                 loop: true,
@@ -112,7 +114,10 @@ export function IdeaForm({ onSubmit, onClick }: IdeaFormProps) {
                     key={topic}
                     className="pl-1 sm:basis-1/2 md:basis-1/4 lg:basis-1/6"
                   >
-                    <div className="flex justify-center items-center h-full w-full">
+                    <div
+                      className="flex justify-center items-center h-full w-full"
+                      onClick={() => handleBadgeClick(topic)}
+                    >
                       <Badge variant="outline" className="text-center">
                         {topic}
                       </Badge>
