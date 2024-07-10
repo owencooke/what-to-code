@@ -27,7 +27,10 @@ interface IdeaFormProps {
 }
 
 const FormSchema = z.object({
-  idea: z.string().optional(),
+  idea: z
+    .string()
+    .max(60, { message: "oops, please try a shorter idea" })
+    .optional(),
 });
 
 export function IdeaForm({ onSubmit, onClick }: IdeaFormProps) {
