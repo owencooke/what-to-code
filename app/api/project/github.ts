@@ -5,17 +5,6 @@ import axios from "axios";
 const getRepoFromTitle = (title: string) =>
   title.toLowerCase().replace(/\s/g, "-");
 
-async function getUsername(authHeader: string) {
-  const url = "https://api.github.com/user";
-  const response = await axios.get(url, {
-    headers: {
-      Authorization: authHeader,
-      Accept: "application/vnd.github.v3+json",
-    },
-  });
-  return response.data.login;
-}
-
 async function matchTemplate(framework: Framework) {
   // TODO: Implement the logic to match the framework to a suitable GitHub template
   return {
@@ -31,7 +20,7 @@ async function createRepoFromTemplate(project: Project, authHeader: string) {
   const url = `https://api.github.com/repos/${template.owner}/${template.repoName}/generate`;
 
   const body = {
-    owner: await getUsername(authHeader),
+    owner: project.github_user,
     name: getRepoFromTitle(project.title),
     description: project.description,
     private: false,
@@ -68,12 +57,11 @@ ${feature.acceptanceCriteria
 
 async function createIssue(
   repoName: string,
+  repoOwner: string,
   feature: Feature,
   authHeader: string,
 ) {
-  const REPO_OWNER = await getUsername(authHeader);
-
-  const url = `https://api.github.com/repos/${REPO_OWNER}/${repoName}/issues`;
+  const url = `https://api.github.com/repos/${repoOwner}/${repoName}/issues`;
 
   const body = {
     title: `[STORY] ${feature.title}`,
@@ -90,4 +78,4 @@ async function createIssue(
   return response.data;
 }
 
-export { createRepoFromTemplate, createIssue, getRepoFromTitle, getUsername };
+export { createRepoFromTemplate, createIssue, getRepoFromTitle };

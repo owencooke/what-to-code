@@ -17,14 +17,14 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const projectId = await createProject(project, authHeader);
+    const projectId = await createProject(project);
 
     // Create new GitHub repo for user based on selected framework
     const repo = await createRepoFromTemplate(project, authHeader);
 
     // Create GitHub enhancement issues for each feature in the project
     project.features.forEach(async (feature: Feature) => {
-      await createIssue(repo.name, feature, authHeader);
+      await createIssue(repo.name, project.github_user, feature, authHeader);
     });
 
     return NextResponse.json({

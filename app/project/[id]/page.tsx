@@ -9,6 +9,7 @@ import { Project } from "@/types/project";
 import RepoDisplay from "@/components/github/Repo";
 import { getRepoFromTitle } from "../../api/project/github";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 export default function Home({ params }: { params: { id: string } }) {
   const router = useRouter();
@@ -43,7 +44,8 @@ export default function Home({ params }: { params: { id: string } }) {
             {/* FIXME: repo display needs to display user from project, not necessarily current active user */}
             <RepoDisplay
               className="pt-4"
-              name={getRepoFromTitle(project.title)}
+              repoName={getRepoFromTitle(project.title)}
+              username={project.github_user}
               isClickable
             />
           </CardHeader>

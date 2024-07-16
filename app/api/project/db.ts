@@ -1,18 +1,13 @@
 import { supabase, generateId } from "@/lib/db";
 import { Project } from "@/types/project";
-import { getUsername } from "./github";
 
-async function createProject(
-  project: Project,
-  authHeader: string,
-): Promise<string> {
+async function createProject(project: Project): Promise<string> {
   const id = generateId();
   const { error } = await supabase
     .from("projects")
     .insert([
       {
         id,
-        github_user: await getUsername(authHeader),
         ...project,
       },
     ])
