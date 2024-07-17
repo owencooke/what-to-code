@@ -7,6 +7,7 @@ import { buttonVariants } from "../ui/button";
 interface RepoDisplayProps {
   repoName: string;
   username: string;
+  avatar?: string;
   isClickable?: boolean;
   className?: string;
 }
@@ -14,12 +15,13 @@ interface RepoDisplayProps {
 const RepoDisplay: React.FC<RepoDisplayProps> = ({
   repoName,
   username,
+  avatar,
   isClickable = false,
   className,
 }) => {
   const avatarAndUsername = (
     <>
-      <GitHubAvatar className="w-8 h-8" />
+      <GitHubAvatar avatar={avatar} className="w-8 h-8" />
       <span className="mx-2">{username}</span>
     </>
   );

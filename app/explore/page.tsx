@@ -44,27 +44,29 @@ export default function Home() {
 
   return (
     <div className="flex flex-col items-center justify-center">
-      <h1 className="text-7xl mt-12 mb-6">hmm, what to code?</h1>
+      <h1 className="text-7xl mt-12 mb-6">things being coded</h1>
       <div className="m-8 w-4/5">
         {projects.length > 0 ? (
           projects.map((project) => (
             <div
-              className="flex flex-col lg:flex-row gap-8"
+              className="flex flex-col lg:flex-row gap-8 my-12"
               key={project.description}
             >
-              <Card className="w-full lg:w-2/5">
+              <Card className="lg:w-2/5">
                 <CardHeader>
                   <h1 className="text-5xl my-4">{project.title}</h1>
                   <h4>{project.description}</h4>
                   {/* FIXME: repo display needs to display user from project, not necessarily current active user */}
                   <RepoDisplay
                     className="pt-4"
-                    name={getRepoFromTitle(project.title)}
+                    repoName={getRepoFromTitle(project.title)}
+                    username={project.github_user}
+                    avatar={project.github_avatar}
                     isClickable
                   />
                 </CardHeader>
               </Card>
-              <Card className="w-full h-full lg:w-3/5">
+              <Card className="w-full lg:w-3/5">
                 <CardHeader className="gap-4 p-4">
                   <h2 className="text-xl">Features</h2>
                   <ScrollArea>

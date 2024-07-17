@@ -67,7 +67,10 @@ export default function Navbar() {
       <div className="flex w-10 items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <GitHubAvatar className="cursor-pointer" />
+            <GitHubAvatar
+              avatar={session?.user?.image}
+              className="cursor-pointer"
+            />
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-40" align="end">
             {isSignedIn && (
