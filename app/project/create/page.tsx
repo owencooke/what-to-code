@@ -29,6 +29,7 @@ export default function Home() {
 
   const [idea, setIdea] = useState<Idea>();
   const [username, setUsername] = useState("");
+  const [avatar, setAvatar] = useState("");
 
   const form = useForm<Project>({
     resolver: zodResolver(ProjectSchema),
@@ -42,12 +43,20 @@ export default function Home() {
       }
     };
 
+    const fetchAvatar = async () => {
+      if (session?.user?.image) {
+        setAvatar(session?.user?.image);
+      }
+    };
+
     fetchUsername();
-  }, [session?.username]);
+    fetchAvatar();
+  }, [session]);
 
   useEffect(() => {
     form.setValue("github_user", username);
-  }, [username, form]);
+    form.setValue("github_avatar", avatar);
+  }, [username, avatar, form]);
 
   // Redirect back to idea generation page, if no valid idea to create project from
   useEffect(() => {
@@ -138,6 +147,7 @@ export default function Home() {
               <CardHeader className="gap-4">
                 {session ? (
                   <RepoDisplay
+                    avatar={avatar}
                     repoName={getRepoFromTitle(title)}
                     username={username}
                   />
@@ -234,6 +244,7 @@ export default function Home() {
                     className="py-4"
                     repoName={getRepoFromTitle(title)}
                     username={username}
+                    avatar={avatar}
                   />
                   <Alert variant="destructive">
                     <AlertCircle className="h-4 w-4" />

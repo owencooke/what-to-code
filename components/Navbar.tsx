@@ -57,11 +57,20 @@ export default function Navbar() {
         >
           Generate Idea
         </Link>
+        <Link
+          href="/explore"
+          className="text-muted-foreground transition-colors hover:text-foreground"
+        >
+          Explore Projects
+        </Link>
       </nav>
       <div className="flex w-10 items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <GitHubAvatar className="cursor-pointer" />
+            <GitHubAvatar
+              avatar={session?.user?.image}
+              className="cursor-pointer"
+            />
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-40" align="end">
             {isSignedIn && (
