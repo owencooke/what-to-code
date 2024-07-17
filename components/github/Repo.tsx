@@ -1,37 +1,22 @@
 import React, { useEffect, useState } from "react";
 import GitHubAvatar from "./Avatar";
 import { useSession } from "next-auth/react";
-import { getUsername } from "@/app/api/project/github";
 import Link from "next/link";
 import { buttonVariants } from "../ui/button";
 
 interface RepoDisplayProps {
-  name: string;
+  repoName: string;
+  username: string;
   isClickable?: boolean;
   className?: string;
 }
 
 const RepoDisplay: React.FC<RepoDisplayProps> = ({
-  name,
+  repoName,
+  username,
   isClickable = false,
   className,
 }) => {
-  const [username, setUsername] = useState("");
-  const { data: session } = useSession();
-
-  useEffect(() => {
-    const fetchUsername = async () => {
-      if (session?.accessToken) {
-        const fetchedUsername = await getUsername(
-          `token ${session.accessToken}`,
-        );
-        setUsername(fetchedUsername);
-      }
-    };
-
-    fetchUsername();
-  }, [session?.accessToken]);
-
   const avatarAndUsername = (
     <>
       <GitHubAvatar className="w-8 h-8" />
@@ -75,10 +60,10 @@ const RepoDisplay: React.FC<RepoDisplayProps> = ({
           target="_blank"
           rel="noopener noreferrer"
         >
-          {name}
+          {repoName}
         </Link>
       ) : (
-        <span className="content-center">{name}</span>
+        <span className="content-center">{repoName}</span>
       )}
     </div>
   );
