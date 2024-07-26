@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { selectRandom, shuffleArray } from "@/lib/utils";
 import categories from "./data/categories";
 import { Idea } from "@/types/idea";
-import { ChevronDown, ChevronRight } from "lucide-react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import FormInput from "@/components/FormInput";
 import { Form } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
@@ -77,12 +77,12 @@ export function IdeaForm({ onSubmit, onClick }: IdeaFormProps) {
           >
             {showMore ? (
               <>
-                <ChevronDown className="mr-2 h-4 w-4" />
+                <ChevronUp className="mr-2 h-4 w-4" />
                 use my ideas
               </>
             ) : (
               <>
-                <ChevronRight className="mr-2 h-4 w-4" />
+                <ChevronDown className="mr-2 h-4 w-4" />
                 any idea is great
               </>
             )}
