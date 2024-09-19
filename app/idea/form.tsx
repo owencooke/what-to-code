@@ -19,7 +19,12 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Collapsible,
+  CollapsibleTrigger,
+  CollapsibleContent,
+} from "@radix-ui/react-collapsible";
 
 interface IdeaFormProps {
   onSubmit: (idea: Idea) => void;
@@ -59,80 +64,78 @@ export function IdeaForm({ onSubmit, onClick }: IdeaFormProps) {
     onSubmit(await response.json());
   };
 
-  const handleBadgeClick = (topic: string) =>
+  const handleTopicClick = (topic: string) =>
     form.setValue("idea", `${form.getValues("idea")} ${topic}`);
 
   return (
     <Form {...form}>
       <form
-        className="flex flex-col gap-8 items-center"
+        className="flex flex-col items-center w-[50vw] max-w-xl"
         onSubmit={form.handleSubmit(handleSubmit)}
       >
-        <div className="flex gap-8">
-          <Button
-            type="button"
-            variant="secondary"
-            size="lg"
-            onClick={() => setShowMore(!showMore)}
-          >
-            {showMore ? (
-              <>
-                <ChevronUp className="mr-2 h-4 w-4" />
-                use my ideas
-              </>
-            ) : (
-              <>
-                <ChevronDown className="mr-2 h-4 w-4" />
-                any idea is great
-              </>
-            )}
-          </Button>
-          <Button type="submit" size="lg">
-            generate
-          </Button>
-        </div>
-        {showMore && (
-          <div className="flex flex-col gap-4 w-[50vw]">
-            <FormInput
-              className="w-full"
-              form={form}
-              name="idea"
-              placeholder="start brainstorming here..."
-            />
-            <Carousel
-              opts={{
-                align: "start",
-                loop: true,
-              }}
-              plugins={[
-                Autoplay({
-                  delay: 3000,
-                }) as any,
-              ]}
-            >
-              <CarouselContent className="">
-                {topics.map((topic) => (
-                  <CarouselItem
-                    key={topic}
-                    className="pl-1 sm:basis-1/2 md:basis-1/4 lg:basis-1/6"
-                  >
-                    <div className="flex justify-center items-center h-full w-full">
-                      <Badge
-                        variant="outline"
-                        className="text-center cursor-pointer"
-                        onClick={() => handleBadgeClick(topic)}
-                      >
-                        {topic}
-                      </Badge>
-                    </div>
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-              <CarouselPrevious type="button" />
-              <CarouselNext type="button" />
-            </Carousel>
+        <Button type="submit" className="w-full mb-4">
+          generate a new idea!
+        </Button>
+
+        <Collapsible
+          open={showMore}
+          onOpenChange={setShowMore}
+          className="mb-6 space-y-2 w-full"
+        >
+          <div className="flex items-center justify-between">
+            <CollapsibleTrigger asChild>
+              <Button variant="outline" className="w-full">
+                {showMore ? "Hide" : "Show"} custom options
+                {showMore ? (
+                  <ChevronUp className="h-4 w-4 ml-2" />
+                ) : (
+                  <ChevronDown className="h-4 w-4 ml-2" />
+                )}
+              </Button>
+            </CollapsibleTrigger>
           </div>
-        )}
+          <CollapsibleContent className="space-y-4">
+            <div className="flex flex-col gap-4 w-[50vw] max-w-xl">
+              <FormInput
+                className="w-full"
+                form={form}
+                name="idea"
+                placeholder="start brainstorming here..."
+              />
+              <Carousel
+                opts={{
+                  align: "start",
+                  loop: true,
+                }}
+                plugins={[
+                  Autoplay({
+                    delay: 3000,
+                  }) as any,
+                ]}
+              >
+                <CarouselContent className="">
+                  {topics.map((topic) => (
+                    <CarouselItem
+                      key={topic}
+                      className="sm:basis-1/2 md:basis-1/3 lg:basis-1/4"
+                    >
+                      <Card
+                        className="h-full cursor-pointer transition-colors hover:bg-primary hover:text-primary-foreground"
+                        onClick={() => handleTopicClick(topic)}
+                      >
+                        <CardContent className="flex items-center justify-center p-2">
+                          <p className="text-center font-medium">{topic}</p>
+                        </CardContent>
+                      </Card>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <CarouselPrevious type="button" />
+                <CarouselNext type="button" />
+              </Carousel>
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
       </form>
     </Form>
   );
