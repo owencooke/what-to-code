@@ -80,24 +80,21 @@ export function IdeaForm({ onSubmit, onClick }: IdeaFormProps) {
         <Collapsible
           open={showMore}
           onOpenChange={setShowMore}
-          className="mb-6 space-y-2 w-full"
+          className="space-y-4 w-full"
         >
-          <div className="flex items-center justify-between">
-            <CollapsibleTrigger asChild>
-              <Button variant="outline" className="w-full">
-                {showMore ? "Hide" : "Show"} custom options
-                {showMore ? (
-                  <ChevronUp className="h-4 w-4 ml-2" />
-                ) : (
-                  <ChevronDown className="h-4 w-4 ml-2" />
-                )}
-              </Button>
-            </CollapsibleTrigger>
-          </div>
-          <CollapsibleContent className="space-y-4">
+          <CollapsibleTrigger asChild>
+            <Button variant="secondary" className="w-full">
+              {showMore ? "hide" : "show"} custom topics
+              {showMore ? (
+                <ChevronUp className="h-4 w-4 ml-2" />
+              ) : (
+                <ChevronDown className="h-4 w-4 ml-2" />
+              )}
+            </Button>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
             <div className="flex flex-col gap-4 w-[50vw] max-w-xl">
               <FormInput
-                className="w-full"
                 form={form}
                 name="idea"
                 placeholder="start brainstorming here..."
@@ -113,7 +110,7 @@ export function IdeaForm({ onSubmit, onClick }: IdeaFormProps) {
                   }) as any,
                 ]}
               >
-                <CarouselContent className="">
+                <CarouselContent>
                   {topics.map((topic) => (
                     <CarouselItem
                       key={topic}
@@ -123,7 +120,7 @@ export function IdeaForm({ onSubmit, onClick }: IdeaFormProps) {
                         className="h-full cursor-pointer transition-colors hover:bg-primary hover:text-primary-foreground"
                         onClick={() => handleTopicClick(topic)}
                       >
-                        <CardContent className="flex items-center justify-center p-2">
+                        <CardContent className="flex items-center justify-center p-2 h-full">
                           <p className="text-center font-medium">{topic}</p>
                         </CardContent>
                       </Card>
