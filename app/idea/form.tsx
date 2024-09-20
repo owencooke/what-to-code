@@ -74,7 +74,7 @@ export function IdeaForm({ onSubmit, onClick }: IdeaFormProps) {
         onSubmit={form.handleSubmit(handleSubmit)}
       >
         <Button type="submit" className="w-full mb-4">
-          generate a new idea!
+          generate a new idea
         </Button>
 
         <Collapsible

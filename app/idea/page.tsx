@@ -13,7 +13,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Idea } from "@/types/idea";
 
 const IdeaCard: React.FC<PropsWithChildren<{}>> = ({ children }) => (
-  <Card>
+  <Card className="w-full">
     <CardHeader className="gap-8">{children}</CardHeader>
   </Card>
 );
@@ -59,11 +59,18 @@ export default function IdeaPage() {
   );
 
   return (
-    <div className="flex flex-col lg:flex-row items-center justify-between h-full gap-12 lg:gap-24">
+    <div
+      className={`flex flex-col ${
+        isInterested ? "justify-center" : "lg:flex-row justify-between"
+      } items-center h-full gap-12 lg:gap-24`}
+    >
       <div className="flex flex-col items-center justify-start w-full">
         <h1 className="text-6xl mb-6 text-center">hmm, what to code?</h1>
         <IdeaForm
-          onClick={() => setIsIdeaLoading(true)}
+          onClick={() => {
+            setIsIdeaLoading(true);
+            setIsInterested(false);
+          }}
           onSubmit={(idea) => {
             setIsInterested(false);
             setIdea(idea);
@@ -86,7 +93,7 @@ export default function IdeaPage() {
                   onClick={handleExpandIdea}
                   loadingText="expanding your idea..."
                 >
-                  {"i'm interested"}
+                  {"i'm interested, tell me more"}
                 </ButtonWithLoading>
               </div>
             ) : (
