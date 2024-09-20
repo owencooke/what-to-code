@@ -13,7 +13,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Idea } from "@/types/idea";
 
 const IdeaCard: React.FC<PropsWithChildren<{}>> = ({ children }) => (
-  <Card className="mt-8 w-4/5">
+  <Card>
     <CardHeader className="gap-8">{children}</CardHeader>
   </Card>
 );
@@ -21,7 +21,7 @@ const IdeaCard: React.FC<PropsWithChildren<{}>> = ({ children }) => (
 export default function IdeaPage() {
   const router = useRouter();
 
-  const [idea, setIdea] = useState<Idea | null>(null);
+  const [idea, setIdea] = useState<Idea>();
   const [isIdeaLoading, setIsIdeaLoading] = useState(false);
   const [isInterested, setIsInterested] = useState(false);
 
@@ -59,15 +59,17 @@ export default function IdeaPage() {
   );
 
   return (
-    <div className="flex flex-col items-center justify-center h-full">
-      <h1 className="text-6xl mb-6 text-center">hmm, what to code?</h1>
-      <IdeaForm
-        onClick={() => setIsIdeaLoading(true)}
-        onSubmit={(idea) => {
-          setIsInterested(false);
-          setIdea(idea);
-        }}
-      />
+    <div className="flex flex-col lg:flex-row items-center justify-between h-full gap-12 lg:gap-24">
+      <div className="flex flex-col items-center justify-start w-full">
+        <h1 className="text-6xl mb-6 text-center">hmm, what to code?</h1>
+        <IdeaForm
+          onClick={() => setIsIdeaLoading(true)}
+          onSubmit={(idea) => {
+            setIsInterested(false);
+            setIdea(idea);
+          }}
+        />
+      </div>
       {isIdeaLoading ? (
         <IdeaCard>
           <Skeleton className="h-12 w-3/4" />
@@ -76,7 +78,7 @@ export default function IdeaPage() {
       ) : (
         idea && (
           <IdeaCard>
-            <h1>{idea.title}</h1>
+            <h1 className="text-4xl">{idea.title}</h1>
             <p>{idea.description}</p>
             {!isInterested ? (
               <div className="flex justify-center">
