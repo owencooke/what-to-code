@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import GitHubAvatar from "./Avatar";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { buttonVariants } from "../ui/button";
+import { buttonVariants } from "@/components/ui/button";
 
 interface RepoDisplayProps {
   repoName: string;
