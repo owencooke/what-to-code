@@ -11,3 +11,12 @@ export const selectRandom = (arr: string[]) => {
 
 export const toAlphaLowerCase = (str: string) =>
   str.replace(/[^a-zA-Z]/g, "").toLowerCase();
+
+export const shuffleArray = (array: Array<any>): Array<any> => {
+  const arrayCopy = [...array];
+  for (let i = arrayCopy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arrayCopy[i], arrayCopy[j]] = [arrayCopy[j], arrayCopy[i]];
+  }
+  return arrayCopy;
+};
