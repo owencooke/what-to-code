@@ -1,38 +1,59 @@
 "use client";
 
-import { useState } from "react";
-import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
-import { cn } from "@/lib/utils";
-import { Button, ButtonWithLoading } from "@/components/ui/button";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { selectRandom } from "@/lib/utils";
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { selectRandom, shuffleArray } from "@/lib/utils";
 import categories from "./data/categories";
 import { Idea } from "@/types/idea";
+import { ChevronDown, ChevronUp } from "lucide-react";
+import FormInput from "@/components/FormInput";
+import { Form } from "@/components/ui/form";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import Autoplay from "embla-carousel-autoplay";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Collapsible,
+  CollapsibleTrigger,
+  CollapsibleContent,
+} from "@radix-ui/react-collapsible";
 
 interface IdeaFormProps {
   onSubmit: (idea: Idea) => void;
   onClick: () => void;
 }
 
-export function IdeaForm({ onSubmit, onClick }: IdeaFormProps) {
-  const [open, setOpen] = useState(false);
-  const [topic, setTopic] = useState("");
+const FormSchema = z.object({
+  idea: z
+    .string()
+    .max(60, { message: "oops, please try a shorter idea" })
+    .optional(),
+});
 
-  const handleNewIdea = async () => {
+export function IdeaForm({ onSubmit, onClick }: IdeaFormProps) {
+  const [showMore, setShowMore] = useState(false);
+  const [topics, setTopics] = useState<string[]>([]);
+
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
+    defaultValues: { idea: "" },
+  });
+
+  useEffect(() => {
+    setTopics(shuffleArray([...categories]));
+  }, []);
+
+  const handleSubmit = async (data: z.infer<typeof FormSchema>) => {
     onClick();
-    let newTopic = topic || selectRandom(categories);
+    let newTopic = data.idea || selectRandom(topics);
     const response = await fetch(
       `/api/idea?topic=${encodeURIComponent(newTopic)}`,
     );
@@ -40,62 +61,79 @@ export function IdeaForm({ onSubmit, onClick }: IdeaFormProps) {
       console.error("Failed to fetch new idea:", response.statusText);
       return;
     }
-    const data = await response.json();
-    onSubmit(data);
+    onSubmit(await response.json());
   };
 
+  const handleTopicClick = (topic: string) =>
+    form.setValue("idea", `${form.getValues("idea")} ${topic}`);
+
   return (
-    <div className="flex gap-8">
-      <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger asChild>
-          <Button
-            variant="outline"
-            role="combobox"
-            aria-expanded={open}
-            className="w-[200px] justify-between"
-          >
-            {topic
-              ? categories.find((category) => category === topic)
-              : "any topic is fine!"}
-            <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-[200px] p-0">
-          <Command>
-            <CommandInput placeholder="search topic..." className="h-9" />
-            <CommandList>
-              <CommandEmpty>No topic found.</CommandEmpty>
-              <CommandGroup>
-                {categories.map((category) => (
-                  <CommandItem
-                    key={category}
-                    value={category}
-                    onSelect={(currenttopic) => {
-                      setTopic(currenttopic === topic ? "" : currenttopic);
-                      setOpen(false);
-                    }}
-                  >
-                    {category}
-                    <CheckIcon
-                      className={cn(
-                        "ml-auto h-4 w-4",
-                        topic === category ? "opacity-100" : "opacity-0",
-                      )}
-                    />
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-            </CommandList>
-          </Command>
-        </PopoverContent>
-      </Popover>
-      <ButtonWithLoading
-        type="submit"
-        onClick={handleNewIdea}
-        loadingText="brainstorming..."
+    <Form {...form}>
+      <form
+        className="flex flex-col items-center w-[50vw] max-w-xl"
+        onSubmit={form.handleSubmit(handleSubmit)}
       >
-        generate
-      </ButtonWithLoading>
-    </div>
+        <Button type="submit" className="w-full mb-4">
+          generate a new idea
+        </Button>
+
+        <Collapsible
+          open={showMore}
+          onOpenChange={setShowMore}
+          className="space-y-4 w-full"
+        >
+          <CollapsibleTrigger asChild>
+            <Button variant="secondary" className="w-full">
+              {showMore ? "hide" : "show"} custom topics
+              {showMore ? (
+                <ChevronUp className="h-4 w-4 ml-2" />
+              ) : (
+                <ChevronDown className="h-4 w-4 ml-2" />
+              )}
+            </Button>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <div className="flex flex-col gap-4 w-[50vw] max-w-xl">
+              <FormInput
+                form={form}
+                name="idea"
+                placeholder="start brainstorming here..."
+              />
+              <Carousel
+                opts={{
+                  align: "start",
+                  loop: true,
+                }}
+                plugins={[
+                  Autoplay({
+                    delay: 3000,
+                  }) as any,
+                ]}
+              >
+                <CarouselContent>
+                  {topics.map((topic) => (
+                    <CarouselItem
+                      key={topic}
+                      className="sm:basis-1/2 md:basis-1/3 lg:basis-1/4"
+                    >
+                      <Card
+                        className="h-full cursor-pointer transition-colors hover:bg-primary hover:text-primary-foreground"
+                        onClick={() => handleTopicClick(topic)}
+                      >
+                        <CardContent className="flex items-center justify-center p-2 h-full">
+                          <p className="text-center font-medium">{topic}</p>
+                        </CardContent>
+                      </Card>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <CarouselPrevious type="button" />
+                <CarouselNext type="button" />
+              </Carousel>
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
+      </form>
+    </Form>
   );
 }
