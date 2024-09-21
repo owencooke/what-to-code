@@ -7,7 +7,7 @@ import Link from "next/link";
 export const Hero = () => {
   return (
     <section className="container w-full">
-      <div className="grid place-items-center lg:max-w-screen-xl gap-8 mx-auto py-20 md:py-32">
+      <div className="grid place-items-center lg:max-w-screen-xl gap-8 mx-auto pb-20 md:pb-32 pt-16 md:pt-24 lg:pt-20">
         <div className="text-center space-y-8">
           <div className="max-w-screen-md mx-auto text-center text-5xl md:text-6xl lg:text-7xl font-bold">
             stop getting stuck on
