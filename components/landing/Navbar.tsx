@@ -33,6 +33,7 @@ import {
 import Link from "next/link";
 import { useSession, signIn, signOut } from "next-auth/react";
 import GitHubAvatar from "@/components/github/Avatar";
+import React from "react";
 
 interface RouteProps {
   href: string;
@@ -49,6 +50,18 @@ const routeList: RouteProps[] = [
     label: "Explore Projects",
   },
 ];
+
+interface MenuItemProps {
+  logo: React.ReactElement;
+  text: string;
+}
+
+const MenuItem: React.FC<MenuItemProps> = ({ logo, text }) => (
+  <div className="flex items-center">
+    {React.cloneElement(logo, { className: "h-4 w-4" })}
+    <span className="ml-2">{text}</span>
+  </div>
+);
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -67,6 +80,25 @@ export const Navbar = () => {
     const firstName = session?.user?.name?.split(" ")[0];
     return firstName ? `Hi, ${firstName}!` : "My Account";
   };
+
+  const renderNavItems = () =>
+    routeList.map(({ href, label }: RouteProps) => (
+      <a
+        key={label}
+        href={href}
+        onClick={() => setIsOpen(false)}
+        className={buttonVariants({ variant: "ghost" })}
+      >
+        {label}
+      </a>
+    ));
+
+  const authMenuItem = (
+    <MenuItem
+      logo={isSignedIn ? <LogOut /> : <LogIn />}
+      text={isSignedIn ? "Sign Out" : "Sign In"}
+    />
+  );
 
   return (
     <header className="sticky border-b-[1px] top-0 z-40 w-full bg-white dark:border-b-slate-700 dark:bg-background">
@@ -105,17 +137,7 @@ export const Navbar = () => {
                 </SheetHeader>
                 <div className="flex flex-col justify-between items-center h-full pb-12">
                   <nav className="flex flex-col justify-center items-center gap-2 mt-4">
-                    {routeList.map(({ href, label }: RouteProps) => (
-                      <a
-                        rel="noreferrer noopener"
-                        key={label}
-                        href={href}
-                        onClick={() => setIsOpen(false)}
-                        className={buttonVariants({ variant: "ghost" })}
-                      >
-                        {label}
-                      </a>
-                    ))}
+                    {renderNavItems()}
                   </nav>
                   <div className="flex flex-col justify-center gap-4">
                     {isSignedIn && (
@@ -127,26 +149,15 @@ export const Navbar = () => {
                             className="cursor-pointer"
                           />
                         </div>
-                        <div className="flex items-center">
-                          <User className="mr-2 h-4 w-4" />
-                          <span>Profile</span>
-                        </div>
-                        <div className="flex  items-center">
-                          <Settings className="mr-2 h-4 w-4" />
-                          <span>Settings</span>
-                        </div>
+                        <MenuItem logo={<User />} text="Profile" />
+                        <MenuItem logo={<Settings />} text="Settings" />
                       </>
                     )}
                     <div
                       onClick={handleAuthAction}
                       className="flex items-center"
                     >
-                      {isSignedIn ? (
-                        <LogOut className="mr-2 h-4 w-4" />
-                      ) : (
-                        <LogIn className="mr-2 h-4 w-4" />
-                      )}
-                      <span>{isSignedIn ? "Sign Out" : "Sign In"}</span>
+                      {authMenuItem}
                     </div>
                   </div>
                 </div>
@@ -156,18 +167,7 @@ export const Navbar = () => {
 
           {/* desktop */}
           <nav className="hidden md:flex gap-2 w-full pl-4">
-            {routeList.map((route: RouteProps, i) => (
-              <a
-                rel="noreferrer noopener"
-                href={route.href}
-                key={i}
-                className={`${buttonVariants({
-                  variant: "ghost",
-                })}`}
-              >
-                {route.label}
-              </a>
-            ))}
+            {renderNavItems()}
           </nav>
 
           <div className="hidden md:flex">
@@ -184,23 +184,16 @@ export const Navbar = () => {
                     <DropdownMenuLabel>{greetUser()}</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem>
-                      <User className="mr-2 h-4 w-4" />
-                      <span>Profile</span>
+                      <MenuItem logo={<User />} text="Profile" />
                     </DropdownMenuItem>
                     <DropdownMenuItem>
-                      <Settings className="mr-2 h-4 w-4" />
-                      <span>Settings</span>
+                      <MenuItem logo={<Settings />} text="Settings" />
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                   </>
                 )}
                 <DropdownMenuItem onClick={handleAuthAction}>
-                  {isSignedIn ? (
-                    <LogOut className="mr-2 h-4 w-4" />
-                  ) : (
-                    <LogIn className="mr-2 h-4 w-4" />
-                  )}
-                  <span>{isSignedIn ? "Sign Out" : "Sign In"}</span>
+                  {authMenuItem}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
