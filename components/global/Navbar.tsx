@@ -28,6 +28,7 @@ import { useSession, signIn, signOut } from "next-auth/react";
 import GitHubAvatar from "@/components/github/Avatar";
 import React from "react";
 import Logo from "./Logo";
+import { ModeToggle } from "../mode-toggle";
 
 interface RouteProps {
   href: string;
@@ -97,7 +98,7 @@ export const Navbar = () => {
   return (
     <header className="sticky border-b-[1px] top-0 z-40 w-full bg-white dark:border-b-slate-700 dark:bg-background">
       <NavigationMenu className="mx-auto">
-        <NavigationMenuList className="container h-14 px-4 w-screen flex justify-between items-center">
+        <NavigationMenuList className="container h-14 px-4 w-[95vw] flex justify-between items-center">
           <NavigationMenuItem className="font-bold flex min-w-fit h-full !mt-0">
             <Link
               href="/"
@@ -130,18 +131,19 @@ export const Navbar = () => {
                   <nav className="flex flex-col justify-center items-center gap-2 mt-4">
                     {renderNavItems()}
                   </nav>
-                  <div className="flex flex-col justify-center gap-4">
+                  <div className="flex flex-col justify-center items-center gap-4">
                     {isSignedIn && (
                       <>
-                        <div className="flex flex-col gap-4 items-center">
-                          {greetUser()}
+                        <div className="flex gap-2 items-center">
                           <GitHubAvatar
                             avatar={session?.user?.image}
                             className="cursor-pointer"
                           />
+                          <span className="font-extralight">{greetUser()}</span>
                         </div>
-                        <MenuItem logo={<User />} text="Profile" />
-                        <MenuItem logo={<Settings />} text="Settings" />
+                        {/* TODO: extra menu items */}
+                        {/* <MenuItem logo={<User />} text="Profile" />
+                        <MenuItem logo={<Settings />} text="Settings" /> */}
                       </>
                     )}
                     <div
@@ -161,7 +163,8 @@ export const Navbar = () => {
             {renderNavItems()}
           </nav>
 
-          <div className="hidden md:flex">
+          <div className="hidden md:flex gap-4">
+            <ModeToggle />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <GitHubAvatar
@@ -174,12 +177,13 @@ export const Navbar = () => {
                   <>
                     <DropdownMenuLabel>{greetUser()}</DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem>
+                    {/* TODO: extra menu items */}
+                    {/* <DropdownMenuItem>
                       <MenuItem logo={<User />} text="Profile" />
                     </DropdownMenuItem>
                     <DropdownMenuItem>
                       <MenuItem logo={<Settings />} text="Settings" />
-                    </DropdownMenuItem>
+                    </DropdownMenuItem> */}
                     <DropdownMenuSeparator />
                   </>
                 )}

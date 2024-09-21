@@ -82,8 +82,6 @@ export const Newsletter = () => {
           </form>
         </Form>
       </div>
-
-      <hr className="w-11/12 mx-auto" />
     </section>
   );
 };
