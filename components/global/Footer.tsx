@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 
-export default function Footer() {
+export function Footer() {
   return (
     <div className="flex flex-col md:flex-row justify-between items-center px-8 py-4 border-t">
       <div className="text-sm">

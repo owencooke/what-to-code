@@ -61,11 +61,15 @@ export default function IdeaPage() {
   return (
     <div
       className={`flex flex-col ${
-        isInterested ? "justify-center" : "lg:flex-row justify-between"
-      } items-center h-full gap-12 lg:gap-24`}
+        isInterested
+          ? "justify-center"
+          : "lg:flex-row justify-center md:justify-between"
+      } items-center h-full gap-12 lg:gap-24 mt-4`}
     >
       <div className="flex flex-col items-center justify-start w-full">
-        <h1 className="text-6xl mb-6 text-center">hmm, what to code?</h1>
+        <h1 className="text-5xl lg:text-6xl mb-6 text-center">
+          hmm, what to code?
+        </h1>
         <IdeaForm
           onClick={() => {
             setIsIdeaLoading(true);

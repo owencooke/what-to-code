@@ -6,6 +6,8 @@ import { SessionProvider } from "next-auth/react";
 import { Toaster } from "@/components/ui/toaster";
 import { Analytics } from "@vercel/analytics/react";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Footer } from "@/components/global/Footer";
+import { Navbar } from "@/components/global/Navbar";
 
 const publicSans = Public_Sans({ subsets: ["latin"] });
 
@@ -28,7 +30,9 @@ export default function RootLayout({
       <body className={`h-full flex flex-col ${publicSans.className}`}>
         <SessionProvider>
           <ThemeProvider>
-            <div>{children}</div>
+            <Navbar />
+            <div className="flex-grow m-4 md:m-8 lg:m-12">{children}</div>
+            <Footer />
             <Toaster />
             <Analytics />
           </ThemeProvider>
