@@ -22,18 +22,12 @@ import {
   DropdownMenuContent,
   DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
-import {
-  Code2,
-  LogOut,
-  MessageCircleQuestion,
-  Settings,
-  User,
-  LogIn,
-} from "lucide-react";
+import { LogOut, Settings, User, LogIn } from "lucide-react";
 import Link from "next/link";
 import { useSession, signIn, signOut } from "next-auth/react";
 import GitHubAvatar from "@/components/github/Avatar";
 import React from "react";
+import Logo from "./Logo";
 
 interface RouteProps {
   href: string;
@@ -109,10 +103,7 @@ export const Navbar = () => {
               href="/"
               className="flex items-center gap-2 font-bold md:text-base"
             >
-              <div className="relative w-10 h-9 min-w-10">
-                <Code2 className="h-5 absolute bottom-0 left-0" />
-                <MessageCircleQuestion className="h-5 absolute top-0 right-0" />
-              </div>
+              <Logo />
               <span className="font-bold text-xl">what to code</span>
             </Link>
           </NavigationMenuItem>
