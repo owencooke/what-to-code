@@ -52,6 +52,7 @@
 @layer base {
   * {
     @apply border-border;
+    word-spacing: -0.25ch;
   }
   body {
     @apply bg-background text-foreground;

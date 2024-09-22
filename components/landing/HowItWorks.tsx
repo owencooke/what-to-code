@@ -17,25 +17,25 @@ const features: FeatureProps[] = [
     icon: <ProgrammingCodeIdeaIcon />,
     title: "Ideate",
     description:
-      "quickly generate new ideas, either randomly or using topics you're interested in",
+      "quickly generate new ideas at random or tailored to your interests",
   },
   {
     icon: <ProgrammingBrowserIcon />,
     title: "Expand",
     description:
-      "once you find a good idea, you can expand on it with features and tools to build it with",
+      "transform your idea into a project with detailed features and ways to build",
   },
   {
     icon: <ProgrammmingHoldCodeIcon />,
     title: "Kickstart",
     description:
-      "we'll suggest GitHub templates that match your project to give you a head start",
+      "get ahead with recommended GitHub templates that match your project's tech stack",
   },
   {
     icon: <ProgrammingKeyboardTypeIcon />,
     title: "Build",
     description:
-      "skip all the boilerplate and get straight to developing the next big thing!",
+      "bypass all the boilerplate and dive straight into developing!",
   },
 ];
 

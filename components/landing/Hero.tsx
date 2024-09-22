@@ -19,7 +19,7 @@ export const Hero = () => {
 
           <p className="max-w-screen-md mx-auto text-xl text-muted-foreground">
             generate new ideas for your next software project, <b>fast</b>, and
-            kickstart a GitHub repository with just a few clicks
+            kickstart your GitHub repository with just a few clicks
           </p>
 
           <div className="space-y-4 md:space-y-0 md:space-x-4">
