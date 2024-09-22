@@ -36,7 +36,9 @@ const FormInput: React.FC<FormInputProps> = ({
       name={name}
       render={({ field }) => (
         <FormItem>
-          {label && <FormLabel>{label}</FormLabel>}
+          {label && (
+            <FormLabel className="font-semibold text-md">{label}</FormLabel>
+          )}
           {description && <FormDescription>{description}</FormDescription>}
           <FormControl>
             {typeof type === "function" ? (

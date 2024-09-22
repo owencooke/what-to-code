@@ -22,7 +22,7 @@ import {
   DropdownMenuContent,
   DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
-import { LogOut, Settings, User, LogIn } from "lucide-react";
+import { LogOut, LogIn } from "lucide-react";
 import Link from "next/link";
 import { useSession, signIn, signOut } from "next-auth/react";
 import GitHubAvatar from "@/components/github/Avatar";
@@ -139,7 +139,7 @@ export const Navbar = () => {
                             avatar={session?.user?.image}
                             className="cursor-pointer"
                           />
-                          <span className="font-extralight">{greetUser()}</span>
+                          <span className="font-medium">{greetUser()}</span>
                         </div>
                         {/* TODO: extra menu items */}
                         {/* <MenuItem logo={<User />} text="Profile" />

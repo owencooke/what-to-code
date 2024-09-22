@@ -1,7 +1,7 @@
 "use client";
 
 import "./globals.css";
-import { Public_Sans } from "next/font/google";
+import { Roboto_Mono } from "next/font/google";
 import { SessionProvider } from "next-auth/react";
 import { Toaster } from "@/components/ui/toaster";
 import { Analytics } from "@vercel/analytics/react";
@@ -9,7 +9,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Footer } from "@/components/global/Footer";
 import { Navbar } from "@/components/global/Navbar";
 
-const publicSans = Public_Sans({ subsets: ["latin"] });
+const publicSans = Roboto_Mono({ subsets: ["latin"] });
 
 export default function RootLayout({
   children,

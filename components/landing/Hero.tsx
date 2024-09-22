@@ -9,7 +9,7 @@ export const Hero = () => {
     <section className="container w-full">
       <div className="grid place-items-center lg:max-w-screen-xl gap-8 mx-auto pb-20 md:pb-32 pt-16 md:pt-24 lg:pt-20">
         <div className="text-center space-y-8">
-          <div className="max-w-screen-md mx-auto text-center text-5xl md:text-6xl lg:text-7xl font-bold">
+          <div className="max-w-screen-md lg:max-w-screen-lg mx-auto text-center text-5xl md:text-6xl lg:text-7xl font-bold">
             stop getting stuck on
             <br />
             <span className="text-transparent px-2 bg-gradient-to-r from-[#32ac4f] to-primary bg-clip-text">
@@ -17,9 +17,9 @@ export const Hero = () => {
             </span>
           </div>
 
-          <p className="max-w-screen-sm mx-auto text-xl text-muted-foreground">
-            generate new ideas for your next software project, <b>fast</b>,
-            <br /> and kickstart a GitHub repository with just a few clicks
+          <p className="max-w-screen-md mx-auto text-xl text-muted-foreground">
+            generate new ideas for your next software project, <b>fast</b>, and
+            kickstart a GitHub repository with just a few clicks
           </p>
 
           <div className="space-y-4 md:space-y-0 md:space-x-4">

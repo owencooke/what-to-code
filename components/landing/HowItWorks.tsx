@@ -48,7 +48,7 @@ export const HowItWorks = () => {
           Works
         </span>
       </h2>
-      <p className="md:w-1/2 mx-auto mt-4 mb-8 text-xl text-muted-foreground">
+      <p className="md:w-3/5 mx-auto mt-4 mb-8 text-xl text-muted-foreground">
         we help developers avoid {`"coder's block"`} and hit the ground running
         for hackathons, personal projects, and startups
       </p>
