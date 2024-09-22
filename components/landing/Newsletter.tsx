@@ -58,13 +58,13 @@ export const Newsletter = () => {
 
       <div className="container pt-24 sm:pt-32 pb-20">
         <h3 className="text-center text-4xl md:text-5xl font-bold">
-          Join Our Daily{" "}
+          Join Our{" "}
           <span className="bg-gradient-to-b from-primary/60 to-primary text-transparent bg-clip-text">
             Newsletter
           </span>
         </h3>
         <p className="text-xl text-muted-foreground text-center mt-4 mb-8">
-          Lorem ipsum dolor sit amet consectetur.
+          {`be the first to know about new and exciting features`}
         </p>
 
         <Form {...form}>
