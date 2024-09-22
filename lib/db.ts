@@ -3,8 +3,8 @@ import { customAlphabet } from "nanoid";
 
 // Create Superbase connection
 const supabase = createClient(
-  process.env.SUPABASE_URL ?? "",
-  process.env.SUPABASE_PRIVATE_KEY ?? "",
+  process.env.DB_URL ?? "",
+  process.env.DB_KEY ?? "",
 );
 
 // Define a custom ID format for URL friendly chars
