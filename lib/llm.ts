@@ -28,11 +28,20 @@ async function generateZodSchemaFromPrompt<T>(
       `withStructuredOutput is not available for model: ${process.env.LLM_MODEL}`,
     );
   }
-  return llm
-    .withStructuredOutput(outputSchema)
+
+  // Check if the schema is an array and wrap it in an object schema if necessary
+  const isArray = outputSchema instanceof z.ZodArray;
+  const wrappedSchema = isArray
+    ? z.object({ items: outputSchema })
+    : outputSchema;
+
+  const result = await llm
+    .withStructuredOutput(wrappedSchema)
     .invoke(
       await PromptTemplate.fromTemplate(promptString).invoke(promptVars || {}),
     );
+
+  return isArray ? result.items : result;
 }
 
 export { generateZodSchemaFromPrompt };

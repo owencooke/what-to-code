@@ -21,7 +21,7 @@ export async function expandIdea(title: string, description: string) {
   // Ways they could possibly build project
   const frameworks = await generateZodSchemaFromPrompt(
     IdeaSchema.shape.frameworks.length(3),
-    FEATURES_PROMPT,
+    FRAMEWORK_PROMPT,
     { title, description, features },
   );
   return { features, frameworks };
