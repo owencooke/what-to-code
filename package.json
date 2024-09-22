@@ -18,6 +18,7 @@
     "@hookform/resolvers": "^3.6.0",
     "@langchain/community": "^0.3.1",
     "@langchain/core": "^0.3.3",
+    "@langchain/google-genai": "^0.1.0",
     "@langchain/openai": "^0.3.0",
     "@next/bundle-analyzer": "^13.4.19",
     "@radix-ui/react-accordion": "^1.2.0",

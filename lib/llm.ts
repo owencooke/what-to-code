@@ -1,4 +1,5 @@
 import { ChatOpenAI } from "@langchain/openai";
+import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { z } from "zod";
 import { PromptTemplate } from "@langchain/core/prompts";
 
@@ -13,6 +14,11 @@ const providers: { [key: string]: Function } = {
     new ChatOpenAI({
       model: process.env.LLM_MODEL,
       temperature: 0.8,
+    }),
+  google: () =>
+    new ChatGoogleGenerativeAI({
+      model: process.env.LLM_MODEL,
+      temperature: 1,
     }),
 };
 
