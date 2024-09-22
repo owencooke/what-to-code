@@ -1,9 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  MedalIcon,
-  MapIcon,
-  PlaneIcon,
-  GiftIcon,
+  ProgrammingCodeIdeaIcon,
+  ProgrammingBrowserIcon,
+  ProgrammmingHoldCodeIcon,
+  ProgrammingKeyboardTypeIcon,
 } from "@/components/landing/Icons";
 
 interface FeatureProps {
@@ -14,28 +14,28 @@ interface FeatureProps {
 
 const features: FeatureProps[] = [
   {
-    icon: <MedalIcon />,
-    title: "Accessibility",
+    icon: <ProgrammingCodeIdeaIcon />,
+    title: "Ideate",
     description:
-      "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Illum quas provident cum",
+      "quickly generate new ideas, either randomly or using topics you're interested in",
   },
   {
-    icon: <MapIcon />,
-    title: "Community",
+    icon: <ProgrammingBrowserIcon />,
+    title: "Expand",
     description:
-      "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Illum quas provident cum",
+      "once you find a good idea, you can expand on it with features and tools to build it with",
   },
   {
-    icon: <PlaneIcon />,
-    title: "Scalability",
+    icon: <ProgrammmingHoldCodeIcon />,
+    title: "Kickstart",
     description:
-      "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Illum quas provident cum",
+      "we'll suggest GitHub templates that match your project to give you a head start",
   },
   {
-    icon: <GiftIcon />,
-    title: "Gamification",
+    icon: <ProgrammingKeyboardTypeIcon />,
+    title: "Build",
     description:
-      "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Illum quas provident cum",
+      "skip all the boilerplate and get straight to developing the next big thing!",
   },
 ];
 
@@ -48,9 +48,9 @@ export const HowItWorks = () => {
           Works
         </span>
       </h2>
-      <p className="md:w-3/4 mx-auto mt-4 mb-8 text-xl text-muted-foreground">
-        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Veritatis
-        dolor pariatur sit!
+      <p className="md:w-1/2 mx-auto mt-4 mb-8 text-xl text-muted-foreground">
+        we help developers avoid {`"coder's block"`} and hit the ground running
+        for hackathons, personal projects, and startups
       </p>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
