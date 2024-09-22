@@ -12,7 +12,7 @@ export const Hero = () => {
           <div className="max-w-screen-md lg:max-w-screen-lg mx-auto text-center text-5xl md:text-6xl lg:text-7xl font-bold">
             stop getting stuck on
             <br />
-            <span className="text-transparent px-2 bg-gradient-to-r from-[#32ac4f] to-primary bg-clip-text">
+            <span className="text-transparent px-2 bg-gradient-to-r from-[#3fb65b] to-primary bg-clip-text">
               what to code
             </span>
           </div>
