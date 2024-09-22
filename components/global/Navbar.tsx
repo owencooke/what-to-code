@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import {
   NavigationMenu,
@@ -113,9 +115,7 @@ export const Navbar = () => {
                 <Menu
                   className="flex md:hidden h-5 w-5"
                   onClick={() => setIsOpen(true)}
-                >
-                  <span className="sr-only">Menu Icon</span>
-                </Menu>
+                />
               </SheetTrigger>
 
               <SheetContent side={"left"}>
