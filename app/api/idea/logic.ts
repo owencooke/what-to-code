@@ -8,7 +8,7 @@ export const generateIdea = async (topic: string, recentIdeas: string[]) => {
   // Modify prompt to avoid using recent ideas (if any)
   const prompt = `${IDEA_PROMPT} ${
     recentIdeas.length > 0 &&
-    `Do not suggest any of these taken ideas: ${recentIdeas.join()}`
+    `Do not suggest already taken ideas: ${recentIdeas.join()}`
   }`;
 
   return generateZodSchemaFromPrompt(
@@ -38,7 +38,7 @@ export async function expandIdea(title: string, description: string) {
   const frameworks = await generateZodSchemaFromPrompt(
     IdeaSchema.shape.frameworks.length(3),
     FRAMEWORK_PROMPT,
-    { title, description, features },
+    { title, features },
   );
 
   return { features, frameworks };
