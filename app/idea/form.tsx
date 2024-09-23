@@ -8,7 +8,7 @@ import { Idea } from "@/types/idea";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import FormInput from "@/components/FormInput";
 import { Form } from "@/components/ui/form";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import {
@@ -25,7 +25,11 @@ import {
   CollapsibleTrigger,
   CollapsibleContent,
 } from "@radix-ui/react-collapsible";
-import { addIdeaToCache, getCachedIdeas } from "./utils/session";
+import {
+  addIdeaToCache,
+  clearIdeaCache,
+  getCachedIdeas,
+} from "./utils/session";
 
 interface IdeaFormProps {
   onSubmit: (idea: Idea) => void;
@@ -48,15 +52,37 @@ export function IdeaForm({ onSubmit, onClick }: IdeaFormProps) {
     defaultValues: { idea: "" },
   });
 
+  // Reset previous idea cache if they change topics
+  {
+    const ideaValue = useWatch({
+      control: form.control,
+      name: "idea",
+    });
+    useEffect(() => {
+      if (ideaValue) {
+        clearIdeaCache();
+      }
+    }, [ideaValue]);
+  }
+
   useEffect(() => {
     setTopics(shuffleArray([...categories]));
   }, []);
 
   const handleSubmit = async (data: z.infer<typeof FormSchema>) => {
     onClick();
-    let newTopic = data.idea || selectRandom(topics);
+
+    // Use custom topic, or default to random
+    let topic;
+    if (showMore && data.idea) {
+      topic = data.idea;
+    } else {
+      topic = selectRandom(topics);
+      clearIdeaCache();
+    }
+
     const response = await fetch(
-      `/api/idea?topic=${encodeURIComponent(newTopic)}`,
+      `/api/idea?topic=${encodeURIComponent(topic)}`,
       {
         method: "POST",
         headers: {
