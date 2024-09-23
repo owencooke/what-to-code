@@ -18,7 +18,7 @@ const providers: { [key: string]: Function } = {
   google: () =>
     new ChatGoogleGenerativeAI({
       model: process.env.LLM_MODEL,
-      temperature: 1,
+      temperature: 0.1,
     }),
 };
 

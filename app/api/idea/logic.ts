@@ -4,12 +4,19 @@ import { generateZodSchemaFromPrompt } from "@/lib/llm";
 import { z } from "zod";
 
 // Generate Title and Description of Idea
-export const generateIdea = async (topic: string) =>
-  generateZodSchemaFromPrompt(
+export const generateIdea = async (topic: string, recentIdeas: string[]) => {
+  // Modify prompt to avoid using recent ideas (if any)
+  const prompt = `${IDEA_PROMPT} ${
+    recentIdeas.length > 0 &&
+    `Do not suggest any of these taken ideas: ${recentIdeas.join()}`
+  }`;
+
+  return generateZodSchemaFromPrompt(
     IdeaSchema.pick({ title: true, description: true }),
-    IDEA_PROMPT,
-    { topic },
+    prompt,
+    { topic, recentIdeas },
   );
+};
 
 // Expand Initial IdeaSchema with Features and Frameworks
 export async function expandIdea(title: string, description: string) {

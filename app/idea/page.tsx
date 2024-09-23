@@ -32,7 +32,7 @@ export default function IdeaPage() {
   const handleExpandIdea = async () => {
     if (idea) {
       setIsInterested(true);
-      const response = await fetch(`/api/idea`, {
+      const response = await fetch(`/api/idea/expand`, {
         method: "POST",
         body: JSON.stringify({
           title: idea.title,

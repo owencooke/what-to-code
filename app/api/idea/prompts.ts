@@ -7,8 +7,9 @@ const IDEA_PROMPT = `
     title: AI Trading Algorithm Builder
     description: Lets users turn their investment goals and risk concerns from natural language into an algorithmic strategy using an AI editor. Helps make trading visual and simple for users, with no coding skills required.
 
-    It is CRITICAL that the description not discuss specific software or application features. 
-    It should only describe the high level benefits of the project for potential users.
+    It is CRITICAL that the description: 
+        1. be less than 300 characters 
+        2. not discuss specific software features (only describe high level benefits for potential users)
 `;
 
 const FEATURES_PROMPT = `

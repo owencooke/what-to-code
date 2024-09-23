@@ -25,6 +25,7 @@ import {
   CollapsibleTrigger,
   CollapsibleContent,
 } from "@radix-ui/react-collapsible";
+import { addIdeaToCache, getCachedIdeas } from "./utils/session";
 
 interface IdeaFormProps {
   onSubmit: (idea: Idea) => void;
@@ -56,12 +57,21 @@ export function IdeaForm({ onSubmit, onClick }: IdeaFormProps) {
     let newTopic = data.idea || selectRandom(topics);
     const response = await fetch(
       `/api/idea?topic=${encodeURIComponent(newTopic)}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ recentIdeas: getCachedIdeas() }),
+      },
     );
     if (!response.ok) {
       console.error("Failed to fetch new idea:", response.statusText);
       return;
     }
-    onSubmit(await response.json());
+    const idea: Idea = await response.json();
+    addIdeaToCache(idea.title);
+    onSubmit(idea);
   };
 
   const handleTopicClick = (topic: string) =>
