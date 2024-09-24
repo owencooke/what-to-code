@@ -7,10 +7,13 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Project } from "@/types/project";
-import { useDebouncedQuery } from "@/hooks/hooks";
+import { useQuery } from "@tanstack/react-query";
+import { debounce } from "lodash";
 
 const fetchProjects = async (searchTerm: string): Promise<Project[]> =>
   ky.get("/api/project", { searchParams: { query: searchTerm } }).json();
+
+const debouncedFetchProjects = debounce(fetchProjects, 500);
 
 export default function ExplorePage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -19,17 +22,14 @@ export default function ExplorePage() {
     data: projects = [],
     isLoading,
     error,
-    setInputValue,
-  } = useDebouncedQuery(
-    ["search", searchTerm],
-    () => fetchProjects(searchTerm),
-    500,
-  );
+  } = useQuery({
+    queryKey: ["search", searchTerm],
+    queryFn: () => debouncedFetchProjects(searchTerm),
+  });
 
   // Update the debounced input value when the search term changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
-    setInputValue(e.target.value);
   };
 
   return (
@@ -83,13 +83,13 @@ export default function ExplorePage() {
                   </div>
                   <div className="flex flex-wrap gap-1">
                     {/* {project.tech.map((tech, index) => (
-                      <span
-                        key={index}
-                        className="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded text-[10px]"
-                      >
-                        {tech}
-                      </span>
-                    ))} */}
+                        <span
+                          key={index}
+                          className="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded text-[10px]"
+                        >
+                          {tech}
+                        </span>
+                      ))} */}
                   </div>
                 </div>
               </CardContent>
