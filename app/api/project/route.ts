@@ -2,7 +2,19 @@ import { NextRequest, NextResponse } from "next/server";
 import { ProjectSchema } from "@/types/project";
 import { createIssue, createRepoFromTemplate } from "./github";
 import { Feature } from "@/types/idea";
-import { createProject } from "./db";
+import { createProject, searchProjects } from "./db";
+
+export async function GET(req: NextRequest) {
+  try {
+    const query = req.nextUrl.searchParams.get("query") || "";
+
+    const projects = await searchProjects(query);
+
+    return NextResponse.json(projects);
+  } catch (e: any) {
+    return NextResponse.json({ error: e.message }, { status: e.status ?? 500 });
+  }
+}
 
 export async function POST(req: NextRequest) {
   const project = await req.json();
@@ -42,40 +54,3 @@ export async function POST(req: NextRequest) {
     );
   }
 }
-
-// const execPromise = promisify(exec);
-//   // Check if repository already exists
-//   const reposResponse = await axios.get("https://api.github.com/user/repos", {
-//     headers: {
-//       Authorization: `token ${accessToken}`,
-//       Accept: "application/vnd.github.v3+json",
-//     },
-//   });
-
-//   const repoExists = reposResponse.data.some(
-//     (repo: any) => repo.name === repoName,
-//   );
-
-//   if (repoExists) {
-//     return NextResponse.json(
-//       { message: `Repository ${repoName} already exists` },
-//       { status: 400 },
-//     );
-//   }
-//   try {
-//     const response = await axios.post(
-//       "https://api.github.com/user/repos",
-//       { name: repoName },
-//       {
-//         headers: {
-//           Authorization: `token ${accessToken}`,
-//           Accept: "application/vnd.github.v3+json",
-//         },
-//       },
-//     );
-
-//     const repoFullName = response.data.full_name;
-//     const commands = viteReactCommands(repoFullName);
-//     for (const command of commands) {
-//       const { stdout, stderr } = await execPromise(command);
-//     }

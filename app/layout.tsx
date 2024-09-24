@@ -8,6 +8,8 @@ import { Analytics } from "@vercel/analytics/react";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Footer } from "@/components/global/Footer";
 import { Navbar } from "@/components/global/Navbar";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { queryClient } from "@/lib/query";
 
 const publicSans = Roboto_Mono({ subsets: ["latin"] });
 
@@ -30,11 +32,13 @@ export default function RootLayout({
       <body className={`h-full flex flex-col ${publicSans.className}`}>
         <SessionProvider>
           <ThemeProvider>
-            <Navbar />
-            <div className="flex-grow m-4 md:m-8 lg:m-12">{children}</div>
-            <Footer />
-            <Toaster />
-            <Analytics />
+            <QueryClientProvider client={queryClient}>
+              <Navbar />
+              <div className="flex-grow m-4 md:m-8 lg:m-12">{children}</div>
+              <Footer />
+              <Toaster />
+              <Analytics />
+            </QueryClientProvider>
           </ThemeProvider>
         </SessionProvider>
       </body>

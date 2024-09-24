@@ -32,9 +32,26 @@ async function getProject(projectId: string): Promise<Project> {
     console.error("Error fetching project:", error);
     throw error;
   }
-  console.log(data);
 
   return data;
 }
 
-export { getProject, createProject };
+const searchProjects = async (searchTerm: string) => {
+  let query = supabase.from("projects").select("*");
+
+  if (searchTerm) {
+    query = query.or(
+      `title.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%`,
+    );
+  }
+
+  const { data, error } = await query;
+
+  if (error) {
+    console.error("Error searching for projects:", error);
+    throw error;
+  }
+  return data;
+};
+
+export { getProject, createProject, searchProjects };

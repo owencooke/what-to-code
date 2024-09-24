@@ -1,96 +1,102 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { Card, CardHeader } from "@/components/ui/card";
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { Search, Github } from "lucide-react";
+import ky from "ky";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { Project } from "@/types/project";
-import { useSession } from "next-auth/react";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import FeatureCard from "@/components/cards/FeatureCard";
-import FrameworkCard from "@/components/cards/FrameworkCard";
-import RepoDisplay from "@/components/github/Repo";
-import { getRepoFromTitle } from "../api/project/github";
+import { useDebouncedQuery } from "@/hooks/hooks";
 
-export default function Home() {
-  const { data: session } = useSession();
+const fetchProjects = async (searchTerm: string): Promise<Project[]> =>
+  ky.get("/api/project", { searchParams: { query: searchTerm } }).json();
 
-  const router = useRouter();
-  const [projects, setProjects] = useState<Project[]>([]);
+export default function ExplorePage() {
+  const [searchTerm, setSearchTerm] = useState("");
 
-  useEffect(() => {
-    const redirect = () => router.push("/");
-    const fetchProject = async () => {
-      try {
-        const response = await fetch(`/api/user/feed`, {
-          method: "GET",
-          headers: {
-            Authorization: "token " + session?.accessToken,
-          },
-        });
-        if (!response.ok) {
-          redirect();
-          return;
-        }
-        const projectData = await response.json();
-        setProjects(projectData);
-      } catch (error) {
-        redirect();
-      }
-    };
-    if (session?.accessToken) {
-      fetchProject();
-    }
-  }, [session?.accessToken, router]);
+  const {
+    data: projects = [],
+    isLoading,
+    error,
+    setInputValue,
+  } = useDebouncedQuery(
+    ["search", searchTerm],
+    () => fetchProjects(searchTerm),
+    500,
+  );
+
+  // Update the debounced input value when the search term changes
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+    setInputValue(e.target.value);
+  };
 
   return (
-    <div className="flex flex-col items-center justify-center">
-      <h1 className="text-7xl mt-12 mb-6">things being coded</h1>
-      <div className="m-8 w-4/5">
-        {projects.length > 0 ? (
-          projects.map((project) => (
-            <div
-              className="flex flex-col lg:flex-row gap-8 my-12"
-              key={project.description}
-            >
-              <Card className="lg:w-2/5">
-                <CardHeader>
-                  <h1 className="text-5xl my-4">{project.title}</h1>
-                  <p>{project.description}</p>
-                  {/* FIXME: repo display needs to display user from project, not necessarily current active user */}
-                  <RepoDisplay
-                    className="pt-4"
-                    repoName={getRepoFromTitle(project.title)}
-                    username={project.github_user}
-                    avatar={project.github_avatar}
-                    isClickable
-                  />
-                </CardHeader>
-              </Card>
-              <Card className="w-full lg:w-3/5">
-                <CardHeader className="gap-4 p-4">
-                  <h2 className="text-xl">Features</h2>
-                  <ScrollArea>
-                    <div className="flex gap-4">
-                      {project.features?.map((feature, i) => (
-                        <FeatureCard key={i} feature={feature} />
-                      ))}
-                    </div>
-                    <ScrollBar orientation="horizontal" />
-                  </ScrollArea>
-                  <h2 className="text-xl mt-4">Type of Project</h2>
-                  <FrameworkCard framework={project.framework} />
-                </CardHeader>
-              </Card>
-            </div>
-          ))
-        ) : (
-          <Card className="mt-8 w-4/5">
-            <CardHeader className="gap-8">
-              <>No projects found</>
-            </CardHeader>
-          </Card>
-        )}
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-4xl font-bold mb-8 text-center">
+        Things Being Coded
+      </h1>
+
+      <div className="mb-8">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+          <Input
+            type="text"
+            placeholder="Search projects..."
+            className="pl-10 w-full"
+            value={searchTerm}
+            onChange={handleInputChange}
+          />
+        </div>
       </div>
+
+      {isLoading ? (
+        <div className="text-center">Loading...</div>
+      ) : error ? (
+        <div className="text-center text-red-500">
+          Error: {(error as Error).message}
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {projects.map((project, id) => (
+            <Card key={id} className="overflow-hidden">
+              <CardContent className="p-4">
+                <div className="flex justify-between items-start mb-2">
+                  <h3 className="font-bold text-lg">{project.title}</h3>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="w-8 h-8 bg-[#f6f8fa] border-gray-300 hover:bg-[#f3f4f6]"
+                  >
+                    <Github className="w-4 h-4 text-gray-700" />
+                    <span className="sr-only">View on GitHub</span>
+                  </Button>
+                </div>
+                <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                  {project.description}
+                </p>
+
+                <div className="flex items-center justify-between text-xs text-gray-500">
+                  <div className="flex items-center">
+                    <span className="font-medium">{project.github_user}</span>
+                  </div>
+                  <div className="flex flex-wrap gap-1">
+                    {/* {project.tech.map((tech, index) => (
+                      <span
+                        key={index}
+                        className="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded text-[10px]"
+                      >
+                        {tech}
+                      </span>
+                    ))} */}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
