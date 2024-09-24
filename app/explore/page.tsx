@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Search, Github } from "lucide-react";
 import ky from "ky";
 import { Input } from "@/components/ui/input";
@@ -13,10 +13,13 @@ import { debounce } from "lodash";
 const fetchProjects = async (searchTerm: string): Promise<Project[]> =>
   ky.get("/api/project", { searchParams: { query: searchTerm } }).json();
 
-const debouncedFetchProjects = debounce(fetchProjects, 500);
-
 export default function ExplorePage() {
   const [searchTerm, setSearchTerm] = useState("");
+
+  const debouncedSearchTerm = useMemo(
+    () => debounce((value: string) => setSearchTerm(value), 500),
+    [],
+  );
 
   const {
     data: projects = [],
@@ -24,13 +27,8 @@ export default function ExplorePage() {
     error,
   } = useQuery({
     queryKey: ["search", searchTerm],
-    queryFn: () => debouncedFetchProjects(searchTerm),
+    queryFn: () => fetchProjects(searchTerm),
   });
-
-  // Update the debounced input value when the search term changes
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
-  };
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -45,8 +43,7 @@ export default function ExplorePage() {
             type="text"
             placeholder="Search projects..."
             className="pl-10 w-full"
-            value={searchTerm}
-            onChange={handleInputChange}
+            onChange={(e) => debouncedSearchTerm(e.target.value)}
           />
         </div>
       </div>
