@@ -9,6 +9,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Project } from "@/types/project";
 import { useQuery } from "@tanstack/react-query";
 import { debounce } from "lodash";
+import { Badge } from "@/components/ui/badge";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { SkeletonCard } from "@/components/cards/SkeletonCard";
+import RepoDisplay from "@/components/github/Repo";
+import { title } from "process";
+import { getRepoFromTitle } from "../api/project/github";
 
 const fetchProjects = async (searchTerm: string): Promise<Project[]> =>
   ky.get("/api/project", { searchParams: { query: searchTerm } }).json();
@@ -38,55 +44,55 @@ export default function ExplorePage() {
 
       <div className="mb-8">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
           <Input
             type="text"
             placeholder="Search projects..."
             className="pl-10 w-full"
-            onChange={(e) => debouncedSearchTerm(e.target.value)}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
       </div>
 
       {isLoading ? (
-        <div className="text-center">Loading...</div>
-      ) : error ? (
-        <div className="text-center text-red-500">
-          Error: {(error as Error).message}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {[...Array(6)].map((_, index) => (
+            <SkeletonCard key={index} />
+          ))}
         </div>
+      ) : error ? (
+        <Alert variant="destructive">
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription>{(error as Error).message}</AlertDescription>
+        </Alert>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {projects.map((project, id) => (
-            <Card key={id} className="overflow-hidden">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {projects.map((project, idx) => (
+            <Card key={idx} className="overflow-hidden">
               <CardContent className="p-4">
-                <div className="flex justify-between items-start mb-2">
-                  <h3 className="font-bold text-lg">{project.title}</h3>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="w-8 h-8 bg-[#f6f8fa] border-gray-300 hover:bg-[#f3f4f6]"
-                  >
-                    <Github className="w-4 h-4 text-gray-700" />
-                    <span className="sr-only">View on GitHub</span>
-                  </Button>
-                </div>
-                <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                <h3 className="font-bold text-lg">{project.title}</h3>
+                <p className="text-sm text-muted-foreground mb-3 line-clamp-4 md:line-clamp-2">
                   {project.description}
                 </p>
-
-                <div className="flex items-center justify-between text-xs text-gray-500">
-                  <div className="flex items-center">
-                    <span className="font-medium">{project.github_user}</span>
-                  </div>
-                  <div className="flex flex-wrap gap-1">
-                    {/* {project.tech.map((tech, index) => (
-                        <span
-                          key={index}
-                          className="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded text-[10px]"
-                        >
-                          {tech}
-                        </span>
-                      ))} */}
+                <div className="flex flex-col-reverse gap-4 md:flex-row items-center justify-start md:justify-between text-xs text-muted-foreground">
+                  <RepoDisplay
+                    className="w-full"
+                    repoName={getRepoFromTitle(title)}
+                    username={project.github_user}
+                    avatar={project.github_avatar}
+                    isClickable
+                  />
+                  <div className="flex md:justify-end flex-wrap gap-1 w-full">
+                    {project.framework.tools.slice(0, 3).map((tech, idx) => (
+                      <Badge key={idx} variant="secondary">
+                        {tech}
+                      </Badge>
+                    ))}
+                    {project.framework.tools.length > 3 && (
+                      <Badge variant="secondary">
+                        +{project.framework.tools.length - 3}
+                      </Badge>
+                    )}
                   </div>
                 </div>
               </CardContent>
