@@ -37,10 +37,7 @@ async function getProject(projectId: string): Promise<NewProject> {
 }
 
 const searchProjects = async (searchTerm: string) => {
-  let query = supabase
-    .from("projects")
-    .select("*")
-    .order("created_at", { ascending: false });
+  let query = supabase.from("random_projects").select("*");
 
   if (searchTerm) {
     query = query.or(
