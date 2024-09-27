@@ -1,7 +1,8 @@
 import { z } from "zod";
 import { FrameworkSchema, IdeaSchema } from "./idea";
 
-const ProjectSchema = IdeaSchema.pick({
+// Project not yet saved to DB
+const NewProjectSchema = IdeaSchema.pick({
   title: true,
   description: true,
 }).extend({
@@ -10,7 +11,11 @@ const ProjectSchema = IdeaSchema.pick({
   github_user: z.string(),
 });
 
+// Project created and stored in DB
+const ProjectSchema = NewProjectSchema.extend({ id: z.string() });
+
+type NewProject = z.infer<typeof NewProjectSchema>;
 type Project = z.infer<typeof ProjectSchema>;
 
-export { ProjectSchema };
-export type { Project };
+export { NewProjectSchema, ProjectSchema };
+export type { NewProject, Project };

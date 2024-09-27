@@ -1,7 +1,7 @@
 import { supabase, generateId } from "@/lib/db";
-import { Project } from "@/types/project";
+import { NewProject } from "@/types/project";
 
-async function createProject(project: Project): Promise<string> {
+async function createProject(project: NewProject): Promise<string> {
   const id = generateId();
   const { error } = await supabase
     .from("projects")
@@ -21,7 +21,7 @@ async function createProject(project: Project): Promise<string> {
   return id;
 }
 
-async function getProject(projectId: string): Promise<Project> {
+async function getProject(projectId: string): Promise<NewProject> {
   const { data, error } = await supabase
     .from("projects")
     .select("*")
@@ -37,7 +37,10 @@ async function getProject(projectId: string): Promise<Project> {
 }
 
 const searchProjects = async (searchTerm: string) => {
-  let query = supabase.from("projects").select("*");
+  let query = supabase
+    .from("projects")
+    .select("*")
+    .order("created_at", { ascending: false });
 
   if (searchTerm) {
     query = query.or(

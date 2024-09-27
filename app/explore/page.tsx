@@ -12,13 +12,14 @@ import { Badge } from "@/components/ui/badge";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { SkeletonCard } from "@/components/cards/SkeletonCard";
 import Repo from "@/components/github/Repo";
-import { title } from "process";
+import { useRouter } from "next/navigation";
 import { getRepoFromTitle } from "../api/project/github";
 
 const fetchProjects = async (searchTerm: string): Promise<Project[]> =>
   ky.get("/api/project", { searchParams: { query: searchTerm } }).json();
 
 export default function ExplorePage() {
+  const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
 
   const setDebouncedSearchTerm = useMemo(
@@ -68,7 +69,11 @@ export default function ExplorePage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {projects.map((project, idx) => (
             // Explore Page project card
-            <Card key={idx} className="overflow-hidden">
+            <Card
+              key={idx}
+              className="overflow-hidden cursor-pointer transition-colors hover:bg-border"
+              onClick={() => router.push(`/project/${project.id}`)}
+            >
               <CardContent className="p-4 flex gap-2 flex-col">
                 <h3 className="font-bold text-lg">{project.title}</h3>
                 {/* RepoDisplay for smaller screens */}

@@ -1,8 +1,8 @@
 import { supabase, generateId } from "@/lib/db";
-import { Project } from "@/types/project";
+import { NewProject } from "@/types/project";
 import axios from "axios";
 
-async function getMyProjects(userId: string): Promise<Project[]> {
+async function getMyProjects(userId: string): Promise<NewProject[]> {
   const { data, error } = await supabase
     .from("projects")
     .select("*")
@@ -17,7 +17,7 @@ async function getMyProjects(userId: string): Promise<Project[]> {
   return data;
 }
 
-async function getOtherProjects(userId: string): Promise<Project[]> {
+async function getOtherProjects(userId: string): Promise<NewProject[]> {
   const { data, error } = await supabase
     .from("projects")
     .select("*")

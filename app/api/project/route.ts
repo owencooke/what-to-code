@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { ProjectSchema } from "@/types/project";
+import { NewProjectSchema } from "@/types/project";
 import { createIssue, createRepoFromTemplate } from "./github";
 import { Feature } from "@/types/idea";
 import { createProject, searchProjects } from "./db";
@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
   const authHeader = req.headers.get("Authorization")!;
 
   // Validate project data
-  if (!ProjectSchema.safeParse(project).success) {
+  if (!NewProjectSchema.safeParse(project).success) {
     return NextResponse.json(
       { message: "Invalid project schema format" },
       { status: 400 },

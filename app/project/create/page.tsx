@@ -13,7 +13,7 @@ import { Form } from "@/components/ui/form";
 import { Idea, Feature, Framework, IdeaSchema } from "@/types/idea";
 import { useEffect, useState } from "react";
 import { useSession, signIn } from "next-auth/react";
-import { ProjectSchema, Project } from "@/types/project";
+import { NewProjectSchema, NewProject } from "@/types/project";
 import { getRepoFromTitle } from "@/app/api/project/github";
 import { AlertCircle, Github } from "lucide-react";
 import RepoDisplay from "@/components/github/Repo";
@@ -30,8 +30,8 @@ export default function Home() {
   const [idea, setIdea] = useState<Idea>();
   const [username, setUsername] = useState("");
 
-  const form = useForm<Project>({
-    resolver: zodResolver(ProjectSchema),
+  const form = useForm<NewProject>({
+    resolver: zodResolver(NewProjectSchema),
     defaultValues: {},
   });
 
@@ -89,7 +89,7 @@ export default function Home() {
     form.setValue("framework", framework);
   };
 
-  const handleSubmit = async (data: Project) => {
+  const handleSubmit = async (data: NewProject) => {
     const response = await fetch(`/api/project`, {
       method: "POST",
       headers: {

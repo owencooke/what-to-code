@@ -5,7 +5,7 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import FeatureCard from "@/components/cards/FeatureCard";
 import FrameworkCard from "@/components/cards/FrameworkCard";
 import { useEffect, useState } from "react";
-import { Project } from "@/types/project";
+import { NewProject } from "@/types/project";
 import RepoDisplay from "@/components/github/Repo";
 import { getRepoFromTitle } from "../../api/project/github";
 import { useRouter } from "next/navigation";
@@ -14,7 +14,7 @@ import { useSession } from "next-auth/react";
 export default function Home({ params }: { params: { id: string } }) {
   const router = useRouter();
   const { id } = params;
-  const [project, setProject] = useState<Project>();
+  const [project, setProject] = useState<NewProject>();
 
   useEffect(() => {
     const redirect = () => router.push("/");

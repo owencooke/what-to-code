@@ -1,5 +1,5 @@
 import { Feature, Framework } from "@/types/idea";
-import { Project } from "@/types/project";
+import { NewProject } from "@/types/project";
 import axios from "axios";
 
 const getRepoFromTitle = (title: string) =>
@@ -13,7 +13,7 @@ async function matchTemplate(framework: Framework) {
   };
 }
 
-async function createRepoFromTemplate(project: Project, authHeader: string) {
+async function createRepoFromTemplate(project: NewProject, authHeader: string) {
   console.log("AUTH HEADER", authHeader);
   const template = await matchTemplate(project.framework);
 
