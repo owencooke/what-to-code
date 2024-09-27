@@ -67,6 +67,7 @@ export default function ExplorePage() {
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {projects.map((project, idx) => (
+            // Explore Page project card
             <Card key={idx} className="overflow-hidden">
               <CardContent className="p-4">
                 <h3 className="font-bold text-lg">{project.title}</h3>
@@ -75,13 +76,12 @@ export default function ExplorePage() {
                 </p>
                 <div className="flex flex-col-reverse gap-4 md:flex-row items-center justify-start md:justify-between text-xs text-muted-foreground">
                   <RepoDisplay
-                    className="w-full"
-                    repoName={getRepoFromTitle(title)}
+                    className="w-fit"
+                    repoName={getRepoFromTitle(project.title)}
                     username={project.github_user}
-                    avatar={project.github_avatar}
                     isClickable
                   />
-                  <div className="flex md:justify-end flex-wrap gap-1 w-full">
+                  <div className="flex md:justify-end flex-wrap gap-1">
                     {project.framework.tools.slice(0, 3).map((tech, idx) => (
                       <Badge key={idx} variant="secondary">
                         {tech}

@@ -1,34 +1,32 @@
 import Link from "next/link";
+import Avatar from "./Avatar";
+import { useSession } from "next-auth/react";
 
-interface RepoDisplayProps {
+interface RepoProps {
   repoName: string;
   username: string;
-  avatar?: string;
   isClickable?: boolean;
   className?: string;
 }
 
-export default function MinimalRepoDisplay({
+export default function Repo({
   repoName,
   username,
-  avatar,
   isClickable = false,
   className,
-}: RepoDisplayProps) {
-  const AvatarComponent = () => (
-    <img
-      src={avatar || `https://github.com/${username}.png`}
-      alt={`${username}'s avatar`}
-      className="w-5 h-5 rounded-full mr-2"
-    />
+}: RepoProps) {
+  const { data: session } = useSession();
+  username = username || session?.username || "";
+
+  const AvatarAndUsername = () => (
+    <>
+      <Avatar className="w-5 h-5 rounded-full mr-2" username={username} />
+      <span className=" text-gray-600 mr-1">{username}</span>
+    </>
   );
 
-  const UsernameComponent = () => (
-    <span className=" text-gray-600 mr-1">{username}</span>
-  );
-
-  const RepoNameComponent = () => (
-    <span className="font-semibold">{repoName}</span>
+  const RepoName = () => (
+    <span className="font-semibold line-clamp-1">{repoName}</span>
   );
 
   return (
@@ -41,14 +39,10 @@ export default function MinimalRepoDisplay({
             target="_blank"
             rel="noopener noreferrer"
           >
-            <AvatarComponent />
-            <UsernameComponent />
+            <AvatarAndUsername />
           </Link>
         ) : (
-          <>
-            <AvatarComponent />
-            <UsernameComponent />
-          </>
+          <AvatarAndUsername />
         )}
         <span>/</span>
         {isClickable ? (
@@ -58,10 +52,10 @@ export default function MinimalRepoDisplay({
             target="_blank"
             rel="noopener noreferrer"
           >
-            <RepoNameComponent />
+            <RepoName />
           </Link>
         ) : (
-          <RepoNameComponent />
+          <RepoName />
         )}
       </div>
     </div>

@@ -132,10 +132,7 @@ export const Navbar = () => {
                     {isSignedIn && (
                       <>
                         <div className="flex gap-2 items-center">
-                          <GitHubAvatar
-                            avatar={session?.user?.image}
-                            className="cursor-pointer"
-                          />
+                          <GitHubAvatar className="cursor-pointer" />
                           <span className="font-medium">{greetUser()}</span>
                         </div>
                         {/* TODO: extra menu items */}
@@ -164,10 +161,7 @@ export const Navbar = () => {
             <ModeToggle />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <GitHubAvatar
-                  avatar={session?.user?.image}
-                  className="cursor-pointer"
-                />
+                <GitHubAvatar className="cursor-pointer" />
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-40" align="end">
                 {isSignedIn && (

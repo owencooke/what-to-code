@@ -46,7 +46,6 @@ export default function Home({ params }: { params: { id: string } }) {
               className="pt-4"
               repoName={getRepoFromTitle(project.title)}
               username={project.github_user}
-              avatar={project.github_avatar}
               isClickable
             />
           </CardHeader>
