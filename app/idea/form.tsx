@@ -30,6 +30,7 @@ import {
   clearIdeaCache,
   getCachedIdeas,
 } from "./utils/session";
+import useIsMobile from "@/hooks/useIsMobile";
 
 interface IdeaFormProps {
   onSubmit: (idea: Idea) => void;
@@ -45,6 +46,7 @@ const FormSchema = z.object({
 
 export function IdeaForm({ onSubmit, onClick }: IdeaFormProps) {
   const [showMore, setShowMore] = useState(false);
+  const isMobile = useIsMobile();
   const [topics, setTopics] = useState<string[]>([]);
 
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -132,8 +134,10 @@ export function IdeaForm({ onSubmit, onClick }: IdeaFormProps) {
             <div className="flex flex-col gap-4 w-[50vw] max-w-xl">
               <FormInput
                 form={form}
+                type={isMobile ? "area" : "input"}
                 name="idea"
                 placeholder="start brainstorming here..."
+                maxLength={50}
               />
               <Carousel
                 opts={{
