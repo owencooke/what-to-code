@@ -11,7 +11,7 @@ import { debounce } from "lodash";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { SkeletonCard } from "@/components/cards/SkeletonCard";
-import RepoDisplay from "@/components/github/Repo";
+import Repo from "@/components/github/Repo";
 import { title } from "process";
 import { getRepoFromTitle } from "../api/project/github";
 
@@ -69,14 +69,22 @@ export default function ExplorePage() {
           {projects.map((project, idx) => (
             // Explore Page project card
             <Card key={idx} className="overflow-hidden">
-              <CardContent className="p-4">
+              <CardContent className="p-4 flex gap-2 flex-col">
                 <h3 className="font-bold text-lg">{project.title}</h3>
-                <p className="text-sm text-muted-foreground mb-3 line-clamp-4 md:line-clamp-3">
+                {/* RepoDisplay for smaller screens */}
+                <Repo
+                  className="md:hidden block text-xs text-muted-foreground"
+                  repoName={getRepoFromTitle(project.title)}
+                  username={project.github_user}
+                  isClickable
+                />
+                <span className="text-sm text-muted-foreground mb-3 line-clamp-4 md:line-clamp-3">
                   {project.description}
-                </p>
+                </span>
                 <div className="flex flex-col-reverse gap-4 md:flex-row items-center justify-start md:justify-between text-xs text-muted-foreground">
-                  <RepoDisplay
-                    className="w-fit"
+                  {/* RepoDisplay for larger screens */}
+                  <Repo
+                    className="w-fit hidden md:block"
                     repoName={getRepoFromTitle(project.title)}
                     username={project.github_user}
                     isClickable

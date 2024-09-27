@@ -50,7 +50,8 @@ export default function CustomizableCard({
       <CardHeader>
         <CardTitle className="flex justify-between items-start gap-2">
           {title}
-          {isSelectable && (
+          {/* TODO: implement edit functionality, with saveable form modal */}
+          {/* {isSelectable && (
             <Button
               type="button"
               className="flex-shrink-0 flex-grow-0 w-9 h-9"
@@ -62,7 +63,7 @@ export default function CustomizableCard({
             >
               <Edit className="h-4 w-4" />
             </Button>
-          )}
+          )} */}
         </CardTitle>
         <CardDescription>{description}</CardDescription>
       </CardHeader>

@@ -137,7 +137,7 @@ export default function IdeaPage() {
                   disabled={!idea.features}
                   onClick={handleCreateProject}
                 >
-                  help me create this project
+                  help me start this project
                 </Button>
               </>
             )}

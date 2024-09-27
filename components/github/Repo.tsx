@@ -20,8 +20,10 @@ export default function Repo({
 
   const AvatarAndUsername = () => (
     <>
-      <Avatar className="w-5 h-5 rounded-full mr-2" username={username} />
-      <span className=" text-gray-600 mr-1">{username}</span>
+      <Avatar className="w-8 h-8 rounded-full mr-2" username={username} />
+      <span className="text-muted-foreground mr-1 whitespace-nowrap">
+        {username}
+      </span>
     </>
   );
 

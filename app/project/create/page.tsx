@@ -61,7 +61,7 @@ export default function Home() {
         form.reset({
           title: parsedIdea.data?.title,
           description: parsedIdea.data?.description,
-          features: [],
+          features: [parsedIdea.data?.features[0]],
           framework: parsedIdea.data?.frameworks[0],
         });
       } else {
