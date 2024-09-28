@@ -21,6 +21,7 @@ import { Modal } from "@/components/Modal";
 import { useToast } from "@/components/ui/use-toast";
 import { ToastAction } from "@/components/ui/toast";
 import { AlertTitle, Alert, AlertDescription } from "@/components/ui/alert";
+import MatchedRepos from "./match-repos";
 
 export default function Home() {
   const router = useRouter();
@@ -213,6 +214,9 @@ export default function Home() {
                       <ScrollBar orientation="horizontal" />
                     </ScrollArea>
                   )}
+                />
+                <MatchedRepos
+                  techDescription={form.watch("framework.description")}
                 />
 
                 <Modal

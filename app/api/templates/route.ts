@@ -6,8 +6,8 @@ import ky from "ky";
 export const runtime = "edge";
 const SIMILARITY_THRESHOLD = 0.4;
 
-export async function POST(req: NextRequest) {
-  const { techDescription } = await req.json();
+export async function GET(req: NextRequest) {
+  const techDescription = req.nextUrl.searchParams.get("techDescription");
   const authHeader = req.headers.get("Authorization")!;
 
   if (!techDescription) {
