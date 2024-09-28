@@ -163,9 +163,12 @@ if __name__ == "__main__":
     print(f"Average star count: {avg_stars:.2f}")
 
     # Write results to JSON file
-    with open("github_starter_templates.json", "w") as f:
+    json_file_path = os.path.join(
+        os.path.dirname(__file__), "output", "github_starter_templates.json"
+    )
+    with open(json_file_path, "w") as f:
         json.dump(ranked_repos, f, indent=2)
-    print("Results written to github_starter_templates.json")
+    print("Results written to", json_file_path)
 
     # Print top 10 repositories
     print("\nTop 10 starter template repositories:")
