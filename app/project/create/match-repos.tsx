@@ -17,6 +17,7 @@ import {
   CalendarIcon,
   RefreshCwIcon,
 } from "lucide-react";
+import { useSession } from "next-auth/react";
 
 interface GitHubRepo {
   url: string;
@@ -34,6 +35,7 @@ export default function MatchedRepos({
 }: {
   techDescription: string;
 }) {
+  const { data: session } = useSession();
   const [repos, setRepos] = useState<GitHubRepo[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -44,6 +46,9 @@ export default function MatchedRepos({
         const data = await ky
           .get("/api/templates", {
             searchParams: { techDescription },
+            headers: {
+              Authorization: "token " + session?.accessToken,
+            },
           })
           .json<GitHubRepo[]>();
         setRepos(data);
@@ -55,7 +60,7 @@ export default function MatchedRepos({
     };
 
     fetchRepos();
-  }, [techDescription]);
+  }, [techDescription, session]);
 
   if (loading) {
     return (
@@ -81,7 +86,7 @@ export default function MatchedRepos({
           </CardHeader>
           <CardContent className="flex-grow">
             <div className="flex flex-wrap gap-2 mb-4">
-              {repo.topics.map((topic) => (
+              {repo.topics?.map((topic) => (
                 <Badge key={topic} variant="secondary">
                   {topic}
                 </Badge>

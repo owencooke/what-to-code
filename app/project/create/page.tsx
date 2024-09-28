@@ -75,6 +75,7 @@ export default function Home() {
 
   const title = form.watch("title");
   const selectedFeatures = form.watch("features");
+  const selectedFramework = form.watch("framework");
 
   const handleToggleFeature = (feature: Feature) => {
     const updatedFeatures = selectedFeatures?.some(
@@ -198,7 +199,7 @@ export default function Home() {
                   name="framework"
                   label="How to Build It"
                   description="choose the type of platform to build and tech stack to use"
-                  type={(field) => (
+                  type={() => (
                     <ScrollArea>
                       <div className="flex">
                         {idea.frameworks?.map((framework, i) => (
@@ -207,7 +208,9 @@ export default function Home() {
                             framework={framework}
                             className="scale-90"
                             onClick={() => handleSelectFramework(framework)}
-                            selected={field.value?.title === framework.title}
+                            selected={
+                              selectedFramework.title === framework.title
+                            }
                           />
                         ))}
                       </div>
@@ -215,10 +218,17 @@ export default function Home() {
                     </ScrollArea>
                   )}
                 />
-                <MatchedRepos
-                  techDescription={form.watch("framework.description")}
+                <FormInput
+                  form={form}
+                  name="templateRepo"
+                  label="Recommended Repositories"
+                  description="skip the boilerplate code and start with a template"
+                  type={() => (
+                    <MatchedRepos
+                      techDescription={`${selectedFramework.title} ${selectedFramework.description}`}
+                    />
+                  )}
                 />
-
                 <Modal
                   title="Are you sure you want to create this project?"
                   description={`
