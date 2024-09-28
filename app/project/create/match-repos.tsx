@@ -22,6 +22,7 @@ import { useSession } from "next-auth/react";
 import { GitHubRepo } from "@/types/github";
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
+import useIsMobile from "@/hooks/useIsMobile";
 
 export default function MatchedRepos({
   techDescription,
@@ -29,6 +30,7 @@ export default function MatchedRepos({
   techDescription: string;
 }) {
   const { data: session } = useSession();
+  const isMobile = useIsMobile();
 
   const fetchRepos = async (): Promise<GitHubRepo[]> => {
     return ky
@@ -74,23 +76,28 @@ export default function MatchedRepos({
     );
   }
 
+  const topicsToShow = isMobile ? 4 : 8;
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div className="pt-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
       {repos.map((repo) => (
         <Card key={repo.url} className="flex flex-col">
           <CardHeader>
             <CardTitle className="text-lg">{repo.name}</CardTitle>
-            <CardDescription className="line-clamp-2">
-              {repo.description}
-            </CardDescription>
+            <CardDescription>{repo.description}</CardDescription>
           </CardHeader>
-          <CardContent className="flex-grow">
-            <div className="flex flex-wrap gap-2 mb-4">
-              {repo.topics?.map((topic) => (
+          <CardContent className="flex-grow items-end w-full flex">
+            <div className="flex flex-wrap gap-2 mb-4 justify-center">
+              {repo.topics.slice(0, topicsToShow).map((topic) => (
                 <Badge key={topic} variant="secondary">
                   {topic}
                 </Badge>
               ))}
+              {repo.topics.length > topicsToShow && (
+                <Badge variant="secondary">
+                  +{repo.topics.length - topicsToShow}
+                </Badge>
+              )}
             </div>
           </CardContent>
           <CardFooter className="flex flex-col items-start gap-2">

@@ -221,7 +221,7 @@ export default function Home() {
                 <FormInput
                   form={form}
                   name="templateRepo"
-                  label="Recommended Repositories"
+                  label="Recommended GitHub Repos"
                   description="skip the boilerplate code and start with a template"
                   type={() => (
                     <MatchedRepos
