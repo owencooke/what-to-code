@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/db";
 import { OpenAIEmbeddings } from "@langchain/openai";
 import ky from "ky";
+import { GitHubRepo } from "@/types/github";
 
 export const runtime = "edge";
 const SIMILARITY_THRESHOLD = 0.4;
@@ -46,7 +47,7 @@ export async function GET(req: NextRequest) {
     const repoTemplates = await Promise.all(
       templateDocuments
         .filter((template: any) => template.similarity >= SIMILARITY_THRESHOLD)
-        .map(async (template: any) => {
+        .map(async (template: any): Promise<GitHubRepo> => {
           // Extract the owner and repo name from the URL
           const { url } = template;
           const urlParts = new URL(url);

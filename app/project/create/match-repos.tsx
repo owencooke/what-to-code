@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import ky from "ky";
 import {
   Card,
@@ -11,24 +11,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import {
-  StarIcon,
-  GitForkIcon,
-  CalendarIcon,
-  RefreshCwIcon,
-} from "lucide-react";
+import { StarIcon, GitForkIcon, GithubIcon } from "lucide-react";
 import { useSession } from "next-auth/react";
-
-interface GitHubRepo {
-  url: string;
-  stars: number;
-  forks: number;
-  createdAt: string;
-  updatedAt: string;
-  topics: string[];
-  description: string;
-  name: string;
-}
+import { GitHubRepo } from "@/types/github";
+import Link from "next/link";
 
 export default function MatchedRepos({
   techDescription,
@@ -36,33 +22,29 @@ export default function MatchedRepos({
   techDescription: string;
 }) {
   const { data: session } = useSession();
-  const [repos, setRepos] = useState<GitHubRepo[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchRepos = async () => {
-      try {
-        const data = await ky
-          .get("/api/templates", {
-            searchParams: { techDescription },
-            headers: {
-              Authorization: "token " + session?.accessToken,
-            },
-          })
-          .json<GitHubRepo[]>();
-        setRepos(data);
-      } catch (err) {
-        setError("Failed to fetch repositories");
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchRepos = async (): Promise<GitHubRepo[]> => {
+    return ky
+      .get("/api/templates", {
+        searchParams: { techDescription },
+        headers: {
+          Authorization: `token ${session?.accessToken}`,
+        },
+      })
+      .json();
+  };
 
-    fetchRepos();
-  }, [techDescription, session]);
+  const {
+    data: repos,
+    isLoading,
+    error,
+  } = useQuery<GitHubRepo[], Error>({
+    queryKey: ["repos", techDescription, session?.accessToken],
+    queryFn: fetchRepos,
+    enabled: !!session?.accessToken,
+  });
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex justify-center items-center h-64">
         Loading repositories...
@@ -71,7 +53,15 @@ export default function MatchedRepos({
   }
 
   if (error) {
-    return <div className="text-red-500 text-center">{error}</div>;
+    return (
+      <div className="text-red-500 text-center">
+        Failed to fetch repositories: {error.message}
+      </div>
+    );
+  }
+
+  if (!repos || repos.length === 0) {
+    return <div className="text-center">No matching template repositories</div>;
   }
 
   return (
@@ -79,7 +69,16 @@ export default function MatchedRepos({
       {repos.map((repo) => (
         <Card key={repo.url} className="flex flex-col">
           <CardHeader>
-            <CardTitle className="text-lg">{repo.name}</CardTitle>
+            <CardTitle className="text-lg">
+              <Link
+                href={repo.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="transition-colors hover:text-secondary"
+              >
+                <GithubIcon className="inline" /> {repo.name}
+              </Link>
+            </CardTitle>
             <CardDescription className="line-clamp-2">
               {repo.description}
             </CardDescription>
@@ -104,7 +103,7 @@ export default function MatchedRepos({
                 {repo.forks}
               </span>
             </div>
-            <div className="flex items-center gap-4 text-sm text-muted-foreground">
+            {/* <div className="flex items-center gap-4 text-sm text-muted-foreground">
               <span className="flex items-center gap-1">
                 <CalendarIcon className="w-4 h-4" />
                 Created: {new Date(repo.createdAt).toLocaleDateString()}
@@ -113,7 +112,7 @@ export default function MatchedRepos({
                 <RefreshCwIcon className="w-4 h-4" />
                 Updated: {new Date(repo.updatedAt).toLocaleDateString()}
               </span>
-            </div>
+            </div> */}
           </CardFooter>
         </Card>
       ))}
