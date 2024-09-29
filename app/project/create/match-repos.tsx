@@ -17,16 +17,22 @@ import { buttonVariants } from "@/components/ui/button";
 import useIsMobile from "@/hooks/useIsMobile";
 import CustomizableCard from "@/components/cards/CustomizableCard";
 import { useState } from "react";
+import { NewProject } from "@/types/project";
 
 interface MatchedReposProps {
-  techDescription: string;
+  project: NewProject;
   onRepoClick: (templateRepo: GitHubRepo) => void;
 }
 
 const MatchedRepos: React.FC<MatchedReposProps> = ({
-  techDescription,
+  project,
   onRepoClick,
 }) => {
+  const { framework } = project;
+
+  // The content used in vector search for matching project --> template
+  const techDescription = `${framework.title} using ${framework.tools.join()}`;
+
   const { data: session } = useSession();
   const isMobile = useIsMobile();
   const [selectedRepo, setSelectedRepo] = useState<GitHubRepo | null>();
@@ -102,6 +108,7 @@ const MatchedRepos: React.FC<MatchedReposProps> = ({
                   size: "icon",
                   className: "rounded-full w-8 h-8 p-0",
                 })}
+                onClick={(e) => e.stopPropagation()}
               >
                 <GithubIcon className="h-4 w-4" />
                 <span className="sr-only">View on GitHub</span>

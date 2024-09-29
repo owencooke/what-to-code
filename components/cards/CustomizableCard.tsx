@@ -67,9 +67,7 @@ export default function CustomizableCard({
         </CardTitle>
         <CardDescription>{description}</CardDescription>
       </CardHeader>
-      <CardContent className="break-words hyphens-auto">
-        {renderContent && renderContent()}
-      </CardContent>
+      <CardContent>{renderContent && renderContent()}</CardContent>
       {renderFooter && <CardFooter>{renderFooter()}</CardFooter>}
     </Card>
   );

@@ -27,7 +27,7 @@ export async function GET(req: NextRequest) {
     });
     const embedding = await embeddings.embedQuery(query);
 
-    // Use RAG for the 3 most similar templates
+    // Use vector search for the 3 most similar templates
     const { data: templateDocuments, error } = await supabase.rpc(
       "match_templates",
       {

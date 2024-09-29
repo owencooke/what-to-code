@@ -224,7 +224,7 @@ export default function Home() {
                   type={() => (
                     <CardScrollArea>
                       <MatchedRepos
-                        techDescription={`${selectedFramework.title} ${selectedFramework.description}`}
+                        project={form.getValues()}
                         onRepoClick={handleSelectStarterRepo}
                       />
                     </CardScrollArea>
