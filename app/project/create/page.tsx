@@ -2,7 +2,6 @@
 
 import { useRouter } from "next/navigation";
 import { Card, CardHeader } from "@/components/ui/card";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import FeatureCard from "@/components/cards/FeatureCard";
 import FrameworkCard from "@/components/cards/FrameworkCard";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -23,6 +22,7 @@ import { ToastAction } from "@/components/ui/toast";
 import { AlertTitle, Alert, AlertDescription } from "@/components/ui/alert";
 import MatchedRepos from "./match-repos";
 import CardScrollArea from "@/components/cards/CardScrollArea";
+import { GitHubRepo } from "@/types/github";
 
 export default function Home() {
   const router = useRouter();
@@ -90,6 +90,10 @@ export default function Home() {
 
   const handleSelectFramework = (framework: Framework) => {
     form.setValue("framework", framework);
+  };
+
+  const handleSelectTemplateRepo = (templateRepo: GitHubRepo) => {
+    form.setValue("starterRepo", { url: templateRepo.url, isTemplate: false });
   };
 
   const handleSubmit = async (data: NewProject) => {
@@ -220,6 +224,9 @@ export default function Home() {
                     <CardScrollArea>
                       <MatchedRepos
                         techDescription={`${selectedFramework.title} ${selectedFramework.description}`}
+                        onRepoClick={(templateRepo) =>
+                          handleSelectTemplateRepo(templateRepo)
+                        }
                       />
                     </CardScrollArea>
                   )}

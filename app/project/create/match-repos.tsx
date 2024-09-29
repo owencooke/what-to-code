@@ -15,8 +15,8 @@ import {
   StarIcon,
   GitForkIcon,
   GithubIcon,
-  SearchIcon,
   RocketIcon,
+  RefreshCwIcon,
 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { GitHubRepo } from "@/types/github";
@@ -24,11 +24,15 @@ import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import useIsMobile from "@/hooks/useIsMobile";
 
-export default function MatchedRepos({
-  techDescription,
-}: {
+interface MatchedReposProps {
   techDescription: string;
-}) {
+  onRepoClick: (templateRepo: GitHubRepo) => void;
+}
+
+const MatchedRepos: React.FC<MatchedReposProps> = ({
+  techDescription,
+  onRepoClick,
+}) => {
   const { data: session } = useSession();
   const isMobile = useIsMobile();
 
@@ -119,19 +123,19 @@ export default function MatchedRepos({
                 {repo.forks}
               </span>
             </div>
-            {/* <div className="flex items-center gap-4 text-sm text-muted-foreground">
+            <div className="flex items-center gap-4 text-sm text-muted-foreground">
               <span className="flex items-center gap-1">
-                <CalendarIcon className="w-4 h-4" />
-                Created: {new Date(repo.createdAt).toLocaleDateString()}
+                <RefreshCwIcon className="w-4 h-4" />{" "}
+                {new Date(repo.updatedAt).toLocaleDateString(undefined, {
+                  dateStyle: "medium",
+                })}
               </span>
-              <span className="flex items-center gap-1">
-                <RefreshCwIcon className="w-4 h-4" />
-                Updated: {new Date(repo.updatedAt).toLocaleDateString()}
-              </span>
-            </div> */}
+            </div>
           </CardFooter>
         </Card>
       ))}
     </>
   );
-}
+};
+
+export default MatchedRepos;
