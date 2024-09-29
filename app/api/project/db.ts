@@ -3,12 +3,15 @@ import { NewProject } from "@/types/project";
 
 async function createProject(project: NewProject): Promise<string> {
   const id = generateId();
+  // Omit certain fields from DB
+  const { starterRepo, ...projectData } = project;
+
   const { error } = await supabase
     .from("projects")
     .insert([
       {
         id,
-        ...project,
+        ...projectData,
       },
     ])
     .single();

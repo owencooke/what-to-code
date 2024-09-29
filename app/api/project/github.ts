@@ -1,38 +1,31 @@
-import { Feature, Framework } from "@/types/idea";
+import { extractDetailsFromRepoUrl } from "@/lib/github";
+import { Feature } from "@/types/idea";
 import { NewProject } from "@/types/project";
-import axios from "axios";
+import ky from "ky";
+import { GitHubRepo } from "@/types/github";
 
 const getRepoFromTitle = (title: string) =>
   title.toLowerCase().replace(/\s/g, "-");
 
-async function matchTemplate(framework: Framework) {
-  // TODO: Implement the logic to match the framework to a suitable GitHub template
-  return {
-    owner: "davidsaulrodriguez",
-    repoName: "mern-stack-template",
-  };
-}
-
-async function createRepoFromTemplate(project: NewProject, authHeader: string) {
-  console.log("AUTH HEADER", authHeader);
-  const template = await matchTemplate(project.framework);
-
-  const url = `https://api.github.com/repos/${template.owner}/${template.repoName}/generate`;
-
-  const body = {
-    owner: project.github_user,
-    name: getRepoFromTitle(project.title),
-    description: project.description,
-    private: false,
-  };
-
-  const response = await axios.post(url, body, {
-    headers: {
-      Authorization: authHeader,
-      Accept: "application/vnd.github.baptiste-preview+json",
-    },
-  });
-  return response.data;
+async function createRepoFromTemplate(
+  project: NewProject,
+  authHeader: string,
+): Promise<GitHubRepo> {
+  const { owner, repoName } = extractDetailsFromRepoUrl(project.starterRepo);
+  return ky
+    .post(`https://api.github.com/repos/${owner}/${repoName}/generate`, {
+      headers: {
+        Authorization: authHeader,
+        Accept: "application/vnd.github.baptiste-preview+json",
+      },
+      json: {
+        owner: project.github_user,
+        name: getRepoFromTitle(project.title),
+        description: project.description,
+        private: false,
+      },
+    })
+    .json();
 }
 
 const composeIssueMarkdown = (feature: Feature) => {
@@ -61,21 +54,19 @@ async function createIssue(
   feature: Feature,
   authHeader: string,
 ) {
-  const url = `https://api.github.com/repos/${repoOwner}/${repoName}/issues`;
-
-  const body = {
-    title: `[STORY] ${feature.title}`,
-    body: composeIssueMarkdown(feature),
-    labels: ["enhancement"],
-  };
-
-  const response = await axios.post(url, body, {
-    headers: {
-      Authorization: authHeader,
-      Accept: "application/vnd.github.v3+json",
-    },
-  });
-  return response.data;
+  return ky
+    .post(`https://api.github.com/repos/${repoOwner}/${repoName}/issues`, {
+      headers: {
+        Authorization: authHeader,
+        Accept: "application/vnd.github.v3+json",
+      },
+      json: {
+        title: `[STORY] ${feature.title}`,
+        body: composeIssueMarkdown(feature),
+        labels: ["enhancement"],
+      },
+    })
+    .json();
 }
 
 export { createRepoFromTemplate, createIssue, getRepoFromTitle };

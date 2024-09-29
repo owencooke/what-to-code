@@ -23,6 +23,7 @@ import { AlertTitle, Alert, AlertDescription } from "@/components/ui/alert";
 import MatchedRepos from "./match-repos";
 import CardScrollArea from "@/components/cards/CardScrollArea";
 import { GitHubRepo } from "@/types/github";
+import ky from "ky";
 
 export default function Home() {
   const router = useRouter();
@@ -96,14 +97,14 @@ export default function Home() {
     form.setValue("starterRepo", starterRepo.url);
   };
 
-  const handleSubmit = async (data: NewProject) => {
-    const response = await fetch(`/api/project`, {
-      method: "POST",
+  const handleSubmit = async (projectToCreate: NewProject) => {
+    const response = await ky.post(`/api/project`, {
       headers: {
         Authorization: "token " + session?.accessToken,
       },
-      body: JSON.stringify(data),
+      json: projectToCreate,
     });
+
     if (!response.ok) {
       toast({
         variant: "destructive",
@@ -120,7 +121,7 @@ export default function Home() {
       });
       return;
     }
-    const { url, projectId } = await response.json();
+    const { url, projectId } = (await response.json()) as any;
     toast({
       title: "Congrats, you're ready to go 🚀",
       description: "Your project's GitHub repository is looking great!",

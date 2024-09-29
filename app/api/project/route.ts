@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
   // Validate project data
   if (!NewProjectSchema.safeParse(project).success) {
     return NextResponse.json(
-      { message: "Invalid project schema format" },
+      { message: "Invalid new project schema format" },
       { status: 400 },
     );
   }
@@ -35,13 +35,14 @@ export async function POST(req: NextRequest) {
     const repo = await createRepoFromTemplate(project, authHeader);
 
     // Create GitHub enhancement issues for each feature in the project
-    project.features.forEach(async (feature: Feature) => {
-      await createIssue(repo.name, project.github_user, feature, authHeader);
-    });
+    project.features.forEach(
+      async (feature: Feature) =>
+        await createIssue(repo.name, project.github_user, feature, authHeader),
+    );
 
     return NextResponse.json({
       message: `Project created and repository pushed successfully!`,
-      url: repo.html_url,
+      url: repo.url,
       projectId,
     });
   } catch (error: any) {
