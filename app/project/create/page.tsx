@@ -93,8 +93,8 @@ export default function Home() {
     form.setValue("framework", framework);
   };
 
-  const handleSelectStarterRepo = (starterRepo: GitHubRepo) => {
-    form.setValue("starterRepo", starterRepo.url);
+  const handleSelectStarterRepo = (starterRepo?: GitHubRepo) => {
+    form.setValue("starterRepo", starterRepo?.url);
   };
 
   const handleSubmit = async (projectToCreate: NewProject) => {

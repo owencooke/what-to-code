@@ -7,10 +7,32 @@ import { GitHubRepo } from "@/types/github";
 const getRepoFromTitle = (title: string) =>
   title.toLowerCase().replace(/\s/g, "-");
 
+async function createEmptyRepo(
+  project: NewProject,
+  authHeader: string,
+): Promise<GitHubRepo> {
+  return ky
+    .post(`https://api.github.com/user/repos`, {
+      headers: {
+        Authorization: authHeader,
+        Accept: "application/vnd.github.v3+json",
+      },
+      json: {
+        name: getRepoFromTitle(project.title),
+        description: project.description,
+        private: false,
+      },
+    })
+    .json();
+}
+
 async function createRepoFromTemplate(
   project: NewProject,
   authHeader: string,
 ): Promise<GitHubRepo> {
+  if (!project.starterRepo) {
+    return createEmptyRepo(project, authHeader);
+  }
   const { owner, repoName } = extractDetailsFromRepoUrl(project.starterRepo);
   return ky
     .post(`https://api.github.com/repos/${owner}/${repoName}/generate`, {

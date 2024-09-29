@@ -21,7 +21,7 @@ import { NewProject } from "@/types/project";
 
 interface MatchedReposProps {
   project: NewProject;
-  onRepoClick: (templateRepo: GitHubRepo) => void;
+  onRepoClick: (templateRepo?: GitHubRepo) => void;
 }
 
 const MatchedRepos: React.FC<MatchedReposProps> = ({
@@ -35,10 +35,10 @@ const MatchedRepos: React.FC<MatchedReposProps> = ({
 
   const { data: session } = useSession();
   const isMobile = useIsMobile();
-  const [selectedRepo, setSelectedRepo] = useState<GitHubRepo | null>();
+  const [selectedRepo, setSelectedRepo] = useState<GitHubRepo>();
 
-  const fetchRepos = async (): Promise<GitHubRepo[]> => {
-    return ky
+  const fetchRepos = async (): Promise<GitHubRepo[]> =>
+    ky
       .get("/api/templates", {
         searchParams: { techDescription },
         headers: {
@@ -46,7 +46,6 @@ const MatchedRepos: React.FC<MatchedReposProps> = ({
         },
       })
       .json();
-  };
 
   const {
     data: repos,
@@ -84,8 +83,9 @@ const MatchedRepos: React.FC<MatchedReposProps> = ({
   const topicsToShow = isMobile ? 4 : 8;
 
   const handleSelectRepo = (repo: GitHubRepo) => {
-    setSelectedRepo((prevRepo) => (prevRepo !== repo ? repo : null));
-    onRepoClick(repo);
+    const newSelectedRepo = repo !== selectedRepo ? repo : undefined;
+    setSelectedRepo(newSelectedRepo);
+    onRepoClick(newSelectedRepo);
   };
 
   return (
