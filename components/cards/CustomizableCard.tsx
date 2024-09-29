@@ -13,7 +13,7 @@ import { Edit } from "lucide-react";
 type SelectableCardProps = {
   className?: string;
   title: string;
-  description: string;
+  description: ReactNode;
   selected?: boolean;
   onSelect?: () => void;
   renderContent?: () => ReactNode;
@@ -65,7 +65,7 @@ export default function CustomizableCard({
             </Button>
           )} */}
         </CardTitle>
-        <CardDescription>{description}</CardDescription>
+        <CardDescription className="!mt-4">{description}</CardDescription>
       </CardHeader>
       <CardContent>{renderContent && renderContent()}</CardContent>
       {renderFooter && <CardFooter>{renderFooter()}</CardFooter>}

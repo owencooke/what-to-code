@@ -59,7 +59,7 @@ const MatchedRepos: React.FC<MatchedReposProps> = ({
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-48">
+      <div className="flex justify-center items-center h-48 w-full">
         <RocketIcon className="w-12 h-12 animate-bounce text-primary" />
         <span className="ml-4">Searching for matches...</span>
       </div>
@@ -68,7 +68,7 @@ const MatchedRepos: React.FC<MatchedReposProps> = ({
 
   if (error) {
     return (
-      <div className="text-red-500 flex justify-center items-center h-48">
+      <div className="text-red-500 flex justify-center items-center h-48 w-full">
         {`Failed to fetch repositories. Please try again later :(`}
       </div>
     );
@@ -76,7 +76,7 @@ const MatchedRepos: React.FC<MatchedReposProps> = ({
 
   if (!repos || repos.length === 0) {
     return (
-      <div className="flex justify-center items-center h-48">{`Sorry, we couldn't find any matching repositories :(`}</div>
+      <div className="flex justify-center items-center h-48 w-full">{`Sorry, we couldn't find any matching repositories :(`}</div>
     );
   }
 

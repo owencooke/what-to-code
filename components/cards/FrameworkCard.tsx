@@ -21,11 +21,8 @@ export default function FrameworkCard({
     <CustomizableCard
       className={className}
       title={framework.title}
-      description=""
-      selected={selected}
-      onSelect={onClick}
-      renderContent={() => (
-        <div>
+      description={
+        <span>
           {framework.description.split(" ").map((word, j) => {
             const tool = framework.tools.find(
               (tool) => toAlphaLowerCase(tool) === toAlphaLowerCase(word),
@@ -44,8 +41,10 @@ export default function FrameworkCard({
             }
             return word + " ";
           })}
-        </div>
-      )}
+        </span>
+      }
+      selected={selected}
+      onSelect={onClick}
     />
   );
 }

@@ -6,11 +6,11 @@ import { useState, useEffect, useMemo, PropsWithChildren } from "react";
 import { IdeaForm } from "./form";
 import { Button, ButtonWithLoading } from "@/components/ui/button";
 import FeatureCard from "@/components/cards/FeatureCard";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import FrameworkCard from "@/components/cards/FrameworkCard";
 import { SkeletonCard } from "@/components/cards/SkeletonCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Idea } from "@/types/idea";
+import CardScrollArea from "@/components/cards/CardScrollArea";
 
 const IdeaCard: React.FC<PropsWithChildren<{}>> = ({ children }) => (
   <Card className="w-full">
@@ -102,36 +102,30 @@ export default function IdeaPage() {
               </div>
             ) : (
               <>
-                <>
+                <div className="flex flex-col gap-2">
                   <h2>what to build</h2>
-                  <ScrollArea className="mt-4">
-                    <div className="flex gap-12">
-                      {idea.features?.length > 0 ? (
-                        idea.features.map((feature, i) => (
-                          <FeatureCard key={i} feature={feature} />
-                        ))
-                      ) : (
-                        <>{skeletonCards}</>
-                      )}
-                    </div>
-                    <ScrollBar orientation="horizontal" />
-                  </ScrollArea>
-                </>
-                <>
+                  <CardScrollArea>
+                    {idea.features?.length > 0 ? (
+                      idea.features.map((feature, i) => (
+                        <FeatureCard key={i} feature={feature} />
+                      ))
+                    ) : (
+                      <>{skeletonCards}</>
+                    )}
+                  </CardScrollArea>
+                </div>
+                <div className="flex flex-col gap-2">
                   <h2>how to build it</h2>
-                  <ScrollArea className="mt-4">
-                    <div className="flex gap-12">
-                      {idea.frameworks?.length > 0 ? (
-                        idea.frameworks.map((framework, i) => (
-                          <FrameworkCard key={i} framework={framework} />
-                        ))
-                      ) : (
-                        <>{skeletonCards}</>
-                      )}
-                    </div>
-                    <ScrollBar orientation="horizontal" />
-                  </ScrollArea>
-                </>
+                  <CardScrollArea>
+                    {idea.frameworks?.length > 0 ? (
+                      idea.frameworks.map((framework, i) => (
+                        <FrameworkCard key={i} framework={framework} />
+                      ))
+                    ) : (
+                      <>{skeletonCards}</>
+                    )}
+                  </CardScrollArea>
+                </div>
                 <Button
                   size="lg"
                   disabled={!idea.features}

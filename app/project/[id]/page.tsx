@@ -1,15 +1,14 @@
 "use client";
 
 import { Card, CardHeader } from "@/components/ui/card";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import FeatureCard from "@/components/cards/FeatureCard";
-import FrameworkCard from "@/components/cards/FrameworkCard";
 import { useEffect, useState } from "react";
 import { NewProject } from "@/types/project";
 import RepoDisplay from "@/components/github/Repo";
 import { getRepoFromTitle } from "../../api/project/github";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
+import CardScrollArea from "@/components/cards/CardScrollArea";
+import { Badge } from "@/components/ui/badge";
 
 export default function Home({ params }: { params: { id: string } }) {
   const router = useRouter();
@@ -39,9 +38,8 @@ export default function Home({ params }: { params: { id: string } }) {
       <div className="flex flex-col lg:flex-row gap-8">
         <Card className="w-full lg:w-2/5">
           <CardHeader>
-            <h1 className="text-5xl my-4">{project.title}</h1>
-            <h4>{project.description}</h4>
-            {/* FIXME: repo display needs to display user from project, not necessarily current active user */}
+            <h1 className="text-3xl md:text-4xl my-4">{project.title}</h1>
+            <p className="text-muted-foreground">{project.description}</p>
             <RepoDisplay
               className="pt-4"
               repoName={getRepoFromTitle(project.title)}
@@ -51,18 +49,21 @@ export default function Home({ params }: { params: { id: string } }) {
           </CardHeader>
         </Card>
         <Card className="w-full h-full lg:w-3/5">
-          <CardHeader className="gap-4 p-4">
-            <h2 className="text-xl">Features</h2>
-            <ScrollArea>
-              <div className="flex gap-4">
-                {project.features?.map((feature, i) => (
-                  <FeatureCard key={i} feature={feature} />
-                ))}
-              </div>
-              <ScrollBar orientation="horizontal" />
-            </ScrollArea>
-            <h2 className="text-xl mt-4">Type of Project</h2>
-            <FrameworkCard framework={project.framework} />
+          <CardHeader className="p-4">
+            <h2 className="text-xl mt-4">{project.framework.title}</h2>
+            <div className="flex flex-wrap gap-2">
+              {project.framework.tools.map((tech, idx) => (
+                <Badge key={idx} variant="secondary">
+                  {tech}
+                </Badge>
+              ))}
+            </div>
+            <h2 className="text-xl !mt-8">Features</h2>
+            <CardScrollArea>
+              {project.features?.map((feature, i) => (
+                <FeatureCard key={i} feature={feature} />
+              ))}
+            </CardScrollArea>
           </CardHeader>
         </Card>
       </div>

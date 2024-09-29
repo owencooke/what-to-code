@@ -22,11 +22,14 @@ export default function FeatureCard({
       selected={selected}
       onSelect={onClick}
       renderContent={() => (
-        <ul>
-          {feature.acceptanceCriteria.map((criteria, i) => (
-            <li key={i}>{criteria}</li>
-          ))}
-        </ul>
+        <div>
+          Acceptance Criteria
+          <ul className="text-muted-foreground">
+            {feature.acceptanceCriteria.map((criteria, i) => (
+              <li key={i}>{criteria}</li>
+            ))}
+          </ul>
+        </div>
       )}
     />
   );
