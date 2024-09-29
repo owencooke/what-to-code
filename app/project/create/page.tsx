@@ -22,6 +22,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { ToastAction } from "@/components/ui/toast";
 import { AlertTitle, Alert, AlertDescription } from "@/components/ui/alert";
 import MatchedRepos from "./match-repos";
+import CardScrollArea from "@/components/cards/CardScrollArea";
 
 export default function Home() {
   const router = useRouter();
@@ -135,8 +136,10 @@ export default function Home() {
       <form className="flex flex-col items-center justify-center">
         {idea && (
           <>
-            <h1 className="text-7xl">kickstart your idea</h1>
-            <Card className="mt-8 w-4/5">
+            <h1 className="text-5xl lg:text-6xl my-6 text-center">
+              kickstart your idea
+            </h1>
+            <Card className="mt-6 w-full max-w-6xl">
               <CardHeader className="gap-4">
                 {session ? (
                   <RepoDisplay
@@ -176,22 +179,18 @@ export default function Home() {
                   description={`${selectedFeatures?.length || 0}/${idea.features
                     ?.length} features selected`}
                   type={() => (
-                    <ScrollArea>
-                      <div className="flex">
-                        {idea.features?.map((feature, i) => (
-                          <FeatureCard
-                            key={i}
-                            feature={feature}
-                            className="scale-90"
-                            onClick={() => handleToggleFeature(feature)}
-                            selected={selectedFeatures
-                              ?.map((f) => f.title)
-                              .includes(feature.title)}
-                          />
-                        ))}
-                      </div>
-                      <ScrollBar orientation="horizontal" />
-                    </ScrollArea>
+                    <CardScrollArea>
+                      {idea.features?.map((feature, i) => (
+                        <FeatureCard
+                          key={i}
+                          feature={feature}
+                          onClick={() => handleToggleFeature(feature)}
+                          selected={selectedFeatures
+                            ?.map((f) => f.title)
+                            .includes(feature.title)}
+                        />
+                      ))}
+                    </CardScrollArea>
                   )}
                 />
                 <FormInput
@@ -200,22 +199,16 @@ export default function Home() {
                   label="How to Build It"
                   description="choose the type of platform to build and tech stack to use"
                   type={() => (
-                    <ScrollArea>
-                      <div className="flex">
-                        {idea.frameworks?.map((framework, i) => (
-                          <FrameworkCard
-                            key={i}
-                            framework={framework}
-                            className="scale-90"
-                            onClick={() => handleSelectFramework(framework)}
-                            selected={
-                              selectedFramework.title === framework.title
-                            }
-                          />
-                        ))}
-                      </div>
-                      <ScrollBar orientation="horizontal" />
-                    </ScrollArea>
+                    <CardScrollArea>
+                      {idea.frameworks?.map((framework, i) => (
+                        <FrameworkCard
+                          key={i}
+                          framework={framework}
+                          onClick={() => handleSelectFramework(framework)}
+                          selected={selectedFramework.title === framework.title}
+                        />
+                      ))}
+                    </CardScrollArea>
                   )}
                 />
                 <FormInput
@@ -224,9 +217,11 @@ export default function Home() {
                   label="Recommended GitHub Repos"
                   description="skip the boilerplate code and start with a template"
                   type={() => (
-                    <MatchedRepos
-                      techDescription={`${selectedFramework.title} ${selectedFramework.description}`}
-                    />
+                    <CardScrollArea>
+                      <MatchedRepos
+                        techDescription={`${selectedFramework.title} ${selectedFramework.description}`}
+                      />
+                    </CardScrollArea>
                   )}
                 />
                 <Modal

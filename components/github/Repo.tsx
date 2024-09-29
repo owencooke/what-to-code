@@ -21,7 +21,7 @@ export default function Repo({
   const AvatarAndUsername = () => (
     <>
       <Avatar className="w-8 h-8 rounded-full mr-2" username={username} />
-      <span className="text-muted-foreground mr-1 whitespace-nowrap">
+      <span className="text-muted-foreground whitespace-nowrap">
         {username}
       </span>
     </>
@@ -50,7 +50,7 @@ export default function Repo({
         {isClickable ? (
           <Link
             href={`https://github.com/${username}/${repoName}`}
-            className="hover:underline ml-1"
+            className="hover:underline"
             target="_blank"
             rel="noopener noreferrer"
           >

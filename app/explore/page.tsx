@@ -38,7 +38,7 @@ export default function ExplorePage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl md:text-4xl font-bold mb-8 text-center">
+      <h1 className="text-4xl md:text-5xl mb-8 text-center">
         {`what's being built?`}
       </h1>
 

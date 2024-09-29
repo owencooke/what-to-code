@@ -42,7 +42,7 @@ export default function CustomizableCard({
 
   return (
     <Card
-      className={`min-w-[24rem] text-sm ${className} ${
+      className={`min-w-[19.25rem] text-sm ${className} ${
         selected ? "[border-color:var(--accent)]" : ""
       } ${isSelectable ? "cursor-pointer" : ""}`}
       onClick={handleClick}

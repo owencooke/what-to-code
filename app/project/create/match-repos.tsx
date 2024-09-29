@@ -79,7 +79,7 @@ export default function MatchedRepos({
   const topicsToShow = isMobile ? 4 : 8;
 
   return (
-    <div className="pt-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <>
       {repos.map((repo) => (
         <Card key={repo.url} className="flex flex-col">
           <CardHeader>
@@ -132,6 +132,6 @@ export default function MatchedRepos({
           </CardFooter>
         </Card>
       ))}
-    </div>
+    </>
   );
 }
