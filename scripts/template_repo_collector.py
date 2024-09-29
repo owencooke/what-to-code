@@ -1,5 +1,4 @@
 from datetime import datetime, timedelta
-import re
 import requests
 import json
 import os
@@ -76,6 +75,8 @@ def search_github_templates(query: str, max_results: int = 500) -> List[Dict[str
             response = requests.post(url, json=graphql_query, headers=headers)
             response.raise_for_status()
             data = response.json()["data"]["search"]
+            # Only collect template repositories
+            # (o/w logic would need to be added to handle regular repositories during repo creation)
             repositories = [
                 edge["node"] for edge in data["edges"] if edge["node"]["isTemplate"]
             ]

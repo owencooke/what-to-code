@@ -52,6 +52,11 @@ def store_in_db(url: str, embedding: list):
     supabase_client.table("templates").insert(data).execute()
 
 
+def url_exists_in_db(url: str) -> bool:
+    response = supabase_client.table("templates").select("url").eq("url", url).execute()
+    return len(response.data) > 0
+
+
 def process_json_file(limit=10):
     json_file_path = os.path.join(
         os.path.dirname(__file__), "output", "github_starter_templates.json"
@@ -65,7 +70,8 @@ def process_json_file(limit=10):
     last_processed_index = 0
     try:
         for i, doc in enumerate(data[:limit]):
-            process_document(doc)
+            if not url_exists_in_db(doc["url"]):
+                process_document(doc)
             last_processed_index = i + 1
     except Exception as e:
         print(f"Error processing document: {e}")
@@ -78,7 +84,8 @@ def process_json_file(limit=10):
 
 # Run the pipeline
 if __name__ == "__main__":
-    process_json_file(100)
+    process_json_file(300)
+
 
 # Close the connection
 cursor.close()
