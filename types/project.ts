@@ -9,7 +9,7 @@ const NewProjectSchema = IdeaSchema.pick({
   features: IdeaSchema.shape.features.optional(),
   framework: FrameworkSchema,
   github_user: z.string(),
-  starterRepo: z.object({ url: z.string().url(), isTemplate: z.boolean() }),
+  starterRepo: z.string().url(),
 });
 
 // Project created and stored in DB

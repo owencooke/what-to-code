@@ -2,14 +2,6 @@
 
 import { useQuery } from "@tanstack/react-query";
 import ky from "ky";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
   StarIcon,
@@ -23,6 +15,8 @@ import { GitHubRepo } from "@/types/github";
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import useIsMobile from "@/hooks/useIsMobile";
+import CustomizableCard from "@/components/cards/CustomizableCard";
+import { useState } from "react";
 
 interface MatchedReposProps {
   techDescription: string;
@@ -35,6 +29,7 @@ const MatchedRepos: React.FC<MatchedReposProps> = ({
 }) => {
   const { data: session } = useSession();
   const isMobile = useIsMobile();
+  const [selectedRepo, setSelectedRepo] = useState<GitHubRepo | null>();
 
   const fetchRepos = async (): Promise<GitHubRepo[]> => {
     return ky
@@ -82,15 +77,48 @@ const MatchedRepos: React.FC<MatchedReposProps> = ({
 
   const topicsToShow = isMobile ? 4 : 8;
 
+  const handleSelectRepo = (repo: GitHubRepo) => {
+    setSelectedRepo((prevRepo) => (prevRepo !== repo ? repo : null));
+    onRepoClick(repo);
+  };
+
   return (
     <>
       {repos.map((repo) => (
-        <Card key={repo.url} className="flex flex-col">
-          <CardHeader>
-            <CardTitle className="text-lg">{repo.name}</CardTitle>
-            <CardDescription>{repo.description}</CardDescription>
-          </CardHeader>
-          <CardContent className="flex-grow items-end w-full flex">
+        <CustomizableCard
+          key={repo.url}
+          title={repo.name}
+          description={repo.description}
+          selected={repo.name === selectedRepo?.name}
+          onSelect={() => handleSelectRepo(repo)}
+          renderContent={() => (
+            <div className="flex items-center gap-4">
+              <Link
+                href={repo.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={buttonVariants({
+                  variant: "outline",
+                  size: "icon",
+                  className: "rounded-full w-8 h-8 p-0",
+                })}
+              >
+                <GithubIcon className="h-4 w-4" />
+                <span className="sr-only">View on GitHub</span>
+              </Link>
+              <span className="flex items-center gap-1">
+                <StarIcon className="w-4 h-4" />
+                {repo.stars}
+              </span>
+              <span className="flex items-center gap-1 text-sm text-muted-foreground">
+                <RefreshCwIcon className="w-4 h-4" />{" "}
+                {new Date(repo.updatedAt).toLocaleDateString(undefined, {
+                  dateStyle: "medium",
+                })}
+              </span>
+            </div>
+          )}
+          renderFooter={() => (
             <div className="flex flex-wrap gap-2 mb-4 justify-center">
               {repo.topics.slice(0, topicsToShow).map((topic) => (
                 <Badge key={topic} variant="secondary">
@@ -103,36 +131,8 @@ const MatchedRepos: React.FC<MatchedReposProps> = ({
                 </Badge>
               )}
             </div>
-          </CardContent>
-          <CardFooter className="flex flex-col items-start gap-2">
-            <div className="flex items-center gap-4">
-              <Link
-                href={repo.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`${buttonVariants({ variant: "link" })} !p-0`}
-              >
-                <GithubIcon className="inline" />
-              </Link>
-              <span className="flex items-center gap-1">
-                <StarIcon className="w-4 h-4" />
-                {repo.stars}
-              </span>
-              <span className="flex items-center gap-1">
-                <GitForkIcon className="w-4 h-4" />
-                {repo.forks}
-              </span>
-            </div>
-            <div className="flex items-center gap-4 text-sm text-muted-foreground">
-              <span className="flex items-center gap-1">
-                <RefreshCwIcon className="w-4 h-4" />{" "}
-                {new Date(repo.updatedAt).toLocaleDateString(undefined, {
-                  dateStyle: "medium",
-                })}
-              </span>
-            </div>
-          </CardFooter>
-        </Card>
+          )}
+        />
       ))}
     </>
   );

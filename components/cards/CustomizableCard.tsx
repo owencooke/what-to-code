@@ -70,11 +70,7 @@ export default function CustomizableCard({
       <CardContent className="break-words hyphens-auto">
         {renderContent && renderContent()}
       </CardContent>
-      {renderFooter && (
-        <CardFooter className="flex justify-between">
-          {renderFooter()}
-        </CardFooter>
-      )}
+      {renderFooter && <CardFooter>{renderFooter()}</CardFooter>}
     </Card>
   );
 }

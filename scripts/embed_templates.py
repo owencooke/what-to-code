@@ -78,7 +78,7 @@ def process_json_file(limit=10):
 
 # Run the pipeline
 if __name__ == "__main__":
-    process_json_file()
+    process_json_file(100)
 
 # Close the connection
 cursor.close()

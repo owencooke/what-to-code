@@ -92,8 +92,8 @@ export default function Home() {
     form.setValue("framework", framework);
   };
 
-  const handleSelectTemplateRepo = (templateRepo: GitHubRepo) => {
-    form.setValue("starterRepo", { url: templateRepo.url, isTemplate: false });
+  const handleSelectStarterRepo = (starterRepo: GitHubRepo) => {
+    form.setValue("starterRepo", starterRepo.url);
   };
 
   const handleSubmit = async (data: NewProject) => {
@@ -217,16 +217,14 @@ export default function Home() {
                 />
                 <FormInput
                   form={form}
-                  name="templateRepo"
+                  name="starterRepo"
                   label="Recommended GitHub Repos"
                   description="skip the boilerplate code and start with a template"
                   type={() => (
                     <CardScrollArea>
                       <MatchedRepos
                         techDescription={`${selectedFramework.title} ${selectedFramework.description}`}
-                        onRepoClick={(templateRepo) =>
-                          handleSelectTemplateRepo(templateRepo)
-                        }
+                        onRepoClick={handleSelectStarterRepo}
                       />
                     </CardScrollArea>
                   )}
