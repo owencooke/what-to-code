@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
     const projectId = await createProject(project);
 
     // Create new GitHub repo for user based on selected framework
-    const repo = await createRepoFromTemplate(project, authHeader);
+    const repo: any = await createRepoFromTemplate(project, authHeader);
 
     // Create GitHub enhancement issues for each feature in the project
     project.features.forEach(
@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       message: `Project created and repository pushed successfully!`,
-      url: repo.url,
+      url: repo.html_url,
       projectId,
     });
   } catch (error: any) {

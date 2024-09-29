@@ -231,12 +231,11 @@ export default function Home() {
                   )}
                 />
                 <Modal
-                  title="Are you sure you want to create this project?"
-                  description={`
-                    A new GitHub repository will be created with your selected features 
-                    as GitHub Issues. We'll also kickstart your repository with some code 
-                    using a template based on the type of project you chose!
-                  `}
+                  title="Create project?"
+                  description="
+                    This will create a new GitHub repository
+                    using code from the kickstarter template, if selected.
+                    GitHub issues will be used to track the features to be developed."
                   renderTrigger={() => (
                     <Button type="button" disabled={!session}>
                       create project
@@ -250,7 +249,7 @@ export default function Home() {
                     repoName={getRepoFromTitle(title)}
                     username={username}
                   />
-                  <Alert variant="destructive">
+                  {/* <Alert variant="destructive">
                     <AlertCircle className="h-4 w-4" />
                     <AlertTitle>Heads up!</AlertTitle>
                     <AlertDescription>
@@ -258,7 +257,7 @@ export default function Home() {
                       still under development and clicking this will generate a repo for the MERN stack.
                     Sign up for our email updates if you'd like to know when this feature is live!`}
                     </AlertDescription>
-                  </Alert>
+                  </Alert> */}
                 </Modal>
               </CardHeader>
             </Card>

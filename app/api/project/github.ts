@@ -26,10 +26,7 @@ async function createEmptyRepo(
     .json();
 }
 
-async function createRepoFromTemplate(
-  project: NewProject,
-  authHeader: string,
-): Promise<GitHubRepo> {
+async function createRepoFromTemplate(project: NewProject, authHeader: string) {
   if (!project.starterRepo) {
     return createEmptyRepo(project, authHeader);
   }
