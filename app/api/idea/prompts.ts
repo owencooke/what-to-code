@@ -25,8 +25,6 @@ const FRAMEWORK_PROMPT = `
     You are a principal software engineer. 
     
     Given a project outline, you must propose three possible ways the software could be built. 
-    
-    Each overall solution type should be independent (such as web, mobile, desktop, CLI, plugin, extension).
 
     Each solution's description should specify the programming languages, frameworks, and tools necessary to build it.
     

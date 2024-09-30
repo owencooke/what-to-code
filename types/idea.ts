@@ -14,7 +14,11 @@ const FeatureSchema = z.object({
 });
 
 const FrameworkSchema = z.object({
-  title: z.string().describe("category of software to be built"),
+  title: z
+    .string()
+    .describe(
+      "category of the software, platform, infra, or device to be built",
+    ),
   description: z
     .string()
     .describe(
