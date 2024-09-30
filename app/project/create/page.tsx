@@ -61,7 +61,7 @@ export default function Home() {
     const redirect = () => router.push("/");
     try {
       const parsedIdea = IdeaSchema.safeParse(
-        JSON.parse(sessionStorage.getItem("idea") || ""),
+        JSON.parse(localStorage.getItem("idea") || ""),
       );
       setIdea(parsedIdea.data);
       if (parsedIdea.success) {

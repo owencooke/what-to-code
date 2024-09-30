@@ -49,7 +49,7 @@ export default function IdeaPage() {
   };
 
   const handleCreateProject = async () => {
-    sessionStorage.setItem("idea", JSON.stringify(idea));
+    localStorage.setItem("idea", JSON.stringify(idea));
     router.push("/project/create");
   };
 
