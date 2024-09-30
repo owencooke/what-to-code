@@ -1,3 +1,5 @@
+import ky from "ky";
+
 const getAvatarUrlForUser = (username: string) =>
   `https://github.com/${username}.png`;
 
@@ -8,4 +10,16 @@ const extractDetailsFromRepoUrl = (repoUrl: string) => {
   return { owner, repoName };
 };
 
-export { getAvatarUrlForUser, extractDetailsFromRepoUrl };
+async function getUsername(authHeader: string) {
+  const user: any = await ky
+    .get("https://api.github.com/user", {
+      headers: {
+        Authorization: authHeader,
+        Accept: "application/vnd.github.v3+json",
+      },
+    })
+    .json();
+  return user.login;
+}
+
+export { getAvatarUrlForUser, extractDetailsFromRepoUrl, getUsername };

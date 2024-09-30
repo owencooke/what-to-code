@@ -1,6 +1,6 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
 import GithubProvider from "next-auth/providers/github";
-import axios from "axios";
+import { getUsername } from "@/lib/github";
 
 const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
@@ -21,14 +21,8 @@ const authOptions: NextAuthOptions = {
         token.accessToken = account.access_token;
 
         // Fetch GitHub username
-        const url = "https://api.github.com/user";
-        const response = await axios.get(url, {
-          headers: {
-            Authorization: `Bearer ${token.accessToken}`,
-            Accept: "application/vnd.github.v3+json",
-          },
-        });
-        token.username = response.data.login;
+        const username = await getUsername(token.accessToken as string);
+        token.username = username;
       }
       return token;
     },
