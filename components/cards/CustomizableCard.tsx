@@ -17,7 +17,7 @@ type SelectableCardProps = {
   description: ReactNode;
   selected?: boolean;
   onSelect?: () => void;
-  onSubmit?: () => void;
+  onSubmit?: (data: any) => void;
   renderContent?: () => ReactNode;
   renderFooter?: () => ReactNode;
   renderEditForm?: () => ReactNode;

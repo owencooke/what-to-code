@@ -98,6 +98,23 @@ export default function Home() {
     form.setValue("framework", framework);
   };
 
+  const handleUpdateFramework = (
+    oldFramework: Framework,
+    newFramework: Framework,
+  ) => {
+    console.log({ oldFramework }, { newFramework });
+    setIdea((prevIdea) => {
+      if (!prevIdea) return prevIdea;
+      return {
+        ...prevIdea,
+        frameworks: prevIdea.frameworks.map((f) =>
+          f.title === oldFramework.title ? newFramework : f,
+        ),
+      };
+    });
+    form.setValue("framework", newFramework);
+  };
+
   const handleSelectStarterRepo = (starterRepo?: GitHubRepo) => {
     form.setValue("starterRepo", starterRepo?.url);
   };
@@ -234,6 +251,9 @@ export default function Home() {
                           key={i}
                           framework={framework}
                           onClick={() => handleSelectFramework(framework)}
+                          onSubmit={(newFramework: Framework) =>
+                            handleUpdateFramework(framework, newFramework)
+                          }
                           selected={selectedFramework.title === framework.title}
                         />
                       ))}

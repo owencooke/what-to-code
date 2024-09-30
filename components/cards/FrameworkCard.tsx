@@ -11,6 +11,7 @@ type FrameworkCardProps = {
   framework: Framework;
   selected?: boolean;
   onClick?: () => void;
+  onSubmit?: (framework: Framework) => void;
 };
 
 export default function FrameworkCard({
@@ -18,6 +19,7 @@ export default function FrameworkCard({
   framework,
   selected = false,
   onClick,
+  onSubmit = () => {},
 }: FrameworkCardProps) {
   const form = useForm({
     defaultValues: {
@@ -26,20 +28,13 @@ export default function FrameworkCard({
     },
   });
 
-  const onSubmit = (data: any) => {
-    console.log("Form submitted:", data);
-  };
-
-  const title = form.watch("title");
-  const description = form.watch("description");
-
   return (
     <CustomizableCard
       className={className}
-      title={title}
+      title={framework.title}
       description={
         <span>
-          {description.split(" ").map((word, j) => {
+          {framework.description.split(" ").map((word, j) => {
             const tool = framework.tools.find(
               (tool) => toAlphaLowerCase(tool) === toAlphaLowerCase(word),
             );
@@ -79,7 +74,14 @@ export default function FrameworkCard({
           </form>
         </Form>
       )}
-      onSubmit={form.handleSubmit(onSubmit)}
+      onSubmit={() => {
+        const data = form.getValues();
+        onSubmit({
+          ...framework,
+          title: data.title,
+          description: data.description,
+        });
+      }}
     />
   );
 }

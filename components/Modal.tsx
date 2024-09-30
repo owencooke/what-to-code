@@ -16,7 +16,7 @@ interface ModalProps {
   description?: string;
   renderTrigger: (props: { open: () => void }) => React.ReactNode;
   children?: ReactNode;
-  onSubmit: () => void;
+  onSubmit: (data: any) => void;
   actionText?: string;
 }
 
