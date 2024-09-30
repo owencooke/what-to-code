@@ -32,10 +32,14 @@ export default function Home() {
 
   const [idea, setIdea] = useState<Idea>();
   const [username, setUsername] = useState("");
+  const [shouldValidate, setShouldValidate] = useState(false);
 
   const form = useForm<NewProject>({
     resolver: zodResolver(NewProjectSchema),
     defaultValues: {},
+    mode: "onSubmit",
+    reValidateMode: "onChange",
+    criteriaMode: "firstError",
   });
 
   useEffect(() => {
@@ -86,7 +90,8 @@ export default function Home() {
       ? selectedFeatures?.filter((f) => f.title !== feature.title)
       : [...(selectedFeatures || []), feature];
 
-    form.setValue("features", updatedFeatures);
+    form.setValue("features", updatedFeatures, { shouldValidate });
+    form.clearErrors("features");
   };
 
   const handleSelectFramework = (framework: Framework) => {
@@ -97,7 +102,9 @@ export default function Home() {
     form.setValue("starterRepo", starterRepo?.url);
   };
 
-  const handleSubmit = async (projectToCreate: NewProject) => {
+  const onSubmit = async (projectToCreate: NewProject) => {
+    setShouldValidate(true);
+
     const response = await ky.post(`/api/project`, {
       headers: {
         Authorization: "token " + session?.accessToken,
@@ -113,7 +120,7 @@ export default function Home() {
         action: (
           <ToastAction
             altText="Try again"
-            onClick={form.handleSubmit(handleSubmit)}
+            onClick={form.handleSubmit(onSubmit, onError)}
           >
             Try again
           </ToastAction>
@@ -134,6 +141,23 @@ export default function Home() {
       ),
     });
     router.push(`/project/${projectId}`);
+  };
+
+  // Show toast notification on form validation error
+  const onError = (errors: any) => {
+    // Extract the first error message
+    const firstError: any = Object.values(errors)[0];
+    const errorMessage =
+      firstError?.message ||
+      "Please correct the highlighted errors and try again.";
+
+    toast({
+      variant: "destructive",
+      title: "Invalid Form",
+      description: errorMessage,
+    });
+
+    console.log(errors);
   };
 
   return (
@@ -241,7 +265,7 @@ export default function Home() {
                       create project
                     </Button>
                   )}
-                  onSubmit={form.handleSubmit(handleSubmit)}
+                  onSubmit={form.handleSubmit(onSubmit, onError)}
                   actionText="Create"
                 >
                   <RepoDisplay

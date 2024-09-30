@@ -6,7 +6,10 @@ const NewProjectSchema = IdeaSchema.pick({
   title: true,
   description: true,
 }).extend({
-  features: IdeaSchema.shape.features.optional(),
+  features: IdeaSchema.shape.features.min(
+    1,
+    "You need to build at least one feature!",
+  ),
   framework: FrameworkSchema,
   github_user: z.string(),
   starterRepo: z.string().url().optional(),
