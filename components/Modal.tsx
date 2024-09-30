@@ -43,7 +43,9 @@ export function Modal({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={onSubmit}>{actionText}</AlertDialogAction>
+          <AlertDialogAction>
+            <div onClick={onSubmit}>{actionText}</div>
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
