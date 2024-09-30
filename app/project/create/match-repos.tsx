@@ -3,13 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import ky from "ky";
 import { Badge } from "@/components/ui/badge";
-import {
-  StarIcon,
-  GitForkIcon,
-  GithubIcon,
-  RocketIcon,
-  RefreshCwIcon,
-} from "lucide-react";
+import { StarIcon, GithubIcon, RocketIcon, RefreshCwIcon } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { GitHubRepo } from "@/types/github";
 import Link from "next/link";
@@ -76,7 +70,11 @@ const MatchedRepos: React.FC<MatchedReposProps> = ({
 
   if (!repos || repos.length === 0) {
     return (
-      <div className="flex justify-center items-center h-48 w-full">{`Sorry, we couldn't find any matching repositories :(`}</div>
+      <div className="flex justify-center items-center h-48 w-full text-sm">
+        {session?.user
+          ? `Sorry, we couldn't find any matching repositories :(`
+          : `Sign in with GitHub to see recommended templates :)`}
+      </div>
     );
   }
 

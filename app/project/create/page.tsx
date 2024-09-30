@@ -157,8 +157,7 @@ export default function Home() {
                     type="button"
                     onClick={() => !session && signIn("github")}
                   >
-                    <Github className="mr-2 h-4 w-4" /> Sign in with GitHub to
-                    Create a Repository
+                    <Github className="mr-2 h-4 w-4" /> Sign in with GitHub
                   </Button>
                 )}
                 {/* TODO: AI generated unique name button */}

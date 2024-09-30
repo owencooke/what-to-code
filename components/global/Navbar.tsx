@@ -13,7 +13,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Menu } from "lucide-react";
 import { useMemo } from "react";
 import {
@@ -132,7 +132,7 @@ export const Navbar = () => {
                     {isSignedIn && (
                       <>
                         <div className="flex gap-2 items-center">
-                          <GitHubAvatar className="cursor-pointer" />
+                          <GitHubAvatar />
                           <span className="font-medium">{greetUser()}</span>
                         </div>
                         {/* TODO: extra menu items */}
@@ -140,12 +140,13 @@ export const Navbar = () => {
                         <MenuItem logo={<Settings />} text="Settings" /> */}
                       </>
                     )}
-                    <div
+                    <Button
+                      variant="ghost"
                       onClick={handleAuthAction}
                       className="flex items-center"
                     >
                       {authMenuItem}
-                    </div>
+                    </Button>
                   </div>
                 </div>
               </SheetContent>
