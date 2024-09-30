@@ -81,7 +81,6 @@ export default function ExplorePage() {
                   className="md:hidden block text-xs text-muted-foreground"
                   repoName={getRepoFromTitle(project.title)}
                   username={project.github_user}
-                  isClickable
                 />
                 <span className="text-sm text-muted-foreground mb-3 line-clamp-4 md:line-clamp-3">
                   {project.description}
@@ -92,7 +91,6 @@ export default function ExplorePage() {
                     className="w-fit hidden md:block"
                     repoName={getRepoFromTitle(project.title)}
                     username={project.github_user}
-                    isClickable
                   />
                   <div className="flex md:justify-end flex-wrap gap-1">
                     {project.framework.tools.slice(0, 3).map((tech, idx) => (

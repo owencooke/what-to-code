@@ -16,7 +16,7 @@ const GitHubAvatar = forwardRef<HTMLDivElement, GitHubAvatarProps>(
     return (
       <Avatar ref={ref} className={`${className}`} {...props}>
         <AvatarImage
-          src={getAvatarUrlForUser(username || session?.username || "")}
+          src={getAvatarUrlForUser(username || session?.user.username || "")}
           alt={`GitHub Profile Picture for ${username}`}
         />
         <AvatarFallback>

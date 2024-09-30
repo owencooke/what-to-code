@@ -11,6 +11,10 @@ const extractDetailsFromRepoUrl = (repoUrl: string) => {
 };
 
 async function getUsername(authHeader: string) {
+  if (!authHeader.startsWith("Bearer ")) {
+    authHeader = `Bearer ${authHeader}`;
+  }
+
   const user: any = await ky
     .get("https://api.github.com/user", {
       headers: {

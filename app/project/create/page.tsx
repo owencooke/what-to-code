@@ -40,8 +40,8 @@ export default function Home() {
 
   useEffect(() => {
     const fetchUsername = async () => {
-      if (session?.username) {
-        setUsername(session?.username);
+      if (session?.user.username) {
+        setUsername(session?.user.username);
       }
     };
 
@@ -181,8 +181,9 @@ export default function Home() {
                   form={form}
                   name="features"
                   label="What To Develop"
-                  description={`${selectedFeatures?.length || 0}/${idea.features
-                    ?.length} features selected`}
+                  description={`${selectedFeatures?.length || 0}/${
+                    idea.features?.length
+                  } features selected`}
                   type={() => (
                     <CardScrollArea>
                       {idea.features?.map((feature, i) => (

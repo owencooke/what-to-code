@@ -16,7 +16,7 @@ export default function Repo({
   className,
 }: RepoProps) {
   const { data: session } = useSession();
-  username = username || session?.username || "";
+  username = username || session?.user.username || "";
 
   const AvatarAndUsername = () => (
     <>
