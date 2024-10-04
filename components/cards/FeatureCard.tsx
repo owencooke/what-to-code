@@ -52,9 +52,11 @@ export default function FeatureCard({
             placeholder="What is being built?"
           />
           <FormInput
+            className="h-[7rem]"
             form={form}
             name="userStory"
             label="User Story"
+            type="area"
             placeholder="As a <user>, I want <goal>, so that <reason>"
           />
           <div>
@@ -64,6 +66,7 @@ export default function FeatureCard({
                 <FormInput
                   key={i}
                   form={form}
+                  type="area"
                   name={`acceptanceCriteria[${i}]`}
                   placeholder="What must the feature do to meet the user's goal?"
                 />

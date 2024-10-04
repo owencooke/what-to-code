@@ -24,7 +24,7 @@ interface ModalProps {
 
 export function Modal({
   title,
-  description,
+  description = "",
   renderTrigger,
   children,
   form,

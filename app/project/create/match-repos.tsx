@@ -50,6 +50,7 @@ const MatchedRepos: React.FC<MatchedReposProps> = ({
     queryFn: fetchRepos,
     enabled: !!session?.accessToken,
     retry: false,
+    refetchOnWindowFocus: false,
   });
 
   if (isLoading) {

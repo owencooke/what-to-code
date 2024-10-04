@@ -75,9 +75,11 @@ export default function FrameworkCard({
             placeholder="What kind of software?"
           />
           <FormInput
+            className="h-[10rem]"
             form={form}
             name="description"
             label="Description"
+            type="area"
             placeholder="How is it being built?"
           />
         </>

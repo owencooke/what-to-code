@@ -76,7 +76,7 @@ export default function CustomizableCard({
               >
                 {
                   <Form {...form}>
-                    <form className="flex flex-col gap-4">
+                    <form className="flex flex-col gap-4 text-left">
                       {renderEditFormFields()}
                     </form>
                   </Form>
