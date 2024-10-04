@@ -60,7 +60,7 @@ export default function CustomizableCard({
             {title}
             {isEditable && (
               <Modal
-                title={`Edit ${title}`}
+                title="Edit Card"
                 renderTrigger={() => (
                   <Button
                     type="button"
@@ -72,10 +72,13 @@ export default function CustomizableCard({
                 )}
                 form={form}
                 onSubmit={onSubmitForm}
+                actionText="Save"
               >
                 {
                   <Form {...form}>
-                    <form>{renderEditFormFields()}</form>
+                    <form className="flex flex-col gap-4">
+                      {renderEditFormFields()}
+                    </form>
                   </Form>
                 }
               </Modal>

@@ -94,6 +94,24 @@ export default function Home() {
     form.clearErrors("features");
   };
 
+  const handleUpdateFeature = (oldFeature: Feature, newFeature: Feature) => {
+    setIdea((prevIdea) => {
+      if (!prevIdea) return prevIdea;
+      return {
+        ...prevIdea,
+        features: prevIdea.features.map((f) =>
+          f.title === oldFeature.title ? newFeature : f,
+        ),
+      };
+    });
+    form.setValue(
+      "features",
+      form
+        .getValues()
+        .features.map((f) => (f.title === oldFeature.title ? newFeature : f)),
+    );
+  };
+
   const handleSelectFramework = (framework: Framework) => {
     form.setValue("framework", framework);
   };
@@ -102,7 +120,6 @@ export default function Home() {
     oldFramework: Framework,
     newFramework: Framework,
   ) => {
-    console.log({ oldFramework }, { newFramework });
     setIdea((prevIdea) => {
       if (!prevIdea) return prevIdea;
       return {
@@ -234,6 +251,9 @@ export default function Home() {
                           selected={selectedFeatures
                             ?.map((f) => f.title)
                             .includes(feature.title)}
+                          onSubmit={(newFeature: Feature) =>
+                            handleUpdateFeature(feature, newFeature)
+                          }
                         />
                       ))}
                     </CardScrollArea>

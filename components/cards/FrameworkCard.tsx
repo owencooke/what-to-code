@@ -72,13 +72,13 @@ export default function FrameworkCard({
             form={form}
             name="title"
             label="Title"
-            placeholder="Enter title"
+            placeholder="What kind of software?"
           />
           <FormInput
             form={form}
             name="description"
             label="Description"
-            placeholder="Enter description"
+            placeholder="How is it being built?"
           />
         </>
       )}
