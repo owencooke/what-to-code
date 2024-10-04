@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, useMemo } from "react";
 import {
   Card,
   CardContent,
@@ -10,6 +10,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Edit } from "lucide-react";
 import { Modal } from "@/components/Modal";
+import { UseFormReturn } from "react-hook-form";
+import { Form } from "../ui/form";
 
 type SelectableCardProps = {
   className?: string;
@@ -17,10 +19,11 @@ type SelectableCardProps = {
   description: ReactNode;
   selected?: boolean;
   onSelect?: () => void;
-  onSubmit?: (data: any) => void;
   renderContent?: () => ReactNode;
   renderFooter?: () => ReactNode;
-  renderEditForm?: () => ReactNode;
+  form?: UseFormReturn<any, any, any>;
+  renderEditFormFields?: () => ReactNode;
+  onSubmitForm?: (data: any) => void;
 };
 
 export default function CustomizableCard({
@@ -29,10 +32,11 @@ export default function CustomizableCard({
   description,
   selected = false,
   onSelect,
-  onSubmit,
   renderContent,
   renderFooter,
-  renderEditForm,
+  form,
+  renderEditFormFields,
+  onSubmitForm,
 }: SelectableCardProps) {
   const handleClick = () => {
     if (isSelectable) {
@@ -40,8 +44,8 @@ export default function CustomizableCard({
     }
   };
 
-  const isEditable = !!renderEditForm;
-  const isSelectable = !!onSelect;
+  const isEditable = form && !!onSubmitForm && !!renderEditFormFields;
+  const isSelectable = useMemo(() => !!onSelect, [onSelect]);
 
   return (
     <>
@@ -66,9 +70,14 @@ export default function CustomizableCard({
                     <Edit className="h-4 w-4" />
                   </Button>
                 )}
-                onSubmit={onSubmit || (() => {})}
+                form={form}
+                onSubmit={onSubmitForm}
               >
-                {renderEditForm && renderEditForm()}
+                {
+                  <Form {...form}>
+                    <form>{renderEditFormFields()}</form>
+                  </Form>
+                }
               </Modal>
             )}
           </CardTitle>

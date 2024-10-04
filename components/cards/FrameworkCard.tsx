@@ -4,7 +4,6 @@ import { toAlphaLowerCase } from "@/lib/utils";
 import tools from "@/app/idea/data/tools";
 import { useForm } from "react-hook-form";
 import FormInput from "@/components/FormInput";
-import { Form } from "../ui/form";
 
 type FrameworkCardProps = {
   className?: string;
@@ -27,6 +26,15 @@ export default function FrameworkCard({
       description: framework.description,
     },
   });
+
+  const handleSubmit = () => {
+    const data = form.getValues();
+    onSubmit({
+      ...framework,
+      title: data.title,
+      description: data.description,
+    });
+  };
 
   return (
     <CustomizableCard
@@ -56,32 +64,24 @@ export default function FrameworkCard({
       }
       selected={selected}
       onSelect={onClick}
-      renderEditForm={() => (
-        <Form {...form}>
-          <form>
-            <FormInput
-              form={form}
-              name="title"
-              label="Title"
-              placeholder="Enter title"
-            />
-            <FormInput
-              form={form}
-              name="description"
-              label="Description"
-              placeholder="Enter description"
-            />
-          </form>
-        </Form>
+      form={form}
+      onSubmitForm={handleSubmit}
+      renderEditFormFields={() => (
+        <>
+          <FormInput
+            form={form}
+            name="title"
+            label="Title"
+            placeholder="Enter title"
+          />
+          <FormInput
+            form={form}
+            name="description"
+            label="Description"
+            placeholder="Enter description"
+          />
+        </>
       )}
-      onSubmit={() => {
-        const data = form.getValues();
-        onSubmit({
-          ...framework,
-          title: data.title,
-          description: data.description,
-        });
-      }}
     />
   );
 }
