@@ -1,6 +1,5 @@
 import CustomizableCard from "./CustomizableCard";
 import { Framework } from "@/types/idea";
-import { Badge } from "@/components/ui/badge";
 import { toAlphaLowerCase } from "@/lib/utils";
 import tools from "@/app/idea/data/tools";
 
@@ -34,14 +33,12 @@ export default function FrameworkCard({
             if (tool && tools.includes(tool)) {
               const punctuation = word.match(/[^a-zA-Z0-9]+$/)?.[0] || "";
               return (
-                <span key={`tool-${j}`}>
-                  <Badge variant="secondary" className="ml-px mr-1">
-                    {punctuation ? word.slice(0, -punctuation.length) : word}
-                    <i
-                      className={`ml-2 devicon-${tool}-original ml-2 devicon-${tool}-plain colored`}
-                    ></i>
-                  </Badge>
-                  {punctuation && punctuation + " "}
+                <span key={`tool-${j}`} className="font-semibold">
+                  {punctuation ? word.slice(0, -punctuation.length) : word}
+                  <i
+                    className={`ml-2 devicon-${tool}-original ml-2 devicon-${tool}-plain colored`}
+                  ></i>
+                  {punctuation + " "}
                 </span>
               );
             }

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import GitHubAvatar from "./Avatar";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { buttonVariants } from "../ui/button";
+import { buttonVariants } from "@/components/ui/button";
 
 interface RepoDisplayProps {
   repoName: string;
@@ -29,10 +29,7 @@ const RepoDisplay: React.FC<RepoDisplayProps> = ({
   return (
     <div className={`grid grid-cols-[auto_1fr] gap-2 text-sm ${className}`}>
       {!isClickable && (
-        <>
-          <span className="font-semibold">GitHub</span>
-          <span className="font-semibold">Repository Name</span>
-        </>
+        <span className="font-semibold text-base col-span-2">GitHub Repo</span>
       )}
       <div className="flex items-center">
         {isClickable ? (

@@ -55,7 +55,7 @@ export default function Home() {
               <Card className="lg:w-2/5">
                 <CardHeader>
                   <h1 className="text-5xl my-4">{project.title}</h1>
-                  <h4>{project.description}</h4>
+                  <p>{project.description}</p>
                   {/* FIXME: repo display needs to display user from project, not necessarily current active user */}
                   <RepoDisplay
                     className="pt-4"

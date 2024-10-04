@@ -1,14 +1,15 @@
 "use client";
 
 import "./globals.css";
-import { Public_Sans } from "next/font/google";
+import { Roboto_Mono } from "next/font/google";
 import { SessionProvider } from "next-auth/react";
-import Navbar from "@/components/Navbar";
 import { Toaster } from "@/components/ui/toaster";
-import Footer from "@/components/Footer";
 import { Analytics } from "@vercel/analytics/react";
+import { ThemeProvider } from "@/components/theme-provider";
+import { Footer } from "@/components/global/Footer";
+import { Navbar } from "@/components/global/Navbar";
 
-const publicSans = Public_Sans({ subsets: ["latin"] });
+const publicSans = Roboto_Mono({ subsets: ["latin"] });
 
 export default function RootLayout({
   children,
@@ -28,11 +29,13 @@ export default function RootLayout({
       </head>
       <body className={`h-full flex flex-col ${publicSans.className}`}>
         <SessionProvider>
-          <Navbar />
-          <div className="flex-grow m-4 md:m-8 lg:m-12">{children}</div>
-          <Footer />
-          <Toaster />
-          <Analytics />
+          <ThemeProvider>
+            <Navbar />
+            <div className="flex-grow m-4 md:m-8 lg:m-12">{children}</div>
+            <Footer />
+            <Toaster />
+            <Analytics />
+          </ThemeProvider>
         </SessionProvider>
       </body>
     </html>

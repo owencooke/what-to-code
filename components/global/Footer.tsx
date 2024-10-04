@@ -1,11 +1,10 @@
-import Waitlist from "./Waitlist";
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 
-export default function Footer() {
+export function Footer() {
   return (
-    <div className="flex flex-col md:flex-row justify-between items-center px-8 py-4 border-t">
-      <div className="text-sm">
+    <div className="flex flex-col md:flex-row justify-center items-center px-8 py-4 border-t bg-muted">
+      <div className="text-sm text-center">
         being 🔨 by{" "}
         <Link
           className={`${buttonVariants({ variant: "link" })} !px-0`}
@@ -20,10 +19,6 @@ export default function Footer() {
         >
           Zack Dorward
         </Link>
-      </div>
-      <div className="flex flex-col md:flex-row items-center gap-2 text-sm">
-        <span>{"be the first to know what's new"}</span>
-        <Waitlist />
       </div>
     </div>
   );
