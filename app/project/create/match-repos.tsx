@@ -51,6 +51,7 @@ const MatchedRepos: React.FC<MatchedReposProps> = ({
     enabled: !!session?.accessToken,
     retry: false,
     refetchOnWindowFocus: false,
+    staleTime: Infinity,
   });
 
   if (isLoading) {

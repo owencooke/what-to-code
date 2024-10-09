@@ -39,9 +39,7 @@ export function Modal({
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>
-          {description && (
-            <AlertDialogDescription>{description}</AlertDialogDescription>
-          )}
+          <AlertDialogDescription>{description}</AlertDialogDescription>
           {children}
         </AlertDialogHeader>
         <AlertDialogFooter>

@@ -280,7 +280,7 @@ export default function Home() {
                     </CardScrollArea>
                   )}
                 />
-                <FormInput
+                {/* <FormInput
                   form={form}
                   name="starterRepo"
                   label="Recommended GitHub Repos"
@@ -293,7 +293,7 @@ export default function Home() {
                       />
                     </CardScrollArea>
                   )}
-                />
+                /> */}
                 <Modal
                   title="Create project?"
                   description="

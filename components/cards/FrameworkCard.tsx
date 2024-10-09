@@ -4,6 +4,7 @@ import { toAlphaLowerCase } from "@/lib/utils";
 import tools from "@/app/idea/data/tools";
 import { useForm } from "react-hook-form";
 import FormInput from "@/components/FormInput";
+import { useEffect } from "react";
 
 type FrameworkCardProps = {
   className?: string;
@@ -26,6 +27,10 @@ export default function FrameworkCard({
       description: framework.description,
     },
   });
+
+  useEffect(() => {
+    form.reset({ ...framework });
+  }, [framework, form]);
 
   const handleSubmit = () => {
     const data = form.getValues();
