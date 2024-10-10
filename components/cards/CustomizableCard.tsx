@@ -1,3 +1,4 @@
+import { ReactNode, useMemo } from "react";
 import {
   Card,
   CardContent,
@@ -7,17 +8,22 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useMemo, useState, ReactNode } from "react";
 import { Edit } from "lucide-react";
+import { Modal } from "@/components/Modal";
+import { UseFormReturn } from "react-hook-form";
+import { Form } from "../ui/form";
 
 type SelectableCardProps = {
   className?: string;
   title: string;
-  description: string;
+  description: ReactNode;
   selected?: boolean;
   onSelect?: () => void;
   renderContent?: () => ReactNode;
   renderFooter?: () => ReactNode;
+  form?: UseFormReturn<any, any, any>;
+  renderEditFormFields?: () => ReactNode;
+  onSubmitForm?: (data: any) => void;
 };
 
 export default function CustomizableCard({
@@ -28,52 +34,61 @@ export default function CustomizableCard({
   onSelect,
   renderContent,
   renderFooter,
+  form,
+  renderEditFormFields,
+  onSubmitForm,
 }: SelectableCardProps) {
-  const isSelectable = useMemo(
-    () => typeof onSelect === "function",
-    [onSelect],
-  );
-
   const handleClick = () => {
     if (isSelectable) {
       onSelect && onSelect();
     }
   };
 
+  const isEditable = form && !!onSubmitForm && !!renderEditFormFields;
+  const isSelectable = useMemo(() => !!onSelect, [onSelect]);
+
   return (
-    <Card
-      className={`min-w-[24rem] text-sm ${className} ${
-        selected ? "[border-color:var(--accent)]" : ""
-      } ${isSelectable ? "cursor-pointer" : ""}`}
-      onClick={handleClick}
-    >
-      <CardHeader>
-        <CardTitle className="flex justify-between items-start gap-2">
-          {title}
-          {isSelectable && (
-            <Button
-              type="button"
-              className="flex-shrink-0 flex-grow-0 w-9 h-9"
-              size="icon"
-              onClick={(e) => {
-                e.stopPropagation();
-                console.log("edit");
-              }}
-            >
-              <Edit className="h-4 w-4" />
-            </Button>
-          )}
-        </CardTitle>
-        <CardDescription>{description}</CardDescription>
-      </CardHeader>
-      <CardContent className="break-words hyphens-auto">
-        {renderContent && renderContent()}
-      </CardContent>
-      {renderFooter && (
-        <CardFooter className="flex justify-between">
-          {renderFooter()}
-        </CardFooter>
-      )}
-    </Card>
+    <>
+      <Card
+        className={`min-w-[19.25rem] text-sm ${className} ${
+          selected ? "[border-color:var(--accent)]" : ""
+        } ${isSelectable ? "cursor-pointer" : ""}`}
+        onClick={handleClick}
+      >
+        <CardHeader>
+          <CardTitle className="flex justify-between items-start gap-2">
+            {title}
+            {isEditable && (
+              <Modal
+                title="Edit Card"
+                renderTrigger={() => (
+                  <Button
+                    type="button"
+                    className="flex-shrink-0 flex-grow-0 w-9 h-9"
+                    size="icon"
+                  >
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                )}
+                form={form}
+                onSubmit={onSubmitForm}
+                actionText="Save"
+              >
+                {
+                  <Form {...form}>
+                    <form className="flex flex-col gap-4 text-left">
+                      {renderEditFormFields()}
+                    </form>
+                  </Form>
+                }
+              </Modal>
+            )}
+          </CardTitle>
+          <CardDescription className="!mt-4">{description}</CardDescription>
+        </CardHeader>
+        <CardContent>{renderContent && renderContent()}</CardContent>
+        {renderFooter && <CardFooter>{renderFooter()}</CardFooter>}
+      </Card>
+    </>
   );
 }

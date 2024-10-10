@@ -1,8 +1,7 @@
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
-import { ReloadIcon } from "@radix-ui/react-icons";
-
+import { LoaderPinwheel } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 
@@ -93,7 +92,7 @@ const ButtonWithLoading = React.forwardRef<
       >
         {isLoading ? (
           <>
-            <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+            <LoaderPinwheel className="mr-2 h-4 w-4 animate-spin" />
             {loadingText}
           </>
         ) : (

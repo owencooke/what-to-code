@@ -19,6 +19,7 @@ interface FormInputProps {
   label?: string;
   placeholder?: string;
   description?: string;
+  maxLength?: number;
 }
 
 const FormInput: React.FC<FormInputProps> = ({
@@ -29,6 +30,7 @@ const FormInput: React.FC<FormInputProps> = ({
   label,
   placeholder,
   description,
+  maxLength,
 }) => {
   return (
     <FormField
@@ -47,12 +49,14 @@ const FormInput: React.FC<FormInputProps> = ({
               <Input
                 className={className}
                 placeholder={placeholder}
+                maxLength={maxLength}
                 {...field}
               />
             ) : (
               <Textarea
                 className={className}
                 placeholder={placeholder}
+                maxLength={maxLength}
                 {...field}
               />
             )}

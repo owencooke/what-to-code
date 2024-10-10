@@ -1,14 +1,17 @@
 import { supabase, generateId } from "@/lib/db";
-import { Project } from "@/types/project";
+import { NewProject } from "@/types/project";
 
-async function createProject(project: Project): Promise<string> {
+async function createProject(project: NewProject): Promise<string> {
   const id = generateId();
+  // Omit certain fields from DB
+  const { starterRepo, ...projectData } = project;
+
   const { error } = await supabase
     .from("projects")
     .insert([
       {
         id,
-        ...project,
+        ...projectData,
       },
     ])
     .single();
@@ -21,7 +24,7 @@ async function createProject(project: Project): Promise<string> {
   return id;
 }
 
-async function getProject(projectId: string): Promise<Project> {
+async function getProject(projectId: string): Promise<NewProject> {
   const { data, error } = await supabase
     .from("projects")
     .select("*")
@@ -32,9 +35,26 @@ async function getProject(projectId: string): Promise<Project> {
     console.error("Error fetching project:", error);
     throw error;
   }
-  console.log(data);
 
   return data;
 }
 
-export { getProject, createProject };
+const searchProjects = async (searchTerm: string) => {
+  let query = supabase.from("random_projects").select("*");
+
+  if (searchTerm) {
+    query = query.or(
+      `title.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%`,
+    );
+  }
+
+  const { data, error } = await query;
+
+  if (error) {
+    console.error("Error searching for projects:", error);
+    throw error;
+  }
+  return data;
+};
+
+export { getProject, createProject, searchProjects };

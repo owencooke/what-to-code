@@ -10,21 +10,24 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { UseFormReturn } from "react-hook-form";
 
 interface ModalProps {
   title: string;
   description?: string;
   renderTrigger: (props: { open: () => void }) => React.ReactNode;
   children?: ReactNode;
-  onSubmit: () => void;
+  form?: UseFormReturn<any, any, any>;
+  onSubmit: (data: any) => void;
   actionText?: string;
 }
 
 export function Modal({
   title,
-  description,
+  description = "",
   renderTrigger,
   children,
+  form,
   onSubmit,
   actionText = "Continue",
 }: ModalProps) {
@@ -36,14 +39,16 @@ export function Modal({
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>
-          {description && (
-            <AlertDialogDescription>{description}</AlertDialogDescription>
-          )}
+          <AlertDialogDescription>{description}</AlertDialogDescription>
           {children}
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={onSubmit}>{actionText}</AlertDialogAction>
+          <AlertDialogCancel>
+            <div onClick={() => form?.reset()}>Cancel</div>
+          </AlertDialogCancel>
+          <AlertDialogAction>
+            <div onClick={onSubmit}>{actionText}</div>
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

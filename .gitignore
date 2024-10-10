@@ -36,3 +36,7 @@ next-env.d.ts
 
 .yarn
 .env
+.vscode
+
+# python
+*venv

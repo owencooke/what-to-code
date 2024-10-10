@@ -2,13 +2,16 @@ import CustomizableCard from "./CustomizableCard";
 import { Framework } from "@/types/idea";
 import { toAlphaLowerCase } from "@/lib/utils";
 import tools from "@/app/idea/data/tools";
+import { useForm } from "react-hook-form";
+import FormInput from "@/components/FormInput";
+import { useEffect } from "react";
 
 type FrameworkCardProps = {
   className?: string;
   framework: Framework;
   selected?: boolean;
-
   onClick?: () => void;
+  onSubmit?: (framework: Framework) => void;
 };
 
 export default function FrameworkCard({
@@ -16,16 +19,34 @@ export default function FrameworkCard({
   framework,
   selected = false,
   onClick,
+  onSubmit = () => {},
 }: FrameworkCardProps) {
+  const form = useForm({
+    defaultValues: {
+      title: framework.title,
+      description: framework.description,
+    },
+  });
+
+  useEffect(() => {
+    form.reset({ ...framework });
+  }, [framework, form]);
+
+  const handleSubmit = () => {
+    const data = form.getValues();
+    onSubmit({
+      ...framework,
+      title: data.title,
+      description: data.description,
+    });
+  };
+
   return (
     <CustomizableCard
       className={className}
       title={framework.title}
-      description=""
-      selected={selected}
-      onSelect={onClick}
-      renderContent={() => (
-        <div>
+      description={
+        <span>
           {framework.description.split(" ").map((word, j) => {
             const tool = framework.tools.find(
               (tool) => toAlphaLowerCase(tool) === toAlphaLowerCase(word),
@@ -44,8 +65,34 @@ export default function FrameworkCard({
             }
             return word + " ";
           })}
-        </div>
-      )}
+        </span>
+      }
+      selected={selected}
+      onSelect={onClick}
+      form={form}
+      onSubmitForm={handleSubmit}
+      renderEditFormFields={
+        onClick
+          ? () => (
+              <>
+                <FormInput
+                  form={form}
+                  name="title"
+                  label="Title"
+                  placeholder="What kind of software?"
+                />
+                <FormInput
+                  className="h-[10rem]"
+                  form={form}
+                  name="description"
+                  label="Description"
+                  type="area"
+                  placeholder="How is it being built?"
+                />
+              </>
+            )
+          : undefined
+      }
     />
   );
 }

@@ -1,71 +1,65 @@
-import React, { useEffect, useState } from "react";
-import GitHubAvatar from "./Avatar";
-import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { buttonVariants } from "@/components/ui/button";
+import Avatar from "./Avatar";
+import { useSession } from "next-auth/react";
 
-interface RepoDisplayProps {
+interface RepoProps {
   repoName: string;
   username: string;
-  avatar?: string;
   isClickable?: boolean;
   className?: string;
 }
 
-const RepoDisplay: React.FC<RepoDisplayProps> = ({
+export default function Repo({
   repoName,
   username,
-  avatar,
   isClickable = false,
   className,
-}) => {
-  const avatarAndUsername = (
+}: RepoProps) {
+  const { data: session } = useSession();
+  username = username || session?.user.username || "";
+
+  const AvatarAndUsername = () => (
     <>
-      <GitHubAvatar avatar={avatar} className="w-8 h-8" />
-      <span className="mx-2">{username}</span>
+      <Avatar className="w-8 h-8 rounded-full mr-2" username={username} />
+      <span className="text-muted-foreground whitespace-nowrap">
+        {username}
+      </span>
     </>
   );
 
+  const RepoName = () => (
+    <span className="font-semibold line-clamp-1">{repoName}</span>
+  );
+
   return (
-    <div className={`grid grid-cols-[auto_1fr] gap-2 text-sm ${className}`}>
-      {!isClickable && (
-        <span className="font-semibold text-base col-span-2">GitHub Repo</span>
-      )}
+    <div className={`flex items-center space-x-2 ${className}`}>
       <div className="flex items-center">
         {isClickable ? (
           <Link
             href={`https://github.com/${username}`}
-            className={`w-fit ${buttonVariants({
-              variant: "link",
-              size: "sm",
-            })} !px-0`}
+            className="flex items-center hover:underline"
             target="_blank"
             rel="noopener noreferrer"
           >
-            {avatarAndUsername}
+            <AvatarAndUsername />
           </Link>
         ) : (
-          <>{avatarAndUsername}</>
+          <AvatarAndUsername />
         )}
-        <span className="font-medium text-xl">/</span>
+        <span>/</span>
+        {isClickable ? (
+          <Link
+            href={`https://github.com/${username}/${repoName}`}
+            className="hover:underline"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <RepoName />
+          </Link>
+        ) : (
+          <RepoName />
+        )}
       </div>
-      {isClickable ? (
-        <Link
-          href={`https://github.com/${username}/${name}`}
-          className={`w-fit ${buttonVariants({
-            variant: "link",
-            size: "sm",
-          })} !px-0`}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          {repoName}
-        </Link>
-      ) : (
-        <span className="content-center">{repoName}</span>
-      )}
     </div>
   );
-};
-
-export default RepoDisplay;
+}

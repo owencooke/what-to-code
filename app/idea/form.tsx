@@ -8,7 +8,7 @@ import { Idea } from "@/types/idea";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import FormInput from "@/components/FormInput";
 import { Form } from "@/components/ui/form";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import {
@@ -25,6 +25,12 @@ import {
   CollapsibleTrigger,
   CollapsibleContent,
 } from "@radix-ui/react-collapsible";
+import {
+  addIdeaToCache,
+  clearIdeaCache,
+  getCachedIdeas,
+} from "./utils/session";
+import useIsMobile from "@/hooks/useIsMobile";
 
 interface IdeaFormProps {
   onSubmit: (idea: Idea) => void;
@@ -40,6 +46,7 @@ const FormSchema = z.object({
 
 export function IdeaForm({ onSubmit, onClick }: IdeaFormProps) {
   const [showMore, setShowMore] = useState(false);
+  const isMobile = useIsMobile();
   const [topics, setTopics] = useState<string[]>([]);
 
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -47,21 +54,52 @@ export function IdeaForm({ onSubmit, onClick }: IdeaFormProps) {
     defaultValues: { idea: "" },
   });
 
+  // Reset previous idea cache if they change topics
+  {
+    const ideaValue = useWatch({
+      control: form.control,
+      name: "idea",
+    });
+    useEffect(() => {
+      if (ideaValue) {
+        clearIdeaCache();
+      }
+    }, [ideaValue]);
+  }
+
   useEffect(() => {
     setTopics(shuffleArray([...categories]));
   }, []);
 
   const handleSubmit = async (data: z.infer<typeof FormSchema>) => {
     onClick();
-    let newTopic = data.idea || selectRandom(topics);
+
+    // Use custom topic, or default to random
+    let topic;
+    if (showMore && data.idea) {
+      topic = data.idea;
+    } else {
+      topic = selectRandom(topics);
+      clearIdeaCache();
+    }
+
     const response = await fetch(
-      `/api/idea?topic=${encodeURIComponent(newTopic)}`,
+      `/api/idea?topic=${encodeURIComponent(topic)}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ recentIdeas: getCachedIdeas() }),
+      },
     );
     if (!response.ok) {
       console.error("Failed to fetch new idea:", response.statusText);
       return;
     }
-    onSubmit(await response.json());
+    const idea: Idea = await response.json();
+    addIdeaToCache(idea.title);
+    onSubmit(idea);
   };
 
   const handleTopicClick = (topic: string) =>
@@ -96,8 +134,10 @@ export function IdeaForm({ onSubmit, onClick }: IdeaFormProps) {
             <div className="flex flex-col gap-4 w-[50vw] max-w-xl">
               <FormInput
                 form={form}
+                type={isMobile ? "area" : "input"}
                 name="idea"
                 placeholder="start brainstorming here..."
+                maxLength={50}
               />
               <Carousel
                 opts={{
