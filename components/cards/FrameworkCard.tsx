@@ -71,24 +71,28 @@ export default function FrameworkCard({
       onSelect={onClick}
       form={form}
       onSubmitForm={handleSubmit}
-      renderEditFormFields={() => (
-        <>
-          <FormInput
-            form={form}
-            name="title"
-            label="Title"
-            placeholder="What kind of software?"
-          />
-          <FormInput
-            className="h-[10rem]"
-            form={form}
-            name="description"
-            label="Description"
-            type="area"
-            placeholder="How is it being built?"
-          />
-        </>
-      )}
+      renderEditFormFields={
+        onClick
+          ? () => (
+              <>
+                <FormInput
+                  form={form}
+                  name="title"
+                  label="Title"
+                  placeholder="What kind of software?"
+                />
+                <FormInput
+                  className="h-[10rem]"
+                  form={form}
+                  name="description"
+                  label="Description"
+                  type="area"
+                  placeholder="How is it being built?"
+                />
+              </>
+            )
+          : undefined
+      }
     />
   );
 }

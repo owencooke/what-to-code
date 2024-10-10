@@ -48,38 +48,44 @@ export default function FeatureCard({
       )}
       form={form}
       onSubmitForm={handleSubmit}
-      renderEditFormFields={() => (
-        <>
-          <FormInput
-            form={form}
-            name="title"
-            label="Title"
-            placeholder="What is being built?"
-          />
-          <FormInput
-            className="h-[7rem]"
-            form={form}
-            name="userStory"
-            label="User Story"
-            type="area"
-            placeholder="As a <user>, I want <goal>, so that <reason>"
-          />
-          <div>
-            <span className="font-semibold text-md">Acceptance Criteria</span>
-            <div className="ml-2 flex flex-col gap-2 mt-2">
-              {feature.acceptanceCriteria.map((_, i) => (
+      renderEditFormFields={
+        onClick
+          ? () => (
+              <>
                 <FormInput
-                  key={i}
                   form={form}
-                  type="area"
-                  name={`acceptanceCriteria[${i}]`}
-                  placeholder="What must the feature do to meet the user's goal?"
+                  name="title"
+                  label="Title"
+                  placeholder="What is being built?"
                 />
-              ))}
-            </div>
-          </div>
-        </>
-      )}
+                <FormInput
+                  className="h-[7rem]"
+                  form={form}
+                  name="userStory"
+                  label="User Story"
+                  type="area"
+                  placeholder="As a <user>, I want <goal>, so that <reason>"
+                />
+                <div>
+                  <span className="font-semibold text-md">
+                    Acceptance Criteria
+                  </span>
+                  <div className="ml-2 flex flex-col gap-2 mt-2">
+                    {feature.acceptanceCriteria.map((_, i) => (
+                      <FormInput
+                        key={i}
+                        form={form}
+                        type="area"
+                        name={`acceptanceCriteria[${i}]`}
+                        placeholder="What must the feature do to meet the user's goal?"
+                      />
+                    ))}
+                  </div>
+                </div>
+              </>
+            )
+          : undefined
+      }
     />
   );
 }
