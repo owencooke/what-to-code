@@ -103,7 +103,10 @@ export default function IdeaPage() {
             ) : (
               <>
                 <div className="flex flex-col gap-2">
-                  <h2>what to build</h2>
+                  <h2 className="pb-0">Features</h2>
+                  <p className="text-muted-foreground !mt-0">
+                    what kind of things could you build?
+                  </p>
                   <CardScrollArea>
                     {idea.features?.length > 0 ? (
                       idea.features.map((feature, i) => (
@@ -115,7 +118,10 @@ export default function IdeaPage() {
                   </CardScrollArea>
                 </div>
                 <div className="flex flex-col gap-2">
-                  <h2>how to build it</h2>
+                  <h2 className="pb-0">Frameworks</h2>
+                  <p className="text-muted-foreground !mt-0">
+                    what kind of tech stacks could you use?
+                  </p>
                   <CardScrollArea>
                     {idea.frameworks?.length > 0 ? (
                       idea.frameworks.map((framework, i) => (
