@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getOtherProjects, getUsername } from "../db";
+import { getOtherProjects } from "../db";
+import { getUsername } from "@/lib/github";
 
 export async function GET(req: NextRequest) {
   const authHeader = req.headers.get("Authorization")!;
