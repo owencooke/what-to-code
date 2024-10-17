@@ -13,10 +13,6 @@ const FormSchema = z.object({
 });
 
 export const Newsletter = () => {
-  const FormSchema = z.object({
-    email: z.string().email(),
-  });
-
   const { data: session } = useSession();
   const { toast } = useToast();
 
