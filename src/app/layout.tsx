@@ -22,7 +22,7 @@ export default function RootLayout({
     <html lang="en" className="h-full">
       <head>
         <title>what to code?</title>
-        <link rel="shortcut icon" href="/images/favicon.ico" />
+        <link rel="shortcut icon" href="favicon.ico" />
         <link
           rel="stylesheet"
           type="text/css"
