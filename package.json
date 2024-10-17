@@ -81,7 +81,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "echo \"[Husky] pre-commit\" && npm run env"
+      "pre-commit": "echo \"[Husky] pre-commit\" && pnpm env"
     }
   }
 }
