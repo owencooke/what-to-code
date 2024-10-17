@@ -5,9 +5,9 @@ import { Roboto_Mono } from "next/font/google";
 import { SessionProvider } from "next-auth/react";
 import { Toaster } from "@/components/ui/toaster";
 import { Analytics } from "@vercel/analytics/react";
-import { ThemeProvider } from "@/providers/theme-provider";
-import { Footer } from "@/components/global/Footer";
-import { Navbar } from "@/components/global/Navbar";
+import { ThemeProvider } from "@/components/providers/theme-provider";
+import { Footer } from "@/components/site/Footer";
+import { Navbar } from "@/components/site/Navbar";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "@/lib/query";
 

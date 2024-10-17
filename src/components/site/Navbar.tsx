@@ -30,7 +30,7 @@ import { useSession, signIn, signOut } from "next-auth/react";
 import GitHubAvatar from "@/components/github/Avatar";
 import React from "react";
 import Logo from "./Logo";
-import { ModeToggle } from "../theme-toggle";
+import { ModeToggle } from "../ThemeToggle";
 
 interface RouteProps {
   href: string;
