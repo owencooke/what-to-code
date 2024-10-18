@@ -1,11 +1,11 @@
-import { extractDetailsFromRepoUrl } from "@/lib/github/string-utils";
+import {
+  extractDetailsFromRepoUrl,
+  getRepoFromProjectTitle,
+} from "@/lib/github/string-utils";
 import { Feature } from "@/types/idea";
 import { NewProject } from "@/types/project";
 import ky from "ky";
 import { GitHubRepo } from "@/types/github";
-
-const getRepoFromTitle = (title: string) =>
-  title.toLowerCase().replace(/\s/g, "-");
 
 async function createEmptyRepo(
   project: NewProject,
@@ -18,7 +18,7 @@ async function createEmptyRepo(
         Accept: "application/vnd.github.v3+json",
       },
       json: {
-        name: getRepoFromTitle(project.title),
+        name: getRepoFromProjectTitle(project.title),
         description: project.description,
         private: false,
       },
@@ -39,7 +39,7 @@ async function createRepoFromTemplate(project: NewProject, authHeader: string) {
       },
       json: {
         owner: project.github_user,
-        name: getRepoFromTitle(project.title),
+        name: getRepoFromProjectTitle(project.title),
         description: project.description,
         private: false,
       },
@@ -88,4 +88,4 @@ async function createIssue(
     .json();
 }
 
-export { createRepoFromTemplate, createIssue, getRepoFromTitle };
+export { createRepoFromTemplate, createIssue };

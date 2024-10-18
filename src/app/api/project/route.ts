@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { NewProjectSchema } from "@/types/project";
-import { createIssue, createRepoFromTemplate } from "./github";
+import { createIssue, createRepoFromTemplate } from "../../../lib/github/repo";
 import { Feature } from "@/types/idea";
 import { createProject, searchProjects } from "@/lib/db/query/project";
 

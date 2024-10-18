@@ -13,7 +13,7 @@ import { Idea, Feature, Framework, IdeaSchema } from "@/types/idea";
 import { useEffect, useState } from "react";
 import { useSession, signIn } from "next-auth/react";
 import { NewProjectSchema, NewProject } from "@/types/project";
-import { getRepoFromTitle } from "@/app/api/project/github";
+import { getRepoFromProjectTitle } from "@/lib/github/string-utils";
 import { Github } from "lucide-react";
 import RepoDisplay from "@/components/github/Repo";
 import { Modal } from "@/components/Modal";
@@ -205,7 +205,7 @@ export default function Home() {
               <CardHeader className="gap-4">
                 {session ? (
                   <RepoDisplay
-                    repoName={getRepoFromTitle(title)}
+                    repoName={getRepoFromProjectTitle(title)}
                     username={username}
                   />
                 ) : (
@@ -309,7 +309,7 @@ export default function Home() {
                 >
                   <RepoDisplay
                     className="py-4"
-                    repoName={getRepoFromTitle(title)}
+                    repoName={getRepoFromProjectTitle(title)}
                     username={username}
                   />
                 </Modal>

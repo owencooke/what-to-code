@@ -5,7 +5,7 @@ import FeatureCard from "@/components/cards/FeatureCard";
 import { useEffect, useState } from "react";
 import { NewProject } from "@/types/project";
 import RepoDisplay from "@/components/github/Repo";
-import { getRepoFromTitle } from "../../api/project/github";
+import { getRepoFromProjectTitle } from "@/lib/github/string-utils";
 import { useRouter } from "next/navigation";
 import CardScrollArea from "@/components/cards/CardScrollArea";
 import { Badge } from "@/components/ui/badge";
@@ -42,7 +42,7 @@ export default function Home({ params }: { params: { id: string } }) {
             <p className="text-muted-foreground">{project.description}</p>
             <RepoDisplay
               className="pt-4"
-              repoName={getRepoFromTitle(project.title)}
+              repoName={getRepoFromProjectTitle(project.title)}
               username={project.github_user}
               isClickable
             />

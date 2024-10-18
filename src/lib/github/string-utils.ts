@@ -8,4 +8,11 @@ const extractDetailsFromRepoUrl = (repoUrl: string) => {
   return { owner, repoName };
 };
 
-export { getAvatarUrlForUser, extractDetailsFromRepoUrl };
+const getRepoFromProjectTitle = (title: string) =>
+  title.toLowerCase().replace(/\s/g, "-");
+
+export {
+  getAvatarUrlForUser,
+  extractDetailsFromRepoUrl,
+  getRepoFromProjectTitle,
+};

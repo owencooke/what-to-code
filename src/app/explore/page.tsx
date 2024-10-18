@@ -13,7 +13,7 @@ import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { SkeletonCard } from "@/components/cards/SkeletonCard";
 import Repo from "@/components/github/Repo";
 import { useRouter } from "next/navigation";
-import { getRepoFromTitle } from "../api/project/github";
+import { getRepoFromProjectTitle } from "@/lib/github/string-utils";
 
 const fetchProjects = async (searchTerm: string): Promise<Project[]> =>
   ky.get("/api/project", { searchParams: { query: searchTerm } }).json();
@@ -80,7 +80,7 @@ export default function ExplorePage() {
                 {/* RepoDisplay for smaller screens */}
                 <Repo
                   className="md:hidden block text-xs text-muted-foreground"
-                  repoName={getRepoFromTitle(project.title)}
+                  repoName={getRepoFromProjectTitle(project.title)}
                   username={project.github_user}
                 />
                 <span className="text-sm text-muted-foreground mb-3 line-clamp-4 md:line-clamp-3">
@@ -90,7 +90,7 @@ export default function ExplorePage() {
                   {/* RepoDisplay for larger screens */}
                   <Repo
                     className="w-fit hidden md:block"
-                    repoName={getRepoFromTitle(project.title)}
+                    repoName={getRepoFromProjectTitle(project.title)}
                     username={project.github_user}
                   />
                   <div className="flex md:justify-end flex-wrap gap-1">
