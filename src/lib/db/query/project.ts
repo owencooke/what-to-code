@@ -1,6 +1,6 @@
 import { getRandomURLFriendlyId } from "@/lib/db/utils";
 import { supabase } from "@/lib/db/config";
-import { NewProject } from "@/types/project";
+import { NewProject, Project } from "@/types/project";
 
 async function createProject(project: NewProject): Promise<string> {
   const id = getRandomURLFriendlyId();
@@ -25,7 +25,7 @@ async function createProject(project: NewProject): Promise<string> {
   return id;
 }
 
-async function getProject(projectId: string): Promise<NewProject> {
+async function getProjectById(projectId: string): Promise<Project> {
   const { data, error } = await supabase
     .from("projects")
     .select("*")
@@ -40,17 +40,16 @@ async function getProject(projectId: string): Promise<NewProject> {
   return data;
 }
 
-const searchProjects = async (searchTerm: string) => {
+// Currently searches for projects by title or description
+// random_projects is a view, just ordered randomly to show different projects on the homepage
+const searchProjects = async (searchTerm: string): Promise<Project[]> => {
   let query = supabase.from("random_projects").select("*");
-
   if (searchTerm) {
     query = query.or(
       `title.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%`,
     );
   }
-
   const { data, error } = await query;
-
   if (error) {
     console.error("Error searching for projects:", error);
     throw error;
@@ -58,4 +57,24 @@ const searchProjects = async (searchTerm: string) => {
   return data;
 };
 
-export { getProject, createProject, searchProjects };
+async function getProjectsByUserId(
+  userId: string,
+  ownedByUser: boolean = true,
+): Promise<Project[]> {
+  const query = supabase.from("projects").select("*");
+
+  if (ownedByUser) {
+    query.eq("github_user", userId);
+  } else {
+    query.neq("github_user", userId);
+  }
+
+  const { data, error } = await query;
+  if (error) {
+    console.error(`Error fetching projects for ${userId}:`, error);
+    throw error;
+  }
+  return data;
+}
+
+export { getProjectById, createProject, searchProjects, getProjectsByUserId };

@@ -34,6 +34,7 @@ export default function ExplorePage() {
   } = useQuery({
     queryKey: ["search", searchTerm],
     queryFn: () => fetchProjects(searchTerm),
+    refetchOnWindowFocus: false,
   });
 
   return (

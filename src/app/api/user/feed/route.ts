@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getOtherProjects } from "../db";
+import { getProjectsByUserId } from "@/lib/db/query/project";
 import { getUsername } from "@/lib/github/user";
 
 export async function GET(req: NextRequest) {
@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const projects = await getOtherProjects(user_id);
+    const projects = await getProjectsByUserId(user_id);
     return NextResponse.json(projects);
   } catch (error: any) {
     return NextResponse.json(

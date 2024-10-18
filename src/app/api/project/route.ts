@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { NewProjectSchema } from "@/types/project";
 import { createIssue, createRepoFromTemplate } from "./github";
 import { Feature } from "@/types/idea";
-import { createProject, searchProjects } from "./db";
+import { createProject, searchProjects } from "@/lib/db/query/project";
 
 export async function GET(req: NextRequest) {
   try {
