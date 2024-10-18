@@ -1,4 +1,4 @@
-import { extractDetailsFromRepoUrl } from "@/lib/github";
+import { extractDetailsFromRepoUrl } from "@/lib/github/string-utils";
 import { Feature } from "@/types/idea";
 import { NewProject } from "@/types/project";
 import ky from "ky";

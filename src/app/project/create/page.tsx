@@ -14,12 +14,11 @@ import { useEffect, useState } from "react";
 import { useSession, signIn } from "next-auth/react";
 import { NewProjectSchema, NewProject } from "@/types/project";
 import { getRepoFromTitle } from "@/app/api/project/github";
-import { AlertCircle, Github } from "lucide-react";
+import { Github } from "lucide-react";
 import RepoDisplay from "@/components/github/Repo";
 import { Modal } from "@/components/Modal";
 import { useToast } from "@/components/ui/use-toast";
 import { ToastAction } from "@/components/ui/toast";
-import { AlertTitle, Alert, AlertDescription } from "@/components/ui/alert";
 import MatchedRepos from "./match-repos";
 import CardScrollArea from "@/components/cards/CardScrollArea";
 import { GitHubRepo } from "@/types/github";
@@ -313,15 +312,6 @@ export default function Home() {
                     repoName={getRepoFromTitle(title)}
                     username={username}
                   />
-                  {/* <Alert variant="destructive">
-                    <AlertCircle className="h-4 w-4" />
-                    <AlertTitle>Heads up!</AlertTitle>
-                    <AlertDescription>
-                      {`Matching GitHub template repos to your selected project is
-                      still under development and clicking this will generate a repo for the MERN stack.
-                    Sign up for our email updates if you'd like to know when this feature is live!`}
-                    </AlertDescription>
-                  </Alert> */}
                 </Modal>
               </CardHeader>
             </Card>

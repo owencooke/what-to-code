@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/db";
+import { supabase } from "@/lib/db/config";
 import { NewProject } from "@/types/project";
 
 async function getMyProjects(userId: string): Promise<NewProject[]> {

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabase } from "@/lib/db";
+import { supabase } from "@/lib/db/config";
 import { OpenAIEmbeddings } from "@langchain/openai";
 import ky from "ky";
 import { GitHubRepo } from "@/types/github";

@@ -1,18 +1,10 @@
-import { type ClassValue, clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
+export const selectRandom = <T>(arr: T[]): T =>
+  arr[Math.floor(Math.random() * arr.length)];
 
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
-
-export const selectRandom = (arr: string[]) => {
-  return arr[Math.floor(Math.random() * arr.length)];
-};
-
-export const toAlphaLowerCase = (str: string) =>
+export const toAlphaLowerCase = (str: string): string =>
   str.replace(/[^a-zA-Z]/g, "").toLowerCase();
 
-export const shuffleArray = (array: Array<any>): Array<any> => {
+export const shuffleArray = <T>(array: Array<T>): Array<T> => {
   const arrayCopy = [...array];
   for (let i = arrayCopy.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));

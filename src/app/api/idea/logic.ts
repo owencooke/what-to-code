@@ -1,6 +1,6 @@
 import { IdeaSchema, FeatureSchema } from "@/types/idea";
 import { IDEA_PROMPT, FEATURES_PROMPT, FRAMEWORK_PROMPT } from "./prompts";
-import { generateZodSchemaFromPrompt } from "@/lib/llm";
+import { generateZodSchemaFromPrompt } from "@/lib/llm/utils";
 import { z } from "zod";
 
 // Generate Title and Description of Idea

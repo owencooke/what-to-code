@@ -1,8 +1,9 @@
-import { supabase, generateId } from "@/lib/db";
+import { getRandomURLFriendlyId } from "@/lib/db/utils";
+import { supabase } from "@/lib/db/config";
 import { NewProject } from "@/types/project";
 
 async function createProject(project: NewProject): Promise<string> {
-  const id = generateId();
+  const id = getRandomURLFriendlyId();
   // Omit certain fields from DB
   const { starterRepo, ...projectData } = project;
 
