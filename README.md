@@ -1,27 +1,23 @@
-# what to code
-
-helping developers get off the ground running
-
-Check out the project's [Figma](https://www.figma.com/design/UZWA43H3x6u7uYOr1MITUH/What-to-Code?node-id=0-1&t=0HOO4WGgqpyLhJzr-1) here for upcoming features!
+# [what to code](https://www.what-to-code.dev/)
+![Screenshot (739)](https://github.com/user-attachments/assets/54a9a7e9-4bfa-4e69-b223-ea1b42894736)
 
 ## Installation
 
 ### Prerequisites
 
-- Node.js
+- Node.js v20.17.0
 - NPM
-- NVM
 
-Install Yarn for dependency management
+Install pnpm for faster dependency management
 
 ```bash
-npm install --global yarn
+npm install --global pnpm
 ```
 
 Install all Node modules
 
 ```bash
-yarn install
+pnpm i
 ```
 
 See `.env.dev` for the necessary environment variable template.
@@ -29,5 +25,34 @@ See `.env.dev` for the necessary environment variable template.
 ### Running
 
 ```bash
-yarn dev
+pnpm dev
+```
+
+## Project Structure
+```
+scripts/
+├── github_templates                # Python scripts for scraping/embedding GitHub template repos for matching
+src/
+├── app/
+│   └── api/                        # API: Backend routes (keep as simple as possible, just define route. Define DB/GitHub/other logic under `src/lib`)
+│   │   └── templates/
+│   │       └── route.ts
+│   └── page.tsx                     # OTHER: React routes, to be rendered at specific route according to dir path
+├── components/
+│   └── ui/                         # ShadCN components automatically added under here using CLI (don't usually need to edit)
+│   │   └── shadcn-component.tsx  
+│   │
+│   └── our-custom-component.tsx    # Custom reusable React components for our app
+├── lib/
+│   ├── db/                         # Keep DB/query logic here (ex: creating a new Project)
+│   │   ├── config.ts               
+│   │   └── query/                  
+│   │       └── project.ts          
+│   ├── github/                     # Keep GitHub API integration calls here (ex: creating repos, issues, etc.)
+│   │   └── user.ts                 
+│   └── llm/                        # Keep LLM config (ex: OpenAI, Google) and helpers (ex: structured JSON output from prompts) here
+│       ├── config.ts               
+│       └── utils.ts               
+├── types/                          # TypeScript type definitions and Zod schemas (ex: Idea, Project, ...)
+    └── index.ts                    
 ```
