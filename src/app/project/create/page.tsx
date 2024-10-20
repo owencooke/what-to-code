@@ -30,7 +30,6 @@ export default function Home() {
   const { toast } = useToast();
 
   const [idea, setIdea] = useState<Idea>();
-  const [username, setUsername] = useState("");
   const [shouldValidate, setShouldValidate] = useState(false);
 
   const form = useForm<NewProject>({
@@ -42,18 +41,10 @@ export default function Home() {
   });
 
   useEffect(() => {
-    const fetchUsername = async () => {
-      if (session?.user.username) {
-        setUsername(session?.user.username);
-      }
-    };
-
-    fetchUsername();
-  }, [session]);
-
-  useEffect(() => {
-    form.setValue("github_user", username);
-  }, [username, form]);
+    if (session?.user.username) {
+      form.setValue("github_user", session.user.username);
+    }
+  }, [session, form]);
 
   // Redirect back to idea generation page, if no valid idea to create project from
   useEffect(() => {
