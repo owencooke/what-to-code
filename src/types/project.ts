@@ -18,6 +18,7 @@ const NewProjectSchema = IdeaSchema.pick({
 // Project created and stored in DB
 const ProjectSchema = NewProjectSchema.omit({ starterRepo: true }).extend({
   id: z.string(),
+  features: IdeaSchema.shape.features,
 });
 
 type NewProject = z.infer<typeof NewProjectSchema>;
