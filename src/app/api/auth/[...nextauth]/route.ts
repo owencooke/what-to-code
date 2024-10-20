@@ -1,6 +1,7 @@
 import NextAuth, { NextAuthOptions, DefaultSession } from "next-auth";
 import GithubProvider from "next-auth/providers/github";
 import { getUsername } from "@/lib/github/user";
+import { createUserIfNotExist } from "@/lib/db/query/user";
 
 declare module "next-auth" {
   interface Session {
@@ -31,7 +32,7 @@ const authOptions: NextAuthOptions = {
       return token;
     },
     async session({ session, token }) {
-      // Fetch GitHub username and include in user info
+      // Fetch GitHub username and include in user session info
       const accessToken = token.accessToken as string;
       const username = await getUsername(accessToken);
       session = {
@@ -39,6 +40,11 @@ const authOptions: NextAuthOptions = {
         accessToken,
         user: { ...session.user, username },
       };
+
+      if (session.user.email) {
+        await createUserIfNotExist(username, session.user.email);
+      }
+
       return session;
     },
   },

@@ -30,7 +30,7 @@ export default function Home() {
   const { toast } = useToast();
 
   const [idea, setIdea] = useState<Idea>();
-  const [username, setUsername] = useState("");
+  const [submitEnabled, setSubmitEnabled] = useState(true);
   const [shouldValidate, setShouldValidate] = useState(false);
 
   const form = useForm<NewProject>({
@@ -42,18 +42,10 @@ export default function Home() {
   });
 
   useEffect(() => {
-    const fetchUsername = async () => {
-      if (session?.user.username) {
-        setUsername(session?.user.username);
-      }
-    };
-
-    fetchUsername();
-  }, [session]);
-
-  useEffect(() => {
-    form.setValue("github_user", username);
-  }, [username, form]);
+    if (session?.user.username) {
+      form.setValue("github_user", session.user.username);
+    }
+  }, [session, form]);
 
   // Redirect back to idea generation page, if no valid idea to create project from
   useEffect(() => {
@@ -138,6 +130,8 @@ export default function Home() {
   const onSubmit = async (projectToCreate: NewProject) => {
     setShouldValidate(true);
 
+    // Disable submit button while server processing
+    setSubmitEnabled(false);
     const response = await ky.post(`/api/project`, {
       headers: {
         Authorization: "token " + session?.accessToken,
@@ -149,7 +143,7 @@ export default function Home() {
       toast({
         variant: "destructive",
         title: "Uh oh! Something went wrong.",
-        description: "There was a problem with creating your project.",
+        description: "There was a problem while creating your project.",
         action: (
           <ToastAction
             altText="Try again"
@@ -159,6 +153,8 @@ export default function Home() {
           </ToastAction>
         ),
       });
+      // Re-enable submit button to try again
+      setSubmitEnabled(true);
       return;
     }
     const { url, projectId } = (await response.json()) as any;
@@ -204,10 +200,7 @@ export default function Home() {
             <Card className="mt-6 w-full max-w-6xl">
               <CardHeader className="gap-4">
                 {session ? (
-                  <RepoDisplay
-                    repoName={getRepoFromProjectTitle(title)}
-                    username={username}
-                  />
+                  <RepoDisplay repoName={getRepoFromProjectTitle(title)} />
                 ) : (
                   <Button
                     className="w-fit"
@@ -304,13 +297,17 @@ export default function Home() {
                       create project
                     </Button>
                   )}
-                  onSubmit={form.handleSubmit(onSubmit, onError)}
+                  // FIXME: would be better to add a LoadingButton state to Modal submit
+                  onSubmit={
+                    submitEnabled
+                      ? form.handleSubmit(onSubmit, onError)
+                      : () => {}
+                  }
                   actionText="Create"
                 >
                   <RepoDisplay
                     className="py-4"
                     repoName={getRepoFromProjectTitle(title)}
-                    username={username}
                   />
                 </Modal>
               </CardHeader>

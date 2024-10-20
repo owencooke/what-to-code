@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 
 interface RepoProps {
   repoName: string;
-  username: string;
+  username?: string;
   isClickable?: boolean;
   className?: string;
 }
