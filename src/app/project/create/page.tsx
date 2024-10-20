@@ -204,10 +204,7 @@ export default function Home() {
             <Card className="mt-6 w-full max-w-6xl">
               <CardHeader className="gap-4">
                 {session ? (
-                  <RepoDisplay
-                    repoName={getRepoFromProjectTitle(title)}
-                    username={username}
-                  />
+                  <RepoDisplay repoName={getRepoFromProjectTitle(title)} />
                 ) : (
                   <Button
                     className="w-fit"
@@ -310,7 +307,6 @@ export default function Home() {
                   <RepoDisplay
                     className="py-4"
                     repoName={getRepoFromProjectTitle(title)}
-                    username={username}
                   />
                 </Modal>
               </CardHeader>
