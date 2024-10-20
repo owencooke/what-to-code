@@ -66,13 +66,7 @@ async function getProjectById(projectId: string): Promise<Project> {
     console.error("Error fetching project:", error);
     throw error;
   }
-
-  // Parse the data to Project type
-  const project = ProjectSchema.parse({
-    ...data,
-    github_user: data.users.username,
-  });
-  return project;
+  return parseProjectData(data);
 }
 /**
  * Searches for projects by title or description, including the GitHub user information.
@@ -101,14 +95,46 @@ const searchProjects = async (searchTerm: string): Promise<Project[]> => {
     console.error("Error searching projects:", error);
     throw error;
   }
-  // Map the data to Project type
-  const projects = data.map((project) =>
-    ProjectSchema.parse({
-      ...project,
-      github_user: project.users.username,
-    }),
-  );
-  return projects;
+  return data.map(parseProjectData);
 };
 
-export { createProject, getProjectById, searchProjects };
+async function getProjectsByUserId(
+  userId: string,
+  ownedByUser: boolean = true,
+): Promise<Project[]> {
+  const query = supabase.from("projects").select(`
+    *,
+    users!inner (
+        username
+    )
+`);
+
+  if (ownedByUser) {
+    query.eq("owner_id", userId);
+  } else {
+    query.neq("owner_id", userId);
+  }
+
+  const { data, error } = await query;
+  if (error) {
+    console.error(`Error fetching projects for ${userId}:`, error);
+    throw error;
+  }
+  return data.map(parseProjectData);
+}
+
+/**
+ * Helper function to parse DB data according to the ProjectSchema.
+ *
+ * @param {any} project - The project data to parse.
+ * @returns {Project} - The project as a parsed Zod schema.
+ * @throws {Error} - Throws an error if the parsing fails.
+ */
+function parseProjectData(project: any): Project {
+  return ProjectSchema.parse({
+    ...project,
+    github_user: project.users.username,
+  });
+}
+
+export { createProject, getProjectById, searchProjects, getProjectsByUserId };
