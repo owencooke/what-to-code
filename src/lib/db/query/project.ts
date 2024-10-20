@@ -10,11 +10,26 @@ import { NewProject, Project, ProjectSchema } from "@/types/project";
  */
 async function createProject(project: NewProject): Promise<string> {
   // Omit certain fields from DB
-  const { starterRepo, ...projectData } = project;
+  const { starterRepo, github_user, ...projectData } = project;
 
+  // Fetch the user ID from the users table
+  const { data: userData, error: userError } = await supabase
+    .from("users")
+    .select("id")
+    .eq("username", github_user)
+    .single();
+
+  if (userError) {
+    console.error("Error fetching user ID:", userError);
+    throw userError;
+  }
+
+  const owner_id = userData.id;
+
+  // Create the new project for user
   const { data, error } = await supabase
     .from("projects")
-    .insert([projectData])
+    .insert([{ ...projectData, owner_id }])
     .select("id")
     .single();
 
