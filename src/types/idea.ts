@@ -1,3 +1,4 @@
+import { features } from "process";
 import { z } from "zod";
 
 // Create schemas for software project idea generation
@@ -32,6 +33,7 @@ const FrameworkSchema = z.object({
 });
 
 const IdeaSchema = z.object({
+  id: z.number().optional(),
   title: z
     .string()
     .min(2, {
@@ -57,10 +59,21 @@ const IdeaSchema = z.object({
     ),
 });
 
+const PartialIdeaSchema = IdeaSchema.omit({ frameworks: true }).extend({
+  features: IdeaSchema.shape.features.optional(),
+});
+
 // Define TS types from schemas
 type Feature = z.infer<typeof FeatureSchema>;
 type Framework = z.infer<typeof FrameworkSchema>;
 type Idea = z.infer<typeof IdeaSchema>;
+type PartialIdea = z.infer<typeof PartialIdeaSchema>;
 
-export { IdeaSchema, FeatureSchema, FrameworkSchema };
-export type { Idea, Feature, Framework };
+interface UserIdeaView {
+  user_id: string;
+  idea_id: number;
+  viewed_at: Date;
+}
+
+export { IdeaSchema, FeatureSchema, FrameworkSchema, PartialIdeaSchema };
+export type { Idea, Feature, Framework, UserIdeaView, PartialIdea };
