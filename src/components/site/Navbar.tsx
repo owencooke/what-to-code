@@ -104,7 +104,7 @@ export const Navbar = () => {
           <NavigationMenuItem className="flex min-w-fit h-full !mt-0">
             <Link href="/" className="flex items-center gap-2 md:text-base">
               <Logo />
-              <span className="font-medium text-lg">what to code</span>
+              {/* <span className="font-medium text-lg">what to code</span> */}
             </Link>
           </NavigationMenuItem>
 
