@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/db/config";
+import { db } from "@/lib/db/config";
 
 /**
  * Creates a user in the database if they don't already exist.
@@ -14,9 +14,9 @@ async function createUserIfNotExist(
   username: string,
   email: string,
 ): Promise<void> {
-  const { data } = await supabase
+  const { data } = await db
+    .select(["id"])
     .from("users")
-    .select("id")
     .eq("id", userId)
     .single();
 
@@ -47,9 +47,9 @@ async function createUserIfNotExist(
 async function getUserIdByGithubUsername(
   githubUsername: string,
 ): Promise<string | null> {
-  const { data, error } = await supabase
+  const { data, error } = await db
+    .select(["id"])
     .from("users")
-    .select("id")
     .eq("username", githubUsername)
     .single();
 

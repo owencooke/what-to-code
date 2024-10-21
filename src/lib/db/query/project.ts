@@ -1,5 +1,7 @@
-import { supabase } from "@/lib/db/config";
+import { db } from "@/lib/db/config";
+import { projects, users } from "@/lib/db/schema";
 import { NewProject, Project, ProjectSchema } from "@/types/project";
+import { eq, ilike, or, not, getTableColumns } from "drizzle-orm";
 
 /**
  * Creates a new project in the database.
@@ -13,32 +15,32 @@ async function createProject(project: NewProject): Promise<string> {
   const { starterRepo, github_user, ...projectData } = project;
 
   // Fetch the user ID from the users table
-  const { data: userData, error: userError } = await supabase
-    .from("users")
-    .select("id")
-    .eq("username", github_user)
-    .single();
+  const [userData] = await db
+    .select({ id: users.id })
+    .from(users)
+    .where(eq(users.username, github_user));
 
-  if (userError) {
-    console.error("Error fetching user ID:", userError);
-    throw userError;
+  if (!userData) {
+    const error = new Error("Error fetching user ID");
+    console.error(error);
+    throw error;
   }
 
   const owner_id = userData.id;
 
-  // Create the new project for user
-  const { data, error } = await supabase
-    .from("projects")
-    .insert([{ ...projectData, owner_id }])
-    .select("id")
-    .single();
+  // Insert the project with the owner_id
+  const [insertedProject] = await db
+    .insert(projects)
+    .values({ ...projectData, owner_id })
+    .returning({ id: projects.id });
 
-  if (error) {
-    console.error("Error inserting project to Supabase:", error);
+  if (!insertedProject) {
+    const error = new Error("Error inserting project");
+    console.error(error);
     throw error;
   }
 
-  return data.id;
+  return insertedProject.id;
 }
 
 /**
@@ -49,25 +51,22 @@ async function createProject(project: NewProject): Promise<string> {
  * @throws {Error} - Throws an error if the fetch fails.
  */
 async function getProjectById(projectId: string): Promise<Project> {
-  const { data, error } = await supabase
-    .from("projects")
-    .select(
-      `
-      *,
-        users!inner (
-            username
-        )
-    `,
-    )
-    .eq("id", projectId)
-    .single();
+  const [project] = await db
+    .select({
+      ...getTableColumns(projects),
+      github_user: users.username,
+    })
+    .from(projects)
+    .leftJoin(users, eq(users.id, projects.owner_id))
+    .where(eq(projects.id, projectId));
 
-  if (error) {
-    console.error("Error fetching project:", error);
-    throw error;
+  if (!project) {
+    throw new Error("Error fetching project");
   }
-  return parseProjectData(data);
+
+  return parseProjectData(project);
 }
+
 /**
  * Searches for projects by title or description, including the GitHub user information.
  *
@@ -75,52 +74,61 @@ async function getProjectById(projectId: string): Promise<Project> {
  * @returns {Promise<Project[]>} - A promise that resolves to an array of projects.
  * @throws {Error} - Throws an error if the search fails.
  */
-const searchProjects = async (searchTerm: string): Promise<Project[]> => {
-  let query = supabase.from("projects").select(
-    `
-        *,
-        users!inner (
-            username
-        )
-    `,
-  );
-  if (searchTerm) {
-    query = query.or(
-      `title.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%`,
+async function searchProjects(searchTerm: string): Promise<Project[]> {
+  const projectsList = await db
+    .select({
+      ...getTableColumns(projects),
+      github_user: users.username,
+    })
+    .from(projects)
+    .leftJoin(users, eq(users.id, projects.owner_id))
+    .where(
+      or(
+        ilike(projects.title, `%${searchTerm}%`),
+        ilike(projects.description, `%${searchTerm}%`),
+      ),
     );
-  }
-  const { data, error } = await query;
 
-  if (error) {
-    console.error("Error searching projects:", error);
-    throw error;
+  if (!projectsList) {
+    throw new Error("Error searching projects");
   }
-  return data.map(parseProjectData);
-};
 
+  return projectsList.map(parseProjectData);
+}
+
+/**
+ * Fetches projects by user ID, including the GitHub user information.
+ *
+ * @param {string} userId - The ID of the user.
+ * @param {boolean} [ownedByUser=true] - Whether to fetch projects owned by the user or not.
+ * @returns {Promise<Project[]>} - A promise that resolves to an array of projects.
+ * @throws {Error} - Throws an error if the fetch fails.
+ */
 async function getProjectsByUserId(
   userId: string,
   ownedByUser: boolean = true,
 ): Promise<Project[]> {
-  const query = supabase.from("projects").select(`
-    *,
-    users!inner (
-        username
-    )
-`);
+  let query = db
+    .select({
+      ...getTableColumns(projects),
+      github_user: users.username,
+    })
+    .from(projects)
+    .leftJoin(users, eq(users.id, projects.owner_id));
 
   if (ownedByUser) {
-    query.eq("owner_id", userId);
+    query.where(eq(projects.owner_id, userId));
   } else {
-    query.neq("owner_id", userId);
+    query.where(not(eq(projects.owner_id, userId)));
   }
 
-  const { data, error } = await query;
-  if (error) {
-    console.error(`Error fetching projects for ${userId}:`, error);
-    throw error;
+  const projectsList = await query;
+
+  if (!projectsList) {
+    throw new Error(`Error fetching projects for ${userId}`);
   }
-  return data.map(parseProjectData);
+
+  return projectsList.map(parseProjectData);
 }
 
 /**
@@ -131,10 +139,7 @@ async function getProjectsByUserId(
  * @throws {Error} - Throws an error if the parsing fails.
  */
 function parseProjectData(project: any): Project {
-  return ProjectSchema.parse({
-    ...project,
-    github_user: project.users.username,
-  });
+  return ProjectSchema.parse(project);
 }
 
 export { createProject, getProjectById, searchProjects, getProjectsByUserId };
