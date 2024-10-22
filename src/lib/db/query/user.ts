@@ -1,38 +1,36 @@
 import { db } from "@/lib/db/config";
+import { users } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
 
 /**
- * Creates a user in the database if they don't already exist.
+ * Creates a new user in the database if they do not already exist.
  *
  * @param {string} userId - The GitHub user ID (from Next Auth token).
- * @param {string} username - The GitHub username.
- * @param {string} email - The user's email.
- * @returns {Promise<void>} - A promise that resolves when the operation is complete.
- * @throws {Error} - Throws an error if the operation fails.
+ * @param {string} githubUsername - The GitHub username of the user.
+ * @param {string} email - The email of the user.
+ * @returns {Promise<void>} - A promise that resolves when check or insert complete.
+ * @throws {Error} - Throws an error if the insertion fails.
  */
 async function createUserIfNotExist(
   userId: string,
-  username: string,
+  githubUsername: string,
   email: string,
 ): Promise<void> {
-  const { data } = await db
-    .select(["id"])
-    .from("users")
-    .eq("id", userId)
-    .single();
+  // Check if the user already exists
+  const [existingUser] = await db
+    .select({ id: users.id })
+    .from(users)
+    .where(eq(users.username, githubUsername));
 
-  if (!data) {
-    // User does not exist, insert new user
-    const { error: insertError } = await supabase.from("users").insert([
-      {
-        id: userId,
-        username: username,
-        email: email,
-      },
-    ]);
+  if (!existingUser) {
+    // Insert a new user
+    const [newUser] = await db
+      .insert(users)
+      .values({ id: userId, username: githubUsername, email })
+      .returning({ id: users.id });
 
-    if (insertError) {
-      console.error("Error inserting new user:", insertError);
-      throw insertError;
+    if (!newUser) {
+      throw new Error("Error inserting new user");
     }
   }
 }
@@ -47,18 +45,17 @@ async function createUserIfNotExist(
 async function getUserIdByGithubUsername(
   githubUsername: string,
 ): Promise<string | null> {
-  const { data, error } = await db
-    .select(["id"])
-    .from("users")
-    .eq("username", githubUsername)
-    .single();
+  try {
+    const [user] = await db
+      .select({ id: users.id })
+      .from(users)
+      .where(eq(users.username, githubUsername));
 
-  if (error) {
+    return user?.id || null;
+  } catch (error) {
     console.error("Error fetching user ID:", error);
     return null;
   }
-
-  return data?.id || null;
 }
 
 export { createUserIfNotExist, getUserIdByGithubUsername };
