@@ -8,6 +8,7 @@ import {
   integer,
   varchar,
   vector,
+  primaryKey,
 } from "drizzle-orm/pg-core";
 
 // Define the "users" table
@@ -54,17 +55,23 @@ export const templates = pgTable(`templates`, {
 });
 
 // Define the "user_idea_views" table
-export const userIdeaViews = pgTable("user_idea_views", {
-  viewed_at: timestamp("viewed_at", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
-  idea_id: integer("idea_id")
-    .notNull()
-    .references(() => ideas.id),
-  user_id: text("user_id")
-    .notNull()
-    .references(() => users.id),
-});
+export const userIdeaViews = pgTable(
+  "user_idea_views",
+  {
+    viewed_at: timestamp("viewed_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    idea_id: integer("idea_id")
+      .notNull()
+      .references(() => ideas.id),
+    user_id: text("user_id")
+      .notNull()
+      .references(() => users.id),
+  },
+  (table) => ({
+    pk: primaryKey({ columns: [table.idea_id, table.user_id] }),
+  }),
+);
 
 // Define the relations
 export const projectRelations = relations(projects, ({ one }) => ({

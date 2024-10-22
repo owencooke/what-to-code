@@ -2,17 +2,24 @@ import {
   extractDetailsFromRepoUrl,
   getRepoFromProjectTitle,
 } from "@/lib/github/string-utils";
-import { Feature } from "@/types/idea";
 import { NewProject } from "@/types/project";
 import ky from "ky";
 import { GitHubRepo } from "@/types/github";
 
+/**
+ * Creates an empty GitHub repository.
+ *
+ * @param {NewProject} project - The project details.
+ * @param {string} authHeader - The authorization header for GitHub API.
+ * @returns {Promise<any>} - A promise that resolves to the created repository details.
+ * @throws {Error} - Throws an error if the repository creation fails.
+ */
 async function createEmptyRepo(
   project: NewProject,
   authHeader: string,
-): Promise<GitHubRepo> {
+): Promise<any> {
   return ky
-    .post(`https://api.github.com/user/repos`, {
+    .post("https://api.github.com/user/repos", {
       headers: {
         Authorization: authHeader,
         Accept: "application/vnd.github.v3+json",
@@ -26,7 +33,18 @@ async function createEmptyRepo(
     .json();
 }
 
-async function createRepoFromTemplate(project: NewProject, authHeader: string) {
+/**
+ * Creates a GitHub repository from a template.
+ *
+ * @param {NewProject} project - The project details.
+ * @param {string} authHeader - The authorization header for GitHub API.
+ * @returns {Promise<any>} - A promise that resolves to the created repository details.
+ * @throws {Error} - Throws an error if the repository creation fails.
+ */
+async function createRepoFromTemplate(
+  project: NewProject,
+  authHeader: string,
+): Promise<any> {
   if (!project.starterRepo) {
     return createEmptyRepo(project, authHeader);
   }
@@ -47,45 +65,45 @@ async function createRepoFromTemplate(project: NewProject, authHeader: string) {
     .json();
 }
 
-const composeIssueMarkdown = (feature: Feature) => {
-  const [_, userRole, action, goal] = feature.userStory
-    .split(/As an?|I want|so that/)
-    .map((str) => str.trim().replace(/^[^\w\s]+|[^\w\s]+$/g, ""));
-  const article = userRole.charAt(0).match(/[aeiou]/i) ? "an" : "a";
-  return `
-# ${feature.title}
-
-## User Story
-
-_**As ${article}** ${userRole}, **I want** ${action} **so that** ${goal}._
-
-## Acceptance Criteria
-
-${feature.acceptanceCriteria
-  .map((criterion) => `- [ ] ${criterion}`)
-  .join("\n")}
-`;
-};
-
-async function createIssue(
-  repoName: string,
-  repoOwner: string,
-  feature: Feature,
+/**
+ * Fetches GitHub repository details.
+ *
+ * @param {string} url - The URL of the GitHub repository.
+ * @param {string} authHeader - The authorization header for GitHub API.
+ * @returns {Promise<GitHubRepo>} - A promise that resolves to the GitHub repository details.
+ * @throws {Error} - Throws an error if the fetch fails.
+ */
+async function getGitHubRepoDetails(
+  url: string,
   authHeader: string,
-) {
-  return ky
-    .post(`https://api.github.com/repos/${repoOwner}/${repoName}/issues`, {
-      headers: {
-        Authorization: authHeader,
-        Accept: "application/vnd.github.v3+json",
-      },
-      json: {
-        title: `[STORY] ${feature.title}`,
-        body: composeIssueMarkdown(feature),
-        labels: ["enhancement"],
-      },
-    })
-    .json();
-}
+): Promise<GitHubRepo> {
+  const urlParts = new URL(url);
+  const [owner, repoName] = urlParts.pathname.split("/").slice(1, 3);
 
-export { createRepoFromTemplate, createIssue };
+  try {
+    // Fetch repo details from GitHub API
+    const repo: any = await ky
+      .get(`https://api.github.com/repos/${owner}/${repoName}`, {
+        headers: {
+          Authorization: authHeader,
+        },
+      })
+      .json();
+
+    // Return the GitHub repo info for matching template
+    return {
+      url,
+      stars: repo.stargazers_count,
+      forks: repo.forks_count,
+      createdAt: repo.created_at,
+      updatedAt: repo.updated_at,
+      topics: repo.topics,
+      description: repo.description,
+      name: repo.name,
+    };
+  } catch (error) {
+    console.error(`Error fetching GitHub data for ${url}:`, error);
+    throw new Error(`Failed to fetch GitHub data for ${url}`);
+  }
+}
+export { createRepoFromTemplate, getGitHubRepoDetails };

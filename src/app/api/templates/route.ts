@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabase } from "@/lib/db/config";
 import { OpenAIEmbeddings } from "@langchain/openai";
-import ky from "ky";
+import { matchTemplates } from "@/lib/db/query/templates";
+import { getGitHubRepoDetails } from "@/lib/github/repo";
+import { TemplateMatch } from "@/types/templates";
 import { GitHubRepo } from "@/types/github";
 
 export const runtime = "edge";
@@ -27,58 +28,27 @@ export async function GET(req: NextRequest) {
     });
     const embedding = await embeddings.embedQuery(query);
 
-    // Use vector search for the 3 most similar templates
-    const { data: templateDocuments, error } = await supabase.rpc(
-      "match_templates",
-      {
-        query_embedding: embedding,
-        match_count: 3, // Return the top 3 matches
-      },
-    );
-
-    if (error) {
+    // Use vector search to find the 3 most similar templates to the description
+    let templateDocuments;
+    try {
+      templateDocuments = await matchTemplates(embedding, 3);
+    } catch (error: any) {
       return NextResponse.json(
         { message: `Error performing RAG on repo templates: ${error.message}` },
         { status: 400 },
       );
     }
 
-    // Process the RAG results
-    const repoTemplates = await Promise.all(
+    // Get full details from Github for the top matching templates
+    const repoTemplates: GitHubRepo[] = await Promise.all(
       templateDocuments
-        .filter((template: any) => template.similarity >= SIMILARITY_THRESHOLD)
-        .map(async (template: any): Promise<GitHubRepo> => {
-          // Extract the owner and repo name from the URL
-          const { url } = template;
-          const urlParts = new URL(url);
-          const [owner, repoName] = urlParts.pathname.split("/").slice(1, 3);
-
-          try {
-            // Fetch repo details from GitHub API
-            const repo: any = await ky
-              .get(`https://api.github.com/repos/${owner}/${repoName}`, {
-                headers: {
-                  Authorization: authHeader,
-                },
-              })
-              .json();
-
-            // Return the GitHub repo info for matching template
-            return {
-              url,
-              stars: repo.stargazers_count,
-              forks: repo.forks_count,
-              createdAt: repo.created_at,
-              updatedAt: repo.updated_at,
-              topics: repo.topics,
-              description: repo.description,
-              name: repo.name,
-            };
-          } catch (error) {
-            console.error(`Error fetching GitHub data for ${url}:`, error);
-            return { ...template, githubInfo: null }; // Return template even if GitHub fetch fails
-          }
-        }),
+        .filter(
+          (template: TemplateMatch) =>
+            template.similarity >= SIMILARITY_THRESHOLD,
+        )
+        .map((template: TemplateMatch) =>
+          getGitHubRepoDetails(template.url, authHeader),
+        ),
     );
 
     return NextResponse.json(repoTemplates);
