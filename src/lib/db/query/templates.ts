@@ -13,6 +13,7 @@ export async function matchTemplates(
   embedding: number[],
   matchCount: number,
 ): Promise<TemplateMatch[]> {
+  //FIXME: this is wrong, it should call postgres function match_templates
   const result = await db.execute(
     sql`SELECT * FROM match_templates(${embedding}, ${matchCount})`,
   );

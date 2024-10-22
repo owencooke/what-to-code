@@ -27,7 +27,7 @@ const MatchedRepos: React.FC<MatchedReposProps> = ({
   // The content used in vector search for matching project --> template
   const techDescription = `${framework.title} using ${framework.tools.join()}`;
 
-  const { data: session } = useSession();
+  const { status } = useSession();
   const isMobile = useIsMobile();
   const [selectedRepo, setSelectedRepo] = useState<GitHubRepo>();
 
@@ -45,7 +45,7 @@ const MatchedRepos: React.FC<MatchedReposProps> = ({
   } = useQuery<GitHubRepo[], Error>({
     queryKey: ["repos", techDescription],
     queryFn: fetchRepos,
-    enabled: !!session?.accessToken,
+    enabled: status === "authenticated",
     retry: false,
     refetchOnWindowFocus: false,
     staleTime: Infinity,
@@ -71,7 +71,7 @@ const MatchedRepos: React.FC<MatchedReposProps> = ({
   if (!repos || repos.length === 0) {
     return (
       <div className="flex justify-center items-center h-48 w-full text-sm">
-        {session?.user
+        {status === "authenticated"
           ? `Sorry, we couldn't find any matching repositories :(`
           : `Sign in with GitHub to see recommended templates :)`}
       </div>
