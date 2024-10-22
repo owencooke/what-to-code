@@ -46,14 +46,6 @@ export const projects = pgTable(`projects`, {
     .notNull(),
 });
 
-// Define the "subscribers" table
-export const subscribers = pgTable(`subscribers`, {
-  created_at: timestamp("created_at", { withTimezone: true })
-    .notNull()
-    .defaultNow(),
-  email: varchar("email").notNull(),
-});
-
 // Define the "templates" table
 export const templates = pgTable(`templates`, {
   url: text("url"),

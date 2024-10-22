@@ -1,47 +1,47 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabase } from "@/lib/db/config";
+import { resend, audienceId } from "@/lib/email/config";
 
-export const runtime = "edge";
 export async function POST(req: NextRequest) {
   try {
-    const email = req.nextUrl.searchParams.get("email");
-    const { error } = await supabase.from("subscribers").insert([{ email }]);
-    if (error) {
-      if (error.code === "23505") {
-        return NextResponse.json({
-          message: `Email ${email} is already registered`,
-        });
-      }
-      throw error;
-    }
-    return NextResponse.json({
-      message: `Email subscription successful for ${email}`,
-    });
-  } catch (e: any) {
-    return NextResponse.json(
-      { error: e.message, details: e.details },
-      { status: e.status ?? 500 },
-    );
-  }
-}
+    const { email, firstName, lastName } = await req.json();
 
-export async function DELETE(req: NextRequest) {
-  try {
-    const email = req.nextUrl.searchParams.get("email");
-    const { error } = await supabase
-      .from("subscribers")
-      .delete()
-      .eq("email", email);
-    if (error) {
-      throw error;
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email || !emailRegex.test(email)) {
+      return NextResponse.json(
+        { error: "Invalid email address" },
+        { status: 400 },
+      );
     }
-    return NextResponse.json({
-      message: `Email ${email} deleted successfully`,
+
+    // Create contact in Resend
+    const response = await resend.contacts.create({
+      audienceId,
+      email,
+      firstName,
+      lastName,
+      unsubscribed: false,
     });
-  } catch (e: any) {
+
+    // Return success response
     return NextResponse.json(
-      { error: e.message, details: e.details },
-      { status: e.status ?? 500 },
+      {
+        message: "Successfully subscribed",
+        data: response,
+      },
+      { status: 200 },
     );
+  } catch (error: any) {
+    // Handle specific Resend errors
+    if (error.statusCode === 409) {
+      return NextResponse.json(
+        { error: "Email already subscribed" },
+        { status: 409 },
+      );
+    }
+
+    // Handle other errors
+    console.error("Subscription error:", error);
+    return NextResponse.json({ error: "Failed to subscribe" }, { status: 500 });
   }
 }

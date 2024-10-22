@@ -10,6 +10,7 @@ import { z } from "zod";
 import { useEffect, useRef, useState } from "react";
 import FormInput from "@/components/FormInput";
 import { motion, useAnimation, useInView } from "framer-motion";
+import ky from "ky";
 
 const containerAnimation = {
   hidden: { opacity: 0, y: 50 },
@@ -35,19 +36,6 @@ const childAnimation = {
 };
 
 const formAnimation = {
-  hidden: { scale: 0.8, opacity: 0 },
-  visible: {
-    scale: 1,
-    opacity: 1,
-    transition: {
-      type: "spring",
-      stiffness: 100,
-      damping: 15,
-    },
-  },
-};
-
-const successAnimation = {
   hidden: { scale: 0.8, opacity: 0 },
   visible: {
     scale: 1,
@@ -92,17 +80,20 @@ export const Newsletter = () => {
   }, [controls, inView]);
 
   const handleSubmit = async (data: z.infer<typeof FormSchema>) => {
-    const response = await fetch(`/api/subscribe?email=${data.email}`, {
-      method: "POST",
-    });
-    if (response.ok) {
-      toast({
-        title: "Thanks for subscribing 💌",
-        description: "We've got your email. Stay tuned for updates!",
+    try {
+      const response = await ky.post("/api/subscribe", {
+        json: { email: data.email },
       });
-      form.reset();
-      setSubmitted(true);
-    } else {
+
+      if (response.ok) {
+        toast({
+          title: "Thanks for subscribing 💌",
+          description: "We've got your email. Stay tuned for updates!",
+        });
+        form.reset();
+        setSubmitted(true);
+      }
+    } catch (error) {
       toast({
         title: "Email subscription signup failed.",
         description: "Please try again later.",
