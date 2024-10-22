@@ -1,8 +1,9 @@
 import { and, desc, eq, ilike, not, sql } from "drizzle-orm";
-import { db } from "@/lib/db/config"; // Assuming this is where your drizzle db instance is configured
+import { db } from "@/lib/db/config";
 import { ideas, userIdeaViews } from "@/lib/db/schema";
 import { selectRandom } from "@/lib/utils";
 import { PartialIdea, PartialIdeaSchema } from "@/types/idea";
+import { subDays, isAfter } from "date-fns";
 
 /**
  * Fetches a random idea that the user hasn't seen yet.
@@ -44,7 +45,12 @@ async function getUnseenIdeaWithTopic(
 }
 
 /**
- * Fetches the last X seen ideas for a user.
+ * Retrieves the most recently viewed ideas for a specific user.
+ * Clears view history if user hasn't viewed any ideas in the last 3 days.
+ *
+ * @param userId - The unique identifier of the user.
+ * @param limit - The maximum number of ideas to retrieve.
+ * @returns {Promise<PartialIdea[]>} - A promise that resolves to an array of partially parsed ideas.
  */
 async function getLastSeenIdeasForUser(
   userId: string,
@@ -53,6 +59,7 @@ async function getLastSeenIdeasForUser(
   const seenIdeas = await db
     .select({
       idea: ideas,
+      viewed_at: userIdeaViews.viewed_at,
     })
     .from(userIdeaViews)
     .innerJoin(ideas, eq(userIdeaViews.idea_id, ideas.id))
@@ -60,11 +67,26 @@ async function getLastSeenIdeasForUser(
     .orderBy(desc(userIdeaViews.viewed_at))
     .limit(limit);
 
+  // Check if the most recent seen idea is more than 3 days old
+  if (seenIdeas.length) {
+    const mostRecentViewDate = seenIdeas[0].viewed_at;
+    const threeDaysAgo = subDays(new Date(), 3);
+
+    if (isAfter(threeDaysAgo, mostRecentViewDate)) {
+      // Clear view history for user
+      await db.delete(userIdeaViews).where(eq(userIdeaViews.user_id, userId));
+      return [];
+    }
+  }
+
   return seenIdeas.map((record) => PartialIdeaSchema.parse(record.idea));
 }
 
 /**
  * Fetches a random idea from all ideas.
+ *
+ * @returns {Promise<PartialIdea>} - A promise that resolves to a random idea.
+ * @throws {Error} - Throws an error if the query fails.
  */
 async function getRandomIdea(): Promise<PartialIdea> {
   const allIdeas = await db.select().from(ideas);
@@ -73,6 +95,11 @@ async function getRandomIdea(): Promise<PartialIdea> {
 
 /**
  * Adds a new idea to the database and associates it with a user as seen.
+ *
+ * @param {PartialIdea} idea - The idea to add to the database.
+ * @param {string} userId - The ID of the user who has seen the idea.
+ * @returns {Promise<void>} - A promise that resolves when the operation is complete.
+ * @throws {Error} - Throws an error if the insertion fails.
  */
 async function createIdeaAndMarkAsSeen(
   idea: PartialIdea,

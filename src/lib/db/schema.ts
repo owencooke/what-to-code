@@ -63,7 +63,9 @@ export const templates = pgTable(`templates`, {
 
 // Define the "user_idea_views" table
 export const userIdeaViews = pgTable("user_idea_views", {
-  viewed_at: timestamp("viewed_at", { withTimezone: true }).defaultNow(),
+  viewed_at: timestamp("viewed_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
   idea_id: integer("idea_id")
     .notNull()
     .references(() => ideas.id),
