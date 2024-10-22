@@ -1,16 +1,8 @@
-import { createClient } from "@supabase/supabase-js";
+import { drizzle } from "drizzle-orm/neon-serverless";
 
-// Check if environment variables are set
-if (!process.env.SUPABASE_URL || !process.env.SUPABASE_KEY) {
-  throw new Error(
-    "Environment variables for Supabase client must be set: SUPABASE_URL, SUPABASE_KEY",
-  );
-}
+// Construct the connection string
+const { DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_NAME } = process.env;
+export const connectionString = `postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}`;
 
-// Create Supabase connection
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_KEY,
-);
-
-export { supabase };
+// Create the drizzle database instance with the SQL client
+export const db = drizzle(connectionString);

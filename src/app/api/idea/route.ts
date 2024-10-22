@@ -1,20 +1,45 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generateIdea } from "./logic";
+import topics from "@/app/idea/data/categories";
+import { getAuthInfo, selectRandom } from "@/lib/utils";
+import {
+  getUnseenIdeaWithTopic,
+  getRandomIdea,
+  createIdeaAndMarkAsSeen,
+  getLastSeenIdeasForUser,
+} from "@/lib/db/query/idea";
 
 export const runtime = "edge";
 
-export async function POST(req: NextRequest) {
+export async function GET(req: NextRequest) {
   try {
-    const topic = req.nextUrl.searchParams.get("topic");
-    const { recentIdeas } = await req.json();
-    if (!topic) {
-      return NextResponse.json(
-        { error: "Topic is required for generating an idea" },
-        { status: 400 },
-      );
+    let topic = req.nextUrl.searchParams.get("topic");
+    const { userId } = await getAuthInfo(req);
+
+    if (!userId) {
+      // User not logged in, fetch a random existing idea from DB
+      const idea = await getRandomIdea();
+      return NextResponse.json(idea);
     }
-    const response = await generateIdea(topic, recentIdeas);
-    return NextResponse.json(response);
+
+    // Check for ideas user hasn't seen yet
+    let idea = await getUnseenIdeaWithTopic(userId, topic);
+
+    if (!idea) {
+      // No unseen ideas in DB, so generate a new idea using GenAI
+      if (!topic) {
+        topic = selectRandom(topics);
+      }
+      const recentIdeas = await getLastSeenIdeasForUser(userId, 6);
+      idea = await generateIdea(
+        topic,
+        recentIdeas.map((idea) => idea.title),
+      );
+      // Add idea to DB
+      await createIdeaAndMarkAsSeen(idea, userId);
+    }
+
+    return NextResponse.json(idea);
   } catch (e: any) {
     return NextResponse.json({ error: e.message }, { status: e.status ?? 500 });
   }

@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { NewProjectSchema } from "@/types/project";
-import { createIssue, createRepoFromTemplate } from "../../../lib/github/repo";
+import { createRepoFromTemplate } from "@/lib/github/repo";
+import { createIssue } from "@/lib/github/issue";
 import { Feature } from "@/types/idea";
 import { createProject, searchProjects } from "@/lib/db/query/project";
+import { getAuthInfo } from "@/lib/utils";
 
 export async function GET(req: NextRequest) {
   try {
@@ -18,7 +20,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   const project = await req.json();
-  const authHeader = req.headers.get("Authorization")!;
+  const { accessToken } = await getAuthInfo(req);
 
   // Validate project data
   if (!NewProjectSchema.safeParse(project).success) {
@@ -30,12 +32,12 @@ export async function POST(req: NextRequest) {
 
   try {
     // Create new GitHub repo for user based on selected framework
-    const repo: any = await createRepoFromTemplate(project, authHeader);
+    const repo: any = await createRepoFromTemplate(project, accessToken);
 
     // Create GitHub enhancement issues for each feature in the project
     project.features.forEach(
       async (feature: Feature) =>
-        await createIssue(repo.name, project.github_user, feature, authHeader),
+        await createIssue(repo.name, project.github_user, feature, accessToken),
     );
 
     // Add an entry to the projects table in the database

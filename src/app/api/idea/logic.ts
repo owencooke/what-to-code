@@ -4,21 +4,20 @@ import { generateZodSchemaFromPrompt } from "@/lib/llm/utils";
 import { z } from "zod";
 
 // Generate Title and Description of Idea
-export const generateIdea = async (topic: string, recentIdeas: string[]) => {
-  // FIXME: recentIdeas should probably be stored in DB (client side risk prompt injection)
-  // For now, just limit length of each idea string to expected title length
-  recentIdeas = recentIdeas.map((idea) => idea.slice(0, 50));
-
+export const generateIdea = async (
+  topic: string,
+  recentIdeaTitles: string[],
+) => {
   // Modify prompt to avoid using recent ideas (if any)
   const prompt = `${IDEA_PROMPT} ${
-    recentIdeas.length > 0 &&
-    `Do not suggest already taken ideas: ${recentIdeas.join()}`
+    recentIdeaTitles.length > 0 &&
+    `Do not suggest already taken ideas: ${recentIdeaTitles.join()}`
   }`;
 
   return generateZodSchemaFromPrompt(
     IdeaSchema.pick({ title: true, description: true }),
     prompt,
-    { topic, recentIdeas },
+    { topic, recentIdeaTitles },
   );
 };
 
