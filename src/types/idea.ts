@@ -60,7 +60,7 @@ const IdeaSchema = z.object({
 });
 
 const PartialIdeaSchema = IdeaSchema.omit({ frameworks: true }).extend({
-  features: IdeaSchema.shape.features.optional(),
+  features: IdeaSchema.shape.features.nullable().optional(),
 });
 
 // Define TS types from schemas
