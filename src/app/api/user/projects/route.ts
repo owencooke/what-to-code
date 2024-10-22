@@ -1,21 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getProjectsByUserId } from "@/lib/db/query/project";
-import { getUsername } from "@/lib/github/user";
+import { getAuthInfo } from "@/lib/utils";
 
+// FIXME: this should probably be refactored to work for any userID, not just the logged in user
+// proper rest conventions would be to use /users/:userId/projects
 export async function GET(req: NextRequest) {
-  const authHeader = req.headers.get("Authorization")!;
+  const { userId } = await getAuthInfo(req);
 
-  const user_id = await getUsername(authHeader);
-
-  if (!user_id) {
+  if (!userId) {
     return NextResponse.json(
-      { message: "Username is required" },
-      { status: 400 },
+      { message: "User not logged in." },
+      { status: 401 },
     );
   }
 
   try {
-    const projects = await getProjectsByUserId(user_id);
+    const projects = await getProjectsByUserId(userId);
     return NextResponse.json(projects);
   } catch (error: any) {
     return NextResponse.json(

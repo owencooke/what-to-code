@@ -3,23 +3,20 @@ import ky from "ky";
 /**
  * Fetches the GitHub username associated with provided auth token.
  *
- * @param {string} authHeader - The authorization header containing the GitHub token.
- * @returns {Promise<string>} - A promise that resolves to the GitHub username.
+ * @param {string} accessToken - The authorization header containing the GitHub token.
+ * @returns {Promise<any>} - A promise that resolves to the GitHub user info.
  * @throws {Error} - Throws an error if the request fails.
  */
-async function getUsername(authHeader: string): Promise<string> {
-  if (!authHeader.startsWith("Bearer ")) {
-    authHeader = `Bearer ${authHeader}`;
-  }
+async function getUser(accessToken: string): Promise<any> {
   const user: any = await ky
     .get("https://api.github.com/user", {
       headers: {
-        Authorization: authHeader,
+        Authorization: `Bearer ${accessToken}`,
         Accept: "application/vnd.github.v3+json",
       },
     })
     .json();
-  return user.login;
+  return user;
 }
 
-export { getUsername };
+export { getUser };

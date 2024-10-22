@@ -35,9 +35,6 @@ const MatchedRepos: React.FC<MatchedReposProps> = ({
     ky
       .get("/api/templates", {
         searchParams: { techDescription },
-        headers: {
-          Authorization: `token ${session?.accessToken}`,
-        },
       })
       .json();
 
@@ -46,7 +43,7 @@ const MatchedRepos: React.FC<MatchedReposProps> = ({
     isLoading,
     error,
   } = useQuery<GitHubRepo[], Error>({
-    queryKey: ["repos", techDescription, session?.accessToken],
+    queryKey: ["repos", techDescription],
     queryFn: fetchRepos,
     enabled: !!session?.accessToken,
     retry: false,

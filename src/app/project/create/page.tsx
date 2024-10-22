@@ -133,9 +133,6 @@ export default function Home() {
     // Disable submit button while server processing
     setSubmitEnabled(false);
     const response = await ky.post(`/api/project`, {
-      headers: {
-        Authorization: "token " + session?.accessToken,
-      },
       json: projectToCreate,
     });
 

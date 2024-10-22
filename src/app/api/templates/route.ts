@@ -4,13 +4,14 @@ import { matchTemplates } from "@/lib/db/query/templates";
 import { getGitHubRepoDetails } from "@/lib/github/repo";
 import { TemplateMatch } from "@/types/templates";
 import { GitHubRepo } from "@/types/github";
+import { getAuthInfo } from "@/lib/utils";
 
 export const runtime = "edge";
 const SIMILARITY_THRESHOLD = 0.4;
 
 export async function GET(req: NextRequest) {
   const techDescription = req.nextUrl.searchParams.get("techDescription");
-  const authHeader = req.headers.get("Authorization")!;
+  const { accessToken } = await getAuthInfo(req);
 
   if (!techDescription) {
     return NextResponse.json(
@@ -47,7 +48,7 @@ export async function GET(req: NextRequest) {
             template.similarity >= SIMILARITY_THRESHOLD,
         )
         .map((template: TemplateMatch) =>
-          getGitHubRepoDetails(template.url, authHeader),
+          getGitHubRepoDetails(template.url, accessToken),
         ),
     );
 

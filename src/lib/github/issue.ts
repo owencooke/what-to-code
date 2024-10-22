@@ -25,12 +25,12 @@ async function createIssue(
   repoName: string,
   repoOwner: string,
   feature: Feature,
-  authHeader: string,
+  accessToken: string,
 ) {
   return ky
     .post(`https://api.github.com/repos/${repoOwner}/${repoName}/issues`, {
       headers: {
-        Authorization: authHeader,
+        Authorization: `Bearer ${accessToken}`,
         Accept: "application/vnd.github.v3+json",
       },
       json: {

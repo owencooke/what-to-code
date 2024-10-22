@@ -10,18 +10,18 @@ import { GitHubRepo } from "@/types/github";
  * Creates an empty GitHub repository.
  *
  * @param {NewProject} project - The project details.
- * @param {string} authHeader - The authorization header for GitHub API.
+ * @param {string} accessToken - The authorization header for GitHub API.
  * @returns {Promise<any>} - A promise that resolves to the created repository details.
  * @throws {Error} - Throws an error if the repository creation fails.
  */
 async function createEmptyRepo(
   project: NewProject,
-  authHeader: string,
+  accessToken: string,
 ): Promise<any> {
   return ky
     .post("https://api.github.com/user/repos", {
       headers: {
-        Authorization: authHeader,
+        Authorization: `Bearer ${accessToken}`,
         Accept: "application/vnd.github.v3+json",
       },
       json: {
@@ -37,22 +37,22 @@ async function createEmptyRepo(
  * Creates a GitHub repository from a template.
  *
  * @param {NewProject} project - The project details.
- * @param {string} authHeader - The authorization header for GitHub API.
+ * @param {string} accessToken - The authorization header for GitHub API.
  * @returns {Promise<any>} - A promise that resolves to the created repository details.
  * @throws {Error} - Throws an error if the repository creation fails.
  */
 async function createRepoFromTemplate(
   project: NewProject,
-  authHeader: string,
+  accessToken: string,
 ): Promise<any> {
   if (!project.starterRepo) {
-    return createEmptyRepo(project, authHeader);
+    return createEmptyRepo(project, accessToken);
   }
   const { owner, repoName } = extractDetailsFromRepoUrl(project.starterRepo);
   return ky
     .post(`https://api.github.com/repos/${owner}/${repoName}/generate`, {
       headers: {
-        Authorization: authHeader,
+        Authorization: `Bearer ${accessToken}`,
         Accept: "application/vnd.github.baptiste-preview+json",
       },
       json: {
@@ -69,13 +69,13 @@ async function createRepoFromTemplate(
  * Fetches GitHub repository details.
  *
  * @param {string} url - The URL of the GitHub repository.
- * @param {string} authHeader - The authorization header for GitHub API.
+ * @param {string} accessToken - The authorization header for GitHub API.
  * @returns {Promise<GitHubRepo>} - A promise that resolves to the GitHub repository details.
  * @throws {Error} - Throws an error if the fetch fails.
  */
 async function getGitHubRepoDetails(
   url: string,
-  authHeader: string,
+  accessToken: string,
 ): Promise<GitHubRepo> {
   const urlParts = new URL(url);
   const [owner, repoName] = urlParts.pathname.split("/").slice(1, 3);
@@ -85,7 +85,7 @@ async function getGitHubRepoDetails(
     const repo: any = await ky
       .get(`https://api.github.com/repos/${owner}/${repoName}`, {
         headers: {
-          Authorization: authHeader,
+          Authorization: `Bearer ${accessToken}`,
         },
       })
       .json();

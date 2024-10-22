@@ -1,30 +1,28 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generateIdea } from "./logic";
 import topics from "@/app/idea/data/categories";
-import { selectRandom } from "@/lib/utils";
+import { getAuthInfo, selectRandom } from "@/lib/utils";
 import {
   getUnseenIdeaWithTopic,
   getRandomIdea,
   createIdeaAndMarkAsSeen,
   getLastSeenIdeasForUser,
 } from "@/lib/db/query/idea";
-import { getToken } from "next-auth/jwt";
 
 export const runtime = "edge";
 
 export async function GET(req: NextRequest) {
   try {
     let topic = req.nextUrl.searchParams.get("topic");
-    const token = await getToken({ req });
+    const { userId } = await getAuthInfo(req);
 
-    if (!token) {
+    if (!userId) {
       // User not logged in, fetch a random existing idea from DB
       const idea = await getRandomIdea();
       return NextResponse.json(idea);
     }
 
     // Check for ideas user hasn't seen yet
-    const userId = token.sub as string;
     let idea = await getUnseenIdeaWithTopic(userId, topic);
 
     if (!idea) {
