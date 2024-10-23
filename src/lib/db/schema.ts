@@ -9,6 +9,7 @@ import {
   varchar,
   vector,
   primaryKey,
+  index,
 } from "drizzle-orm/pg-core";
 
 // Define the "users" table
@@ -48,11 +49,20 @@ export const projects = pgTable(`projects`, {
 });
 
 // Define the "templates" table
-export const templates = pgTable(`templates`, {
-  url: text("url"),
-  id: serial("id").primaryKey(),
-  embedding: vector("embedding", { dimensions: 1536 }),
-});
+export const templates = pgTable(
+  `templates`,
+  {
+    url: text("url"),
+    id: serial("id").primaryKey(),
+    embedding: vector("embedding", { dimensions: 1536 }),
+  },
+  (table) => ({
+    embeddingIndex: index("embeddingIndex").using(
+      "hnsw",
+      table.embedding.op("vector_cosine_ops"),
+    ),
+  }),
+);
 
 // Define the "user_idea_views" table
 export const userIdeaViews = pgTable(
