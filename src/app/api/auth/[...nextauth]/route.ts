@@ -2,6 +2,7 @@ import NextAuth, { NextAuthOptions, DefaultSession } from "next-auth";
 import GithubProvider from "next-auth/providers/github";
 import { getUser } from "@/lib/github/user";
 import { createUserIfNotExist } from "@/lib/db/query/user";
+import { sendWelcomeEmail } from "@/lib/email/welcome";
 
 declare module "next-auth" {
   interface Session {
@@ -38,12 +39,16 @@ const authOptions: NextAuthOptions = {
       const { login: username } = await getUser(token.accessToken as string);
       session.user = { ...session.user, username };
 
-      // If first-time user, create a new user in the DB
-      await createUserIfNotExist(
+      // If first-time user, create a new user in the DB and send a welcome email
+      const email = session.user.email as string;
+      const { status } = await createUserIfNotExist(
         token.sub as string,
         username,
-        session.user.email as string,
+        email,
       );
+      if (status === "created") {
+        await sendWelcomeEmail(email, session.user.name as string);
+      }
 
       return session;
     },
