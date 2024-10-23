@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { shuffleArray } from "@/lib/utils";
-import categories from "./data/categories";
+import categories from "../data/categories";
 import { Idea } from "@/types/idea";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import FormInput from "@/components/FormInput";

@@ -99,7 +99,7 @@ export const Hero = () => {
             variants={heroButtonsAnimation}
           >
             <Button asChild className="w-5/6 md:w-1/4 group/arrow">
-              <Link href="/idea">
+              <Link href="/idea/generate">
                 get started
                 <ArrowRight className="size-5 ml-2 group-hover/arrow:translate-x-1 transition-transform" />
               </Link>

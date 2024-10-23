@@ -27,7 +27,7 @@ export const ideas = pgTable(`ideas`, {
   title: varchar("title", { length: 100 }).notNull(),
   id: serial("id").primaryKey(),
   features: jsonb("features"),
-  likes: integer("likes"),
+  likes: integer("likes").default(0).notNull(),
   description: varchar("description", { length: 350 }).notNull(),
 });
 
