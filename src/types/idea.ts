@@ -33,7 +33,6 @@ const FrameworkSchema = z.object({
 });
 
 const IdeaSchema = z.object({
-  id: z.number().optional(),
   title: z
     .string()
     .min(2, {
@@ -61,7 +60,8 @@ const IdeaSchema = z.object({
 
 const PartialIdeaSchema = IdeaSchema.omit({ frameworks: true }).extend({
   features: IdeaSchema.shape.features.nullable().optional(),
-  likes: z.number(),
+  likes: z.number().optional(),
+  id: z.number().optional(),
 });
 
 // Define TS types from schemas
