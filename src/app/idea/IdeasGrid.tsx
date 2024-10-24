@@ -4,7 +4,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { PartialIdea } from "@/types/idea";
 
-export function IdeasGrid({ initialIdeas }: { initialIdeas: PartialIdea[] }) {
+export default function IdeasGrid({
+  initialIdeas,
+}: {
+  initialIdeas: PartialIdea[];
+}) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       {initialIdeas.map((idea) => (
@@ -39,16 +43,6 @@ export function IdeasGrid({ initialIdeas }: { initialIdeas: PartialIdea[] }) {
             </div>
           </CardContent>
         </Card>
-      ))}
-    </div>
-  );
-}
-
-export function IdeasGridSkeleton() {
-  return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-      {[...Array(8)].map((_, index) => (
-        <div key={index} className="h-40 bg-muted animate-pulse rounded-lg" />
       ))}
     </div>
   );
