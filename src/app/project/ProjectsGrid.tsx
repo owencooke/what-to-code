@@ -5,13 +5,14 @@ import { Card, CardContent } from "@/components/ui/card";
 import { getRepoFromProjectTitle } from "@/lib/github/string-utils";
 import { Project } from "@/types/project";
 import { Badge } from "@/components/ui/badge";
-import router from "next/router";
+import { useRouter } from "next/navigation";
 
 export default function ProjectsGrid({ projects }: { projects: Project[] }) {
+  const router = useRouter();
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
       {projects.map((project, idx) => (
-        // Explore Page project card
+        // Explore Page Project card
         <Card
           key={idx}
           className="overflow-hidden cursor-pointer transition-colors hover:bg-border"
