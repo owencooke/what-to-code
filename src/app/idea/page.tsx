@@ -25,7 +25,7 @@ export default async function IdeasPage({
         <SearchInput route="idea" />
       </div>
       <Suspense fallback={<IdeasGridSkeleton />}>
-        <IdeasGrid initialIdeas={ideas} />
+        <IdeasGrid ideas={ideas} />
       </Suspense>
     </div>
   );

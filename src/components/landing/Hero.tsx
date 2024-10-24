@@ -105,7 +105,7 @@ export const Hero = () => {
               </Link>
             </Button>
             <Button asChild variant="secondary" className="w-5/6 md:w-1/4 ">
-              <Link href="/explore">explore projects</Link>
+              <Link href="/project">explore projects</Link>
             </Button>
           </motion.div>
         </motion.div>

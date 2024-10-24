@@ -47,7 +47,7 @@ const routeList: RouteProps[] = [
     label: "Generate Idea",
   },
   {
-    href: "/explore",
+    href: "/project",
     label: "Explore Projects",
   },
 ];

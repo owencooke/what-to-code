@@ -44,7 +44,7 @@ export default async function ProjectsPage({
       </h1>
 
       <div className="mb-8">
-        <SearchInput route="explore" />
+        <SearchInput route="project" />
       </div>
 
       {error && (
