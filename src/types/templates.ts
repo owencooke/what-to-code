@@ -7,7 +7,6 @@ export type Template = {
 };
 
 export type TemplateMatch = {
-  id: number;
   url: string;
   similarity: number;
 };

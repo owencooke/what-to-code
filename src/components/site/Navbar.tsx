@@ -40,10 +40,14 @@ interface RouteProps {
 const routeList: RouteProps[] = [
   {
     href: "/idea",
+    label: "Brainstorm Ideas",
+  },
+  {
+    href: "/idea/generate",
     label: "Generate Idea",
   },
   {
-    href: "/explore",
+    href: "/project",
     label: "Explore Projects",
   },
 ];

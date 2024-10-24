@@ -1,6 +1,7 @@
 import { db } from "@/lib/db/config";
-import { sql } from "drizzle-orm";
+import { cosineDistance, desc, sql } from "drizzle-orm";
 import { TemplateMatch } from "@/types/templates";
+import { templates } from "../schema";
 
 /**
  * Calls the PostgreSQL function match_templates to get the top matching templates.
@@ -13,9 +14,11 @@ export async function matchTemplates(
   embedding: number[],
   matchCount: number,
 ): Promise<TemplateMatch[]> {
-  //FIXME: this is wrong, it should call postgres function match_templates
-  const result = await db.execute(
-    sql`SELECT * FROM match_templates(${embedding}, ${matchCount})`,
-  );
-  return result.rows.map((row) => row as TemplateMatch);
+  const similarity = sql<number>`1 - (${cosineDistance(templates.embedding, embedding)})`;
+  const matches = await db
+    .select({ url: templates.url, similarity })
+    .from(templates)
+    .orderBy((t) => desc(t.similarity))
+    .limit(matchCount);
+  return matches.map((row) => row as TemplateMatch);
 }

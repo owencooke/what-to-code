@@ -3,36 +3,40 @@ import { users } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 
 /**
- * Creates a new user in the database if they do not already exist.
+ * Checks if a user exists in the database and creates a new user if not.
  *
  * @param {string} userId - The GitHub user ID (from Next Auth token).
  * @param {string} githubUsername - The GitHub username of the user.
  * @param {string} email - The email of the user.
- * @returns {Promise<void>} - A promise that resolves when check or insert complete.
+ * @returns {Promise<{ status: string; userId: string }>} - A promise that resolves to an object indicating the result of the operation.
  * @throws {Error} - Throws an error if the insertion fails.
  */
 async function createUserIfNotExist(
   userId: string,
   githubUsername: string,
   email: string,
-): Promise<void> {
+): Promise<{ status: string; userId: string }> {
   // Check if the user already exists
   const [existingUser] = await db
     .select({ id: users.id })
     .from(users)
     .where(eq(users.username, githubUsername));
 
-  if (!existingUser) {
-    // Insert a new user
-    const [newUser] = await db
-      .insert(users)
-      .values({ id: userId, username: githubUsername, email })
-      .returning({ id: users.id });
-
-    if (!newUser) {
-      throw new Error("Error inserting new user");
-    }
+  if (existingUser) {
+    return { status: "found", userId: existingUser.id };
   }
+
+  // Insert a new user
+  const [newUser] = await db
+    .insert(users)
+    .values({ id: userId, username: githubUsername, email })
+    .returning({ id: users.id });
+
+  if (!newUser) {
+    throw new Error("Error inserting new user");
+  }
+
+  return { status: "created", userId: newUser.id };
 }
 
 /**
@@ -40,7 +44,6 @@ async function createUserIfNotExist(
  *
  * @param {string} githubUsername - The GitHub username of the user.
  * @returns {Promise<string | null>} - A promise that resolves to the user ID or null if not found.
- * @throws {Error} - Throws an error if the query fails.
  */
 async function getUserIdByGithubUsername(
   githubUsername: string,

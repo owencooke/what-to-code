@@ -1,4 +1,4 @@
-import { and, desc, eq, ilike, not, sql } from "drizzle-orm";
+import { and, desc, eq, ilike, not, or, sql } from "drizzle-orm";
 import { db } from "@/lib/db/config";
 import { ideas, userIdeaViews } from "@/lib/db/schema";
 import { selectRandom } from "@/lib/utils";
@@ -121,7 +121,39 @@ async function createIdeaAndMarkAsSeen(
   });
 }
 
+/**
+ * Fetches ideas from the database based on an optional search query.
+ *
+ * @param {string | undefined} query - The optional search query to filter ideas by title or description.
+ * @returns {Promise<PartialIdea[]>} - A promise that resolves to an array of ideas.
+ * @throws {Error} - Throws an error if the query fails.
+ */
+async function getIdeas(query: string | undefined): Promise<PartialIdea[]> {
+  try {
+    let result;
+    if (query) {
+      result = await db
+        .select()
+        .from(ideas)
+        .where(
+          or(
+            ilike(ideas.title, `%${query}%`),
+            ilike(ideas.description, `%${query}%`),
+          ),
+        );
+    } else {
+      result = await db.select().from(ideas);
+    }
+
+    return result.map((record) => PartialIdeaSchema.parse(record));
+  } catch (error) {
+    console.error("Error fetching ideas:", error);
+    throw new Error("Failed to fetch ideas");
+  }
+}
+
 export {
+  getIdeas,
   getUnseenIdeaWithTopic,
   getRandomIdea,
   createIdeaAndMarkAsSeen,
