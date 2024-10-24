@@ -3,24 +3,12 @@ import { Project } from "@/types/project";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import dynamic from "next/dynamic";
 import ProjectsGrid from "./ProjectsGrid";
+import { searchProjects } from "@/lib/db/query/project";
 
 // Dynamically import client side SearchInput component
 const SearchInput = dynamic(() => import("@/components/SearchInput"), {
   ssr: false,
 });
-
-async function fetchProjects(searchTerm: string): Promise<Project[]> {
-  const url = new URL(
-    "/api/project",
-    process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000",
-  );
-  if (searchTerm) {
-    url.searchParams.append("query", searchTerm);
-  }
-  const res = await fetch(url.toString(), { cache: "no-store" });
-  if (!res.ok) throw new Error("Failed to fetch projects");
-  return res.json();
-}
 
 export default async function ProjectsPage({
   searchParams,
@@ -32,7 +20,7 @@ export default async function ProjectsPage({
   let error: Error | null = null;
 
   try {
-    projects = await fetchProjects(searchTerm);
+    projects = await searchProjects(searchTerm);
   } catch (e) {
     error = e instanceof Error ? e : new Error("An unknown error occurred");
   }
