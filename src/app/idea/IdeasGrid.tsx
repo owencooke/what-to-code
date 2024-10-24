@@ -1,3 +1,6 @@
+"use client";
+
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { PartialIdea } from "@/types/idea";
 
@@ -14,9 +17,16 @@ export default function IdeasGrid({ ideas }: { ideas: PartialIdea[] }) {
             <p className="text-sm text-muted-foreground mb-3 line-clamp-5">
               {idea.description}
             </p>
-            <div className="flex-grow text-xs text-muted-foreground">
-              <span>❤️ {idea.likes}</span>
-            </div>
+            {/* <div className="flex-grow flex justify-end flex-col items-end text-xs text-muted-foreground">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="hover:bg-primary/10 transition-colors duration-200"
+                aria-label={`Like ${idea.title}`}
+              >
+                <span>❤️ {idea.likes}</span>
+              </Button>
+            </div> */}
           </CardContent>
         </Card>
       ))}
