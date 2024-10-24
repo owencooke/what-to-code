@@ -5,29 +5,42 @@ import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useDebouncedCallback } from "use-debounce";
 
-export default function SearchInput() {
+interface SearchInputProps {
+  route: string;
+  placeholder?: string;
+  searchParamKey?: string;
+  debounceDelay?: number;
+}
+
+export default function SearchInput({
+  route,
+  placeholder = "Search...",
+  searchParamKey = "q",
+  debounceDelay = 300,
+}: SearchInputProps) {
+  route = route.startsWith("/") ? route : `/${route}`;
   const router = useRouter();
   const searchParams = useSearchParams();
 
   const handleSearch = useDebouncedCallback((term: string) => {
     const params = new URLSearchParams(searchParams);
     if (term) {
-      params.set("query", term);
+      params.set(searchParamKey, term);
     } else {
-      params.delete("query");
+      params.delete(searchParamKey);
     }
-    router.push(`/idea?${params.toString()}`);
-  }, 300);
+    router.push(`${route}?${params.toString()}`);
+  }, debounceDelay);
 
   return (
     <div className="relative">
       <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
       <Input
         type="text"
-        placeholder="Search ideas..."
+        placeholder={placeholder}
         className="pl-10 w-full"
         onChange={(e) => handleSearch(e.target.value)}
-        defaultValue={searchParams.get("query")?.toString()}
+        defaultValue={searchParams.get(searchParamKey)?.toString()}
       />
     </div>
   );
