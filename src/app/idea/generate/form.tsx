@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { shuffleArray } from "@/lib/utils";
 import categories from "../data/categories";
-import { Idea } from "@/types/idea";
+import { Idea, PartialIdea, PartialIdeaSchema } from "@/types/idea";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import FormInput from "@/components/FormInput";
 import { Form } from "@/components/ui/form";
@@ -29,7 +29,7 @@ import useIsMobile from "@/hooks/useIsMobile";
 import ky from "ky";
 
 interface IdeaFormProps {
-  onSubmit: (idea: Idea) => void;
+  onSubmit: (idea: PartialIdea) => void;
   onClick: () => void;
 }
 
@@ -64,7 +64,7 @@ export function IdeaForm({ onSubmit, onClick }: IdeaFormProps) {
       console.error("Failed to fetch new idea:", response.statusText);
       return;
     }
-    const idea: Idea = await response.json();
+    const idea = PartialIdeaSchema.parse(await response.json());
     onSubmit(idea);
   };
 

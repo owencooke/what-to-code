@@ -98,27 +98,27 @@ async function getRandomIdea(): Promise<PartialIdea> {
  *
  * @param {PartialIdea} idea - The idea to add to the database.
  * @param {string} userId - The ID of the user who has seen the idea.
- * @returns {Promise<void>} - A promise that resolves when the operation is complete.
+ * @returns {Promise<PartialIdea>} - A promise that resolves to the inserted idea.
  * @throws {Error} - Throws an error if the insertion fails.
  */
 async function createIdeaAndMarkAsSeen(
   idea: PartialIdea,
   userId: string,
-): Promise<void> {
-  // Use a transaction to ensure both operations succeed or fail together
-  await db.transaction(async (tx) => {
+): Promise<PartialIdea> {
+  const insertedIdea = await db.transaction(async (tx) => {
     // Insert the new idea
-    const [insertedIdea] = await tx
-      .insert(ideas)
-      .values(idea)
-      .returning({ id: ideas.id });
+    const [newIdea] = await tx.insert(ideas).values(idea).returning();
 
     // Create the user-idea view record
     await tx.insert(userIdeaViews).values({
       user_id: userId,
-      idea_id: insertedIdea.id,
+      idea_id: newIdea.id,
     });
+
+    return newIdea;
   });
+
+  return PartialIdeaSchema.parse(insertedIdea);
 }
 
 /**

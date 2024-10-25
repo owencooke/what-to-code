@@ -36,7 +36,7 @@ export async function GET(req: NextRequest) {
         recentIdeas.map((idea) => idea.title),
       );
       // Add idea to DB
-      await createIdeaAndMarkAsSeen(idea, userId);
+      idea = await createIdeaAndMarkAsSeen(idea, userId);
     }
 
     return NextResponse.json(idea);

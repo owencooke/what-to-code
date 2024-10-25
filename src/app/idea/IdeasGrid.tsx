@@ -58,6 +58,16 @@ export default function IdeasGrid({ ideas }: { ideas: PartialIdea[] }) {
                 <ScrollArea className="mt-4 max-h-[60vh]">
                   <DialogDescription className="text-muted-foreground text-sm">
                     {selectedIdea.description}
+                    {selectedIdea.features && (
+                      <div className="mt-4">
+                        <h4 className="font-semibold text-lg">Features</h4>
+                        <ul className="list-disc list-inside">
+                          {selectedIdea.features.map((feature, idx) => (
+                            <li key={idx}>{feature.title}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
                   </DialogDescription>
                 </ScrollArea>
               </motion.div>
