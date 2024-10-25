@@ -126,34 +126,34 @@ async function createIdeaAndMarkAsSeen(
  *
  * @param {string | undefined} query - The optional search query to filter ideas by title or description.
  * @returns {Promise<PartialIdea[]>} - A promise that resolves to an array of ideas.
- * @throws {Error} - Throws an error if the query fails.
  */
-async function getIdeas(query: string | undefined): Promise<PartialIdea[]> {
-  try {
-    let result;
-    if (query) {
-      result = await db
-        .select()
-        .from(ideas)
-        .where(
-          or(
-            ilike(ideas.title, `%${query}%`),
-            ilike(ideas.description, `%${query}%`),
-          ),
-        );
-    } else {
-      result = await db.select().from(ideas);
-    }
-
-    return result.map((record) => PartialIdeaSchema.parse(record));
-  } catch (error) {
-    console.error("Error fetching ideas:", error);
-    throw new Error("Failed to fetch ideas");
+async function searchIdeas(query: string | undefined): Promise<PartialIdea[]> {
+  let result;
+  if (query) {
+    result = await db
+      .select()
+      .from(ideas)
+      .where(
+        or(
+          ilike(ideas.title, `%${query}%`),
+          ilike(ideas.description, `%${query}%`),
+        ),
+      );
+  } else {
+    result = await db.select().from(ideas);
   }
+
+  return result.map((record) => PartialIdeaSchema.parse(record));
+}
+
+async function getIdeaById(id: number): Promise<PartialIdea> {
+  const idea = await db.select().from(ideas).where(eq(ideas.id, id));
+  return PartialIdeaSchema.parse(idea[0]);
 }
 
 export {
-  getIdeas,
+  getIdeaById,
+  searchIdeas,
   getUnseenIdeaWithTopic,
   getRandomIdea,
   createIdeaAndMarkAsSeen,

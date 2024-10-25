@@ -46,12 +46,7 @@ export default function IdeaPage() {
             <p>{idea.description}</p>
             <div className="flex justify-center">
               <Link
-                href={{
-                  pathname: "/idea/expand",
-                  query: {
-                    id: idea.id,
-                  },
-                }}
+                href={`/idea/expand/${idea.id}`}
                 className={buttonVariants()}
               >
                 {"i'm interested, tell me more"}

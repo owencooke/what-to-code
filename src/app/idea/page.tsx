@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { Suspense } from "react";
-import { getIdeas } from "@/lib/db/query/idea";
+import { searchIdeas } from "@/lib/db/query/idea";
 import IdeasGrid from "./IdeasGrid";
 
 // Dynamically import client side SearchInput component
@@ -15,7 +15,7 @@ export default async function IdeasPage({
 }: {
   searchParams: { q?: string };
 }) {
-  const ideas = await getIdeas(searchParams.q);
+  const ideas = await searchIdeas(searchParams.q);
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-4xl md:text-5xl mb-8 text-center">
