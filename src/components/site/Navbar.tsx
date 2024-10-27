@@ -5,6 +5,10 @@ import {
   NavigationMenu,
   NavigationMenuItem,
   NavigationMenuList,
+  NavigationMenuTrigger,
+  NavigationMenuContent,
+  NavigationMenuLink,
+  navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import {
   Sheet,
@@ -14,7 +18,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { Menu } from "lucide-react";
+import { Menu, ChevronDown } from "lucide-react";
 import { useMemo } from "react";
 import {
   DropdownMenu,
@@ -35,16 +39,18 @@ import { ModeToggle } from "../ThemeToggle";
 interface RouteProps {
   href: string;
   label: string;
+  children?: RouteProps[];
 }
 
 const routeList: RouteProps[] = [
   {
     href: "/idea",
-    label: "Brainstorm Ideas",
-  },
-  {
-    href: "/idea/generate",
-    label: "Generate Idea",
+    label: "Idea",
+    children: [
+      { href: "/idea", label: "Brainstorm Ideas" },
+      { href: "/idea/generate", label: "Generate Idea" },
+      { href: "/idea/create", label: "Use My Idea" },
+    ],
   },
   {
     href: "/project",
@@ -64,7 +70,7 @@ const MenuItem: React.FC<MenuItemProps> = ({ logo, text }) => (
   </div>
 );
 
-export const Navbar = () => {
+export default function Navbar() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const { data: session } = useSession();
   const isSignedIn = useMemo(() => !!session, [session]);
@@ -82,17 +88,68 @@ export const Navbar = () => {
     return firstName ? `Hi, ${firstName}!` : "My Account";
   };
 
-  const renderNavItems = () =>
-    routeList.map(({ href, label }: RouteProps) => (
-      <a
-        key={label}
-        href={href}
-        onClick={() => setIsOpen(false)}
-        className={buttonVariants({ variant: "ghost" })}
-      >
-        {label}
-      </a>
-    ));
+  const renderNavItems = (items: RouteProps[], mobile: boolean = false) =>
+    items.map(({ href, label, children }: RouteProps) => {
+      if (children) {
+        if (mobile) {
+          return (
+            <DropdownMenu key={label}>
+              <DropdownMenuTrigger
+                className={buttonVariants({ variant: "ghost" })}
+              >
+                {label} <ChevronDown className="ml-1 h-4 w-4" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                {children.map((child) => (
+                  <DropdownMenuItem key={child.label}>
+                    <Link href={child.href} onClick={() => setIsOpen(false)}>
+                      {child.label}
+                    </Link>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          );
+        } else {
+          return (
+            <NavigationMenuItem key={label}>
+              <NavigationMenuTrigger className="!bg-transparent">
+                {label}
+              </NavigationMenuTrigger>
+              <NavigationMenuContent>
+                <ul className="grid w-[400px] p-1 md:grid-cols-2 list-none">
+                  {children.map((child) => (
+                    <li key={child.label} className="w-full">
+                      <NavigationMenuLink asChild className="w-full">
+                        <Link
+                          href={child.href}
+                          className={buttonVariants({ variant: "ghost" })}
+                        >
+                          <span className="text-left w-full">
+                            {child.label}
+                          </span>
+                        </Link>
+                      </NavigationMenuLink>
+                    </li>
+                  ))}
+                </ul>
+              </NavigationMenuContent>
+            </NavigationMenuItem>
+          );
+        }
+      } else {
+        return (
+          <Link
+            key={label}
+            href={href}
+            onClick={() => setIsOpen(false)}
+            className={buttonVariants({ variant: "ghost" })}
+          >
+            {label}
+          </Link>
+        );
+      }
+    });
 
   const authMenuItem = (
     <MenuItem
@@ -108,7 +165,6 @@ export const Navbar = () => {
           <NavigationMenuItem className="flex min-w-fit h-full !mt-0">
             <Link href="/" className="flex items-center gap-2 md:text-base">
               <Logo />
-              {/* <span className="font-medium text-lg">what to code</span> */}
             </Link>
           </NavigationMenuItem>
 
@@ -130,19 +186,14 @@ export const Navbar = () => {
                 </SheetHeader>
                 <div className="flex flex-col justify-between items-center h-full pb-12">
                   <nav className="flex flex-col justify-center items-center gap-2 mt-4">
-                    {renderNavItems()}
+                    {renderNavItems(routeList, true)}
                   </nav>
                   <div className="flex flex-col justify-center items-center gap-4">
                     {isSignedIn && (
-                      <>
-                        <div className="flex gap-2 items-center">
-                          <GitHubAvatar />
-                          <span className="font-medium">{greetUser()}</span>
-                        </div>
-                        {/* TODO: extra menu items */}
-                        {/* <MenuItem logo={<User />} text="Profile" />
-                        <MenuItem logo={<Settings />} text="Settings" /> */}
-                      </>
+                      <div className="flex gap-2 items-center">
+                        <GitHubAvatar />
+                        <span className="font-medium">{greetUser()}</span>
+                      </div>
                     )}
                     <Button
                       variant="ghost"
@@ -159,7 +210,7 @@ export const Navbar = () => {
 
           {/* desktop */}
           <nav className="hidden md:flex gap-2 w-full pl-4">
-            {renderNavItems()}
+            {renderNavItems(routeList)}
           </nav>
 
           <div className="hidden md:flex gap-4">
@@ -173,14 +224,6 @@ export const Navbar = () => {
                   <>
                     <DropdownMenuLabel>{greetUser()}</DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    {/* TODO: extra menu items */}
-                    {/* <DropdownMenuItem>
-                      <MenuItem logo={<User />} text="Profile" />
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <MenuItem logo={<Settings />} text="Settings" />
-                    </DropdownMenuItem> */}
-                    <DropdownMenuSeparator />
                   </>
                 )}
                 <DropdownMenuItem onClick={handleAuthAction}>
@@ -193,4 +236,4 @@ export const Navbar = () => {
       </NavigationMenu>
     </header>
   );
-};
+}
