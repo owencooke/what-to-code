@@ -40,9 +40,11 @@ export default function FeatureCard({
         <div>
           Acceptance Criteria
           <ul className="text-muted-foreground">
-            {feature.acceptanceCriteria.map((criteria, i) => (
-              <li key={i}>{criteria}</li>
-            ))}
+            {feature.acceptanceCriteria
+              .filter((s) => s)
+              .map((criteria, i) => (
+                <li key={i}>{criteria}</li>
+              ))}
           </ul>
         </div>
       )}

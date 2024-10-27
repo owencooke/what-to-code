@@ -10,13 +10,15 @@ import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import useIsMobile from "@/hooks/useIsMobile";
 import CustomizableCard from "@/components/cards/CustomizableCard";
-import { useState } from "react";
-import { useCreateProjectStore } from "@/store/useCreateProjectStore";
+import { UseFormReturn } from "react-hook-form";
 
-const MatchedRepos: React.FC = () => {
-  const { getSelectedFramework, starterRepo, setStarterRepo } =
-    useCreateProjectStore();
-  const framework = getSelectedFramework();
+interface MatchedReposProps {
+  form: UseFormReturn<any>;
+}
+
+const MatchedRepos: React.FC<MatchedReposProps> = ({ form }) => {
+  const framework = form.watch("framework");
+  const starterRepo = form.watch("starterRepo");
 
   const { status } = useSession();
   const isMobile = useIsMobile();
@@ -78,7 +80,7 @@ const MatchedRepos: React.FC = () => {
 
   const handleSelectRepo = (repo: GitHubRepo) => {
     const url = repo.url !== starterRepo ? repo.url : null;
-    setStarterRepo(url);
+    form.setValue("starterRepo", url);
   };
 
   return (

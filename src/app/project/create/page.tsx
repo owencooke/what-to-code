@@ -9,7 +9,7 @@ import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import FormInput from "@/components/FormInput";
 import { Form } from "@/components/ui/form";
-import { Idea, Feature, Framework, IdeaSchema } from "@/types/idea";
+import { Feature, Framework } from "@/types/idea";
 import { useEffect, useState } from "react";
 import { useSession, signIn } from "next-auth/react";
 import { NewProjectSchema, NewProject } from "@/types/project";
@@ -21,7 +21,6 @@ import { useToast } from "@/components/ui/use-toast";
 import { ToastAction } from "@/components/ui/toast";
 import MatchedRepos from "./match-repos";
 import CardScrollArea from "@/components/cards/CardScrollArea";
-import { GitHubRepo } from "@/types/github";
 import ky from "ky";
 import { useCreateProjectStore } from "@/store/useCreateProjectStore";
 
@@ -30,7 +29,8 @@ export default function Home() {
   const { data: session } = useSession();
   const { toast } = useToast();
 
-  const { idea, features, frameworks } = useCreateProjectStore();
+  const { idea, features, frameworks, setFeature, setFramework } =
+    useCreateProjectStore();
 
   const [submitEnabled, setSubmitEnabled] = useState(true);
   const [shouldValidate, setShouldValidate] = useState(false);
@@ -76,8 +76,23 @@ export default function Home() {
     form.clearErrors("features");
   };
 
+  const handleUpdateFeature = (updatedFeature: Feature) => {
+    setFeature(updatedFeature);
+    form.setValue(
+      "features",
+      form
+        .getValues()
+        .features.map((f) => (f.id === updatedFeature.id ? updatedFeature : f)),
+    );
+  };
+
   const handleSelectFramework = (framework: Framework) => {
     form.setValue("framework", framework);
+  };
+
+  const handleUpdateFramework = (updatedFramework: Framework) => {
+    setFramework(updatedFramework);
+    form.setValue("framework", updatedFramework);
   };
 
   const onSubmit = async (projectToCreate: NewProject) => {
@@ -192,6 +207,7 @@ export default function Home() {
                         selected={selectedFeatures
                           ?.map((f) => f.id)
                           .includes(feature.id)}
+                        onSubmit={handleUpdateFeature}
                       />
                     ))}
                   </CardScrollArea>
@@ -210,6 +226,7 @@ export default function Home() {
                         framework={framework}
                         onClick={() => handleSelectFramework(framework)}
                         selected={selectedFramework?.id === framework.id}
+                        onSubmit={handleUpdateFramework}
                       />
                     ))}
                   </CardScrollArea>
@@ -222,7 +239,7 @@ export default function Home() {
                 description="skip the boilerplate code and start with a template"
                 type={() => (
                   <CardScrollArea>
-                    <MatchedRepos />
+                    <MatchedRepos form={form} />
                   </CardScrollArea>
                 )}
               />

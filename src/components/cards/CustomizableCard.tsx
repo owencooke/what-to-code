@@ -51,8 +51,8 @@ export default function CustomizableCard({
   return (
     <>
       <Card
-        className={`min-w-[19.25rem] bg-inherit border-none relative text-sm ${className} ${
-          selected ? "[border-color:var(--accent)]" : ""
+        className={`min-w-[19.25rem] bg-inherit border-2 relative text-sm ${className} ${
+          selected ? "border-accent" : "border-transparent"
         } ${isSelectable ? "cursor-pointer" : ""}`}
         onClick={handleClick}
       >
