@@ -2,6 +2,7 @@ import { Feature, Framework } from "@/types/idea";
 
 export const mockFeatures: Feature[] = [
   {
+    id: 0,
     title: "Progress Tracking",
     userStory:
       "As a user, I want to track my daily fitness activities and visualize my progress over time so that I can stay accountable and motivated.",
@@ -12,6 +13,7 @@ export const mockFeatures: Feature[] = [
     ],
   },
   {
+    id: 1,
     title: "Social Features",
     userStory:
       "As a social user, I want to interact with other users, share achievements, and participate in group challenges so that I can stay connected and motivated.",
@@ -22,6 +24,7 @@ export const mockFeatures: Feature[] = [
     ],
   },
   {
+    id: 2,
     title: "Challenge Creation",
     userStory:
       "As a fitness enthusiast, I want to create challenges with customizable parameters so that I can challenge my friends and stay motivated.",
@@ -35,18 +38,21 @@ export const mockFeatures: Feature[] = [
 
 export const mockFrameworks: Framework[] = [
   {
+    id: 0,
     title: "Mobile App",
     tools: ["reactnative", "firebase", "redux"],
     description:
       "The Fitness Challenge App will be built as a mobile application using React Native for cross-platform development. The app will leverage Firebase for real-time database and authentication, and Redux for state management.",
   },
   {
+    id: 1,
     title: "Web App",
     tools: ["react", "nodejs", "mongodb"],
     description:
       "The Fitness Challenge App will also have a web version built with React for the frontend, Node.js for the backend, and MongoDB for the database. This will provide users with a seamless experience across devices.",
   },
   {
+    id: 2,
     title: "Machine Learning",
     tools: ["tensorflow", "keras", "python"],
     description:
