@@ -17,8 +17,13 @@ interface ExpandIdeaProps {
 
 export default function ExpandIdea({ idea }: ExpandIdeaProps) {
   const router = useRouter();
-  const { idea: projectIdea, setIdea, resetState } = useCreateProjectStore();
-  const [isExpanded, setIsExpanded] = useState(false);
+  const {
+    idea: projectIdea,
+    setIdea,
+    resetState,
+    features,
+    frameworks,
+  } = useCreateProjectStore();
 
   if (projectIdea && projectIdea.id !== idea.id) {
     resetState();
@@ -82,8 +87,7 @@ export default function ExpandIdea({ idea }: ExpandIdeaProps) {
         </motion.div>
 
         <div
-          className={`grid grid-cols-1 ${!isExpanded && "lg:grid-cols-2"} gap-8 mb-12`}
-          onClick={() => setIsExpanded(true)}
+          className={`grid grid-cols-1 ${!(frameworks.length || features.length) && "lg:grid-cols-2"} gap-8 mb-12`}
         >
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -113,6 +117,7 @@ export default function ExpandIdea({ idea }: ExpandIdeaProps) {
           </p>
           <Button
             size="lg"
+            disabled={!(frameworks.length && features.length)}
             onClick={handleCreateProject}
             className="font-bold py-4 px-8 rounded-lg transition-all duration-200 transform hover:scale-105 flex items-center space-x-2"
           >

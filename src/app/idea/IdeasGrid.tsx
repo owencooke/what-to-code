@@ -12,8 +12,11 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { motion, AnimatePresence } from "framer-motion";
 import type { PartialIdea } from "@/types/idea";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
 
 export default function IdeasGrid({ ideas }: { ideas: PartialIdea[] }) {
+  const router = useRouter();
   const [selectedIdea, setSelectedIdea] = useState<PartialIdea | null>(null);
 
   const openIdeaDetails = (idea: PartialIdea) => {
@@ -22,6 +25,12 @@ export default function IdeasGrid({ ideas }: { ideas: PartialIdea[] }) {
 
   const closeIdeaDetails = () => {
     setSelectedIdea(null);
+  };
+
+  const handleTryIdea = () => {
+    if (selectedIdea) {
+      router.push(`/idea/expand/${selectedIdea.id}`);
+    }
   };
 
   return (
@@ -55,21 +64,22 @@ export default function IdeasGrid({ ideas }: { ideas: PartialIdea[] }) {
                 <DialogHeader>
                   <DialogTitle>{selectedIdea.title}</DialogTitle>
                 </DialogHeader>
-                <ScrollArea className="mt-4 max-h-[60vh]">
-                  <DialogDescription className="text-muted-foreground text-sm">
-                    {selectedIdea.description}
-                    {selectedIdea.features && (
-                      <div className="mt-4">
-                        <h4 className="font-semibold text-lg">Features</h4>
-                        <ul className="list-disc list-inside">
-                          {selectedIdea.features.map((feature, idx) => (
-                            <li key={idx}>{feature.title}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                  </DialogDescription>
-                </ScrollArea>
+                <DialogDescription className="text-muted-foreground text-sm">
+                  {selectedIdea.description}
+                  {selectedIdea.features && (
+                    <div className="mt-4">
+                      <h4 className="font-semibold text-lg">Features</h4>
+                      <ul className="list-disc list-inside">
+                        {selectedIdea.features.map((feature, idx) => (
+                          <li key={idx}>{feature.title}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  <div className="flex justify-center mt-4">
+                    <Button onClick={handleTryIdea}>Use this Idea</Button>
+                  </div>
+                </DialogDescription>
               </motion.div>
             </DialogContent>
           </Dialog>
