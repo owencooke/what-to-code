@@ -5,6 +5,8 @@ import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Code2, Loader2 } from "lucide-react";
 import CardScrollArea from "@/components/cards/CardScrollArea";
+import { PartialIdea } from "@/types/idea";
+import ky from "ky";
 
 interface Framework {
   title: string;
@@ -12,7 +14,7 @@ interface Framework {
   tools: string[];
 }
 
-export default function AIEngineer({ ideaId }: { ideaId: number }) {
+export default function AIEngineer({ idea }: { idea: PartialIdea }) {
   const [frameworks, setFrameworks] = useState<Framework[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
 
@@ -20,12 +22,14 @@ export default function AIEngineer({ ideaId }: { ideaId: number }) {
     if (isGenerating) return;
     setIsGenerating(true);
     try {
-      const response = await fetch(`/api/idea/expand/frameworks?id=${ideaId}`);
+      const response = await ky.post(`/api/idea/expand/frameworks`, {
+        json: idea,
+      });
       if (!response.ok) {
         throw new Error("Failed to generate frameworks");
       }
-      const data = await response.json();
-      setFrameworks(data.frameworks);
+      const data: Framework[] = await response.json();
+      setFrameworks(data);
     } catch (error) {
       console.error(error);
     } finally {

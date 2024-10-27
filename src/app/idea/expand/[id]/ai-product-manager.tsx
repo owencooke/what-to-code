@@ -4,17 +4,12 @@ import { useState } from "react";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Sparkles, Loader2 } from "lucide-react";
-import { Feature } from "@/types/idea";
+import { Feature, PartialIdea } from "@/types/idea";
 import CardScrollArea from "@/components/cards/CardScrollArea";
 import FeatureCard from "@/components/cards/FeatureCard";
+import ky from "ky";
 
-export default function AIProductManager({
-  initialFeatures,
-  ideaId,
-}: {
-  initialFeatures: Feature[];
-  ideaId: number;
-}) {
+export default function AIProductManager({ idea }: { idea: PartialIdea }) {
   const [expandedFeatures, setExpandedFeatures] = useState<Feature[]>([]);
   const [isExpanding, setIsExpanding] = useState(false);
 
@@ -22,12 +17,14 @@ export default function AIProductManager({
     if (isExpanding) return;
     setIsExpanding(true);
     try {
-      const response = await fetch(`/api/idea/expand/features?id=${ideaId}`);
+      const response = await ky.post(`/api/idea/expand/features`, {
+        json: idea,
+      });
       if (!response.ok) {
         throw new Error("Failed to expand features");
       }
-      const data = await response.json();
-      setExpandedFeatures(data.features);
+      const data: Feature[] = await response.json();
+      setExpandedFeatures(data);
     } catch (error) {
       console.error(error);
     } finally {
@@ -50,20 +47,13 @@ export default function AIProductManager({
         </p>
       </CardHeader>
       <CardContent className="space-y-6">
-        <CardScrollArea>
-          {expandedFeatures.length > 0
-            ? expandedFeatures.map((feature, i) => (
-                <FeatureCard key={i} feature={feature} />
-              ))
-            : initialFeatures.map((feature, i) => (
-                <Card key={i} className="p-4 bg-white dark:bg-gray-800">
-                  <h3 className="text-lg font-semibold text-purple-600 dark:text-purple-300">
-                    {feature.title}
-                  </h3>
-                </Card>
-              ))}
-        </CardScrollArea>
-        {expandedFeatures.length === 0 && (
+        {expandedFeatures.length > 0 ? (
+          <CardScrollArea>
+            {expandedFeatures.map((feature, i) => (
+              <FeatureCard key={i} feature={feature} />
+            ))}
+          </CardScrollArea>
+        ) : (
           <Button
             onClick={handleExpandFeatures}
             disabled={isExpanding}

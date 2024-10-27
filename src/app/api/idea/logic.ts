@@ -1,4 +1,10 @@
-import { IdeaSchema, FeatureSchema } from "@/types/idea";
+import {
+  IdeaSchema,
+  FeatureSchema,
+  PartialIdea,
+  Feature,
+  Framework,
+} from "@/types/idea";
 import { IDEA_PROMPT, FEATURES_PROMPT, FRAMEWORK_PROMPT } from "./prompts";
 import { generateZodSchemaFromPrompt } from "@/lib/llm/utils";
 import { z } from "zod";
@@ -21,9 +27,8 @@ export const generateIdea = async (
   );
 };
 
-// Expand Initial IdeaSchema with Features and Frameworks
-export async function expandIdea(title: string, description: string) {
-  // Major features to develop for project
+// Expand Features for a given idea
+export async function expandFeatures(idea: PartialIdea): Promise<Feature[]> {
   const featuresWithTwoBullets = z
     .array(
       FeatureSchema.extend({
@@ -31,18 +36,25 @@ export async function expandIdea(title: string, description: string) {
       }),
     )
     .length(3);
+
   const features = await generateZodSchemaFromPrompt(
     featuresWithTwoBullets,
     FEATURES_PROMPT,
-    { title, description },
+    { title: idea.title, description: idea.description },
   );
 
-  // Ways they could possibly build project
+  return features;
+}
+
+// Expand Frameworks for a given idea
+export async function expandFrameworks(
+  idea: PartialIdea,
+): Promise<Framework[]> {
   const frameworks = await generateZodSchemaFromPrompt(
     IdeaSchema.shape.frameworks.length(3),
     FRAMEWORK_PROMPT,
-    { title, features },
+    { title: idea.title, features: idea.features },
   );
 
-  return { features, frameworks };
+  return frameworks;
 }

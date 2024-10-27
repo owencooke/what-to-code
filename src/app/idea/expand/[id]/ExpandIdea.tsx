@@ -28,11 +28,8 @@ export default function IdeaClient({ idea }: { idea: PartialIdea }) {
         </CardHeader>
         <CardContent className="space-y-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <AIProductManager
-              initialFeatures={idea.features || []}
-              ideaId={idea.id}
-            />
-            <AIEngineer ideaId={idea.id} />
+            <AIProductManager idea={idea} />
+            <AIEngineer idea={idea} />
           </div>
           <Button
             size="lg"
