@@ -43,22 +43,23 @@ export default function AIEngineer({ idea }: { idea: PartialIdea }) {
       <CardHeader className="gap-4">
         <div className="flex items-center justify-between">
           <h2 className="text-3xl font-bold text-cyan-700 dark:text-cyan-300">
-            AI Engineer
+            Software Architect
           </h2>
           <Code2 className="w-8 h-8 text-blue-500" />
         </div>
         <p className="text-lg text-gray-600 dark:text-gray-300">
-          Discover optimal tech stacks for your project with our AI-powered
+          Discover optimal tech stacks for your project with AI-powered
           framework recommendations.
         </p>
       </CardHeader>
       <CardContent className="space-y-6">
-        <CardScrollArea>
-          {frameworks.map((framework, i) => (
-            <FrameworkCard key={i} framework={framework} />
-          ))}
-        </CardScrollArea>
-        {frameworks.length === 0 && (
+        {frameworks.length > 0 ? (
+          <CardScrollArea>
+            {frameworks.map((framework, i) => (
+              <FrameworkCard key={i} framework={framework} />
+            ))}
+          </CardScrollArea>
+        ) : (
           <Button
             onClick={handleGenerateFrameworks}
             disabled={isGenerating}
@@ -72,7 +73,7 @@ export default function AIEngineer({ idea }: { idea: PartialIdea }) {
             ) : (
               <>
                 <Code2 className="mr-2 h-4 w-4" />
-                Generate AI-Powered Framework Options
+                Generate AI-Powered Tech Stack Options
               </>
             )}
           </Button>

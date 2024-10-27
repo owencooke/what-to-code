@@ -37,13 +37,13 @@ export default function AIProductManager({ idea }: { idea: PartialIdea }) {
       <CardHeader className="gap-4">
         <div className="flex items-center justify-between">
           <h2 className="text-3xl font-bold text-purple-700 dark:text-purple-300">
-            AI Product Manager
+            Product Manager
           </h2>
           <Sparkles className="w-8 h-8 text-yellow-500" />
         </div>
         <p className="text-lg text-gray-600 dark:text-gray-300">
           Transform your initial ideas into a comprehensive product vision with
-          our AI-powered feature expansion.
+          AI-powered user stories.
         </p>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -67,7 +67,7 @@ export default function AIProductManager({ idea }: { idea: PartialIdea }) {
             ) : (
               <>
                 <Sparkles className="mr-2 h-4 w-4" />
-                Unleash AI-Powered Feature Expansion
+                Unleash AI-Powered User Features
               </>
             )}
           </Button>
