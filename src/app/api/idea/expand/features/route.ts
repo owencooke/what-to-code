@@ -1,11 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { expandFeatures } from "../../logic";
 import { PartialIdeaSchema } from "@/types/idea";
+import { mockFeatures } from "../mock";
 
 export const runtime = "edge";
 
 export async function POST(req: NextRequest) {
   try {
+    // Check if MOCK_LLM is set and return mock data if true
+    if (process.env.MOCK_LLM) {
+      return NextResponse.json(mockFeatures);
+    }
+
     const body = await req.json();
     const parsedIdea = PartialIdeaSchema.safeParse(body);
 
