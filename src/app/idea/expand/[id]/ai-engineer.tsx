@@ -1,7 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { Card, CardHeader, CardContent } from "@/components/ui/card";
+import {
+  Card,
+  CardHeader,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Code2, Loader2 } from "lucide-react";
 import CardScrollArea from "@/components/cards/CardScrollArea";
@@ -53,17 +58,20 @@ export default function AIEngineer({ idea }: { idea: PartialIdea }) {
         </p>
       </CardHeader>
       <CardContent className="space-y-6">
-        {frameworks.length > 0 ? (
+        {frameworks.length > 0 && (
           <CardScrollArea>
             {frameworks.map((framework, i) => (
               <FrameworkCard key={i} framework={framework} />
             ))}
           </CardScrollArea>
-        ) : (
+        )}
+      </CardContent>
+      <CardFooter>
+        {frameworks.length === 0 && (
           <Button
             onClick={handleGenerateFrameworks}
             disabled={isGenerating}
-            className="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-105"
+            className="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 mt-auto"
           >
             {isGenerating ? (
               <>
@@ -73,12 +81,12 @@ export default function AIEngineer({ idea }: { idea: PartialIdea }) {
             ) : (
               <>
                 <Code2 className="mr-2 h-4 w-4" />
-                Generate AI-Powered Tech Stack Options
+                Generate Tech Stacks
               </>
             )}
           </Button>
         )}
-      </CardContent>
+      </CardFooter>
     </Card>
   );
 }
