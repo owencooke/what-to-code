@@ -23,13 +23,17 @@ import MatchedRepos from "./match-repos";
 import CardScrollArea from "@/components/cards/CardScrollArea";
 import { GitHubRepo } from "@/types/github";
 import ky from "ky";
+import { useCreateProjectStore } from "@/store/useCreateProjectStore";
 
 export default function Home() {
   const router = useRouter();
   const { data: session } = useSession();
   const { toast } = useToast();
 
-  const [idea, setIdea] = useState<Idea>();
+  const store = useCreateProjectStore();
+  console.log({ store });
+
+  //   const [idea, setIdea] = useState<Idea>();
   const [submitEnabled, setSubmitEnabled] = useState(true);
   const [shouldValidate, setShouldValidate] = useState(false);
 
@@ -46,29 +50,6 @@ export default function Home() {
       form.setValue("github_user", session.user.username);
     }
   }, [session, form]);
-
-  // Redirect back to idea generation page, if no valid idea to create project from
-  useEffect(() => {
-    const redirect = () => router.push("/");
-    try {
-      const parsedIdea = IdeaSchema.safeParse(
-        JSON.parse(localStorage.getItem("idea") || ""),
-      );
-      setIdea(parsedIdea.data);
-      if (parsedIdea.success) {
-        form.reset({
-          title: parsedIdea.data?.title,
-          description: parsedIdea.data?.description,
-          features: [parsedIdea.data?.features[0]],
-          framework: parsedIdea.data?.frameworks[0],
-        });
-      } else {
-        redirect();
-      }
-    } catch (error) {
-      redirect();
-    }
-  }, [router, form]);
 
   const title = form.watch("title");
   const selectedFeatures = form.watch("features");

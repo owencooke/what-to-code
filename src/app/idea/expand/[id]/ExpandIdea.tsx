@@ -9,6 +9,7 @@ import AIEngineer from "./ai-engineer";
 import { motion } from "framer-motion";
 import { Rocket, ArrowDown } from "lucide-react";
 import { useState } from "react";
+import { useCreateProjectStore } from "@/store/useCreateProjectStore";
 
 interface ExpandIdeaProps {
   idea: PartialIdea;
@@ -16,10 +17,11 @@ interface ExpandIdeaProps {
 
 export default function ExpandIdea({ idea }: ExpandIdeaProps) {
   const router = useRouter();
+  const { setIdea } = useCreateProjectStore();
   const [isExpanded, setIsExpanded] = useState(false);
 
   const handleCreateProject = () => {
-    localStorage.setItem("idea", JSON.stringify(idea));
+    setIdea(idea);
     router.push("/project/create");
   };
 

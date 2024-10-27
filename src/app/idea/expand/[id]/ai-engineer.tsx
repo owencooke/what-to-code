@@ -10,18 +10,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { Code2, Loader2, Sparkles } from "lucide-react";
 import CardScrollArea from "@/components/cards/CardScrollArea";
-import { PartialIdea } from "@/types/idea";
+import { Framework, PartialIdea } from "@/types/idea";
 import ky from "ky";
 import FrameworkCard from "@/components/cards/FrameworkCard";
-
-interface Framework {
-  title: string;
-  description: string;
-  tools: string[];
-}
+import { useCreateProjectStore } from "@/store/useCreateProjectStore";
 
 export default function AIEngineer({ idea }: { idea: PartialIdea }) {
-  const [frameworks, setFrameworks] = useState<Framework[]>([]);
+  const { frameworks, setFrameworks } = useCreateProjectStore();
   const [isGenerating, setIsGenerating] = useState(false);
 
   const handleGenerateFrameworks = async () => {

@@ -13,7 +13,6 @@ import { Modal } from "@/components/Modal";
 import { UseFormReturn } from "react-hook-form";
 import { Form } from "../ui/form";
 import { useTheme } from "@/components/providers/theme-provider";
-import useIsDarkMode from "@/hooks/useIsDarkMode";
 
 type SelectableCardProps = {
   className?: string;
@@ -40,8 +39,6 @@ export default function CustomizableCard({
   renderEditFormFields,
   onSubmitForm,
 }: SelectableCardProps) {
-  const isDarkMode = useIsDarkMode();
-
   const handleClick = () => {
     if (isSelectable) {
       onSelect && onSelect();
@@ -59,9 +56,7 @@ export default function CustomizableCard({
         } ${isSelectable ? "cursor-pointer" : ""}`}
         onClick={handleClick}
       >
-        <div
-          className={`absolute inset-0 ${isDarkMode ? "bg-white" : "bg-black"} opacity-5 pointer-events-none rounded-lg`}
-        ></div>
+        <div className="absolute inset-0 bg-black dark:bg-white opacity-5 pointer-events-none rounded-lg"></div>
         <CardHeader>
           <CardTitle className="flex justify-between items-start gap-2">
             {title}

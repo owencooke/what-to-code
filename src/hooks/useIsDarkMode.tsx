@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useTheme } from "@/components/providers/theme-provider";
 
+// Hook to determine if dark mode is active based on theme or system preference
+// NOTE: don't use this for tailwind classes, use :dark selector instead
 export default function useIsDarkMode() {
   const { theme } = useTheme();
   const [isDarkMode, setIsDarkMode] = useState(false);

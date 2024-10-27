@@ -8,9 +8,10 @@ import { Feature, PartialIdea } from "@/types/idea";
 import CardScrollArea from "@/components/cards/CardScrollArea";
 import FeatureCard from "@/components/cards/FeatureCard";
 import ky from "ky";
+import { useCreateProjectStore } from "@/store/useCreateProjectStore";
 
 export default function AIProductManager({ idea }: { idea: PartialIdea }) {
-  const [expandedFeatures, setExpandedFeatures] = useState<Feature[]>([]);
+  const { features, setFeatures } = useCreateProjectStore();
   const [isExpanding, setIsExpanding] = useState(false);
 
   const handleExpandFeatures = async () => {
@@ -24,7 +25,7 @@ export default function AIProductManager({ idea }: { idea: PartialIdea }) {
         throw new Error("Failed to expand features");
       }
       const data: Feature[] = await response.json();
-      setExpandedFeatures(data);
+      setFeatures(data);
     } catch (error) {
       console.error(error);
     } finally {
@@ -45,9 +46,9 @@ export default function AIProductManager({ idea }: { idea: PartialIdea }) {
         </p>
       </CardHeader>
       <CardContent className="space-y-6">
-        {expandedFeatures.length > 0 ? (
+        {features.length > 0 ? (
           <CardScrollArea>
-            {expandedFeatures.map((feature, i) => (
+            {features.map((feature, i) => (
               <FeatureCard key={i} feature={feature} />
             ))}
           </CardScrollArea>

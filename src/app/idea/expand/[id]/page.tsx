@@ -1,5 +1,3 @@
-import { notFound } from "next/navigation";
-import { PartialIdea, PartialIdeaSchema } from "@/types/idea";
 import IdeaClient from "./ExpandIdea";
 import { getIdeaById } from "@/lib/db/query/idea";
 

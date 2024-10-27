@@ -1,8 +1,8 @@
-import { features } from "process";
 import { z } from "zod";
 
 // Create schemas for software project idea generation
 const FeatureSchema = z.object({
+  id: z.number(),
   title: z.string().describe("Short title of the single feature to make"),
   userStory: z
     .string()
@@ -15,6 +15,7 @@ const FeatureSchema = z.object({
 });
 
 const FrameworkSchema = z.object({
+  id: z.number(),
   title: z
     .string()
     .describe(
