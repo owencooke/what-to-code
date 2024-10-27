@@ -8,7 +8,6 @@ import {
   NavigationMenuTrigger,
   NavigationMenuContent,
   NavigationMenuLink,
-  navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import {
   Sheet,
@@ -18,7 +17,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { Menu, ChevronDown } from "lucide-react";
+import { Menu } from "lucide-react";
 import { useMemo } from "react";
 import {
   DropdownMenu,
@@ -45,16 +44,22 @@ interface RouteProps {
 const routeList: RouteProps[] = [
   {
     href: "/idea",
-    label: "Idea",
+    label: "Ideas",
     children: [
-      { href: "/idea", label: "Brainstorm Ideas" },
-      { href: "/idea/generate", label: "Generate Idea" },
-      { href: "/idea/create", label: "Use My Idea" },
+      { href: "/idea", label: "Explore" },
+      { href: "/idea/generate", label: "Generate New" },
+      { href: "/idea/create", label: "Use My Own" },
     ],
   },
   {
     href: "/project",
-    label: "Explore Projects",
+    label: "Projects",
+    children: [
+      {
+        href: "/project",
+        label: "Explore",
+      },
+    ],
   },
 ];
 
@@ -88,65 +93,62 @@ export default function Navbar() {
     return firstName ? `Hi, ${firstName}!` : "My Account";
   };
 
-  const renderNavItems = (items: RouteProps[], mobile: boolean = false) =>
-    items.map(({ href, label, children }: RouteProps) => {
-      if (children) {
-        if (mobile) {
-          return (
-            <DropdownMenu key={label}>
-              <DropdownMenuTrigger
-                className={buttonVariants({ variant: "ghost" })}
-              >
-                {label} <ChevronDown className="ml-1 h-4 w-4" />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                {children.map((child) => (
-                  <DropdownMenuItem key={child.label}>
-                    <Link href={child.href} onClick={() => setIsOpen(false)}>
-                      {child.label}
-                    </Link>
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          );
-        } else {
-          return (
-            <NavigationMenuItem key={label}>
-              <NavigationMenuTrigger className="!bg-transparent">
-                {label}
-              </NavigationMenuTrigger>
-              <NavigationMenuContent>
-                <ul className="grid w-[400px] p-1 md:grid-cols-2 list-none">
-                  {children.map((child) => (
-                    <li key={child.label} className="w-full">
-                      <NavigationMenuLink asChild className="w-full">
-                        <Link
-                          href={child.href}
-                          className={buttonVariants({ variant: "ghost" })}
-                        >
-                          <span className="text-left w-full">
-                            {child.label}
-                          </span>
-                        </Link>
-                      </NavigationMenuLink>
-                    </li>
-                  ))}
-                </ul>
-              </NavigationMenuContent>
-            </NavigationMenuItem>
-          );
-        }
-      } else {
-        return (
+  const renderMobileNavItems = (items: RouteProps[], level: number = 0) =>
+    items.map(({ href, label, children }: RouteProps) => (
+      <div key={label} className={`ml-${level * 4}`}>
+        {children ? (
+          <>
+            <div className="mb-2 underline">{label}</div>
+            {renderMobileNavItems(children, level + 1)}
+          </>
+        ) : (
           <Link
-            key={label}
             href={href}
             onClick={() => setIsOpen(false)}
-            className={buttonVariants({ variant: "ghost" })}
+            className={buttonVariants({
+              variant: "ghost",
+              className: "mb-1",
+            })}
           >
             {label}
           </Link>
+        )}
+      </div>
+    ));
+
+  const renderDesktopNavItems = (items: RouteProps[]) =>
+    items.map(({ href, label, children }: RouteProps) => {
+      if (children) {
+        return (
+          <NavigationMenuItem key={label}>
+            <NavigationMenuTrigger className="!bg-transparent">
+              {label}
+            </NavigationMenuTrigger>
+            <NavigationMenuContent>
+              <ul className="grid w-[350px] pb-2 pr-6 md:grid-cols-2 list-none">
+                {children.map((child) => (
+                  <li key={child.label} className="w-full">
+                    <NavigationMenuLink asChild className="w-full">
+                      <Link
+                        href={child.href}
+                        className={buttonVariants({ variant: "ghost" })}
+                      >
+                        <span className="text-left w-full">{child.label}</span>
+                      </Link>
+                    </NavigationMenuLink>
+                  </li>
+                ))}
+              </ul>
+            </NavigationMenuContent>
+          </NavigationMenuItem>
+        );
+      } else {
+        return (
+          <NavigationMenuItem key={label}>
+            <Link href={href} className={buttonVariants({ variant: "ghost" })}>
+              {label}
+            </Link>
+          </NavigationMenuItem>
         );
       }
     });
@@ -180,26 +182,22 @@ export default function Navbar() {
 
               <SheetContent side={"left"}>
                 <SheetHeader>
-                  <SheetTitle className="font-medium text-xl">
+                  <SheetTitle className="font-bold text-xl mb-4">
                     what to code
                   </SheetTitle>
                 </SheetHeader>
-                <div className="flex flex-col justify-between items-center h-full pb-12">
-                  <nav className="flex flex-col justify-center items-center gap-2 mt-4">
-                    {renderNavItems(routeList, true)}
-                  </nav>
-                  <div className="flex flex-col justify-center items-center gap-4">
+                <nav className="flex flex-col gap-4">
+                  {renderMobileNavItems(routeList)}
+                </nav>
+                <div className="absolute bottom-8 left-4 right-4">
+                  <div className="flex flex-col gap-4">
                     {isSignedIn && (
-                      <div className="flex gap-2 items-center">
+                      <div className="flex gap-2 items-center justify-center">
                         <GitHubAvatar />
                         <span className="font-medium">{greetUser()}</span>
                       </div>
                     )}
-                    <Button
-                      variant="ghost"
-                      onClick={handleAuthAction}
-                      className="flex items-center"
-                    >
+                    <Button variant="ghost" onClick={handleAuthAction}>
                       {authMenuItem}
                     </Button>
                   </div>
@@ -210,7 +208,7 @@ export default function Navbar() {
 
           {/* desktop */}
           <nav className="hidden md:flex gap-2 w-full pl-4">
-            {renderNavItems(routeList)}
+            {renderDesktopNavItems(routeList)}
           </nav>
 
           <div className="hidden md:flex gap-4">
