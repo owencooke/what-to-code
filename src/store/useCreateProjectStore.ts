@@ -18,11 +18,22 @@ interface CreateProjectState {
   setFeature: (feature: Feature) => void;
   setFramework: (framework: Framework) => void;
   setStarterRepo: (url: string | null) => void;
+  resetState: () => void;
 
   // helpers
   getSelectedFeatures: () => Feature[];
   getSelectedFramework: () => Framework | undefined;
 }
+
+// Define initial state
+const initialState = {
+  idea: null,
+  features: [],
+  selectedFeatureIds: [],
+  frameworks: [],
+  selectedFrameworkId: 0,
+  starterRepo: null,
+};
 
 // Persit in local storage to keep state on page refresh
 const persistOptions: PersistOptions<CreateProjectState> = {
@@ -33,12 +44,7 @@ export const useCreateProjectStore = create<CreateProjectState>()(
   persist(
     (set, get) => ({
       // default state
-      idea: null,
-      features: [],
-      selectedFeatureIds: [],
-      frameworks: [],
-      selectedFrameworkId: 0,
-      starterRepo: null,
+      ...initialState,
 
       // actions
       setIdea: (idea) => set({ idea }),
@@ -57,6 +63,7 @@ export const useCreateProjectStore = create<CreateProjectState>()(
           ),
         })),
       setStarterRepo: (url) => set({ starterRepo: url }),
+      resetState: () => set(initialState),
 
       // helpers
       getSelectedFeatures: () =>

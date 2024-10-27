@@ -163,7 +163,7 @@ export default function Home() {
         {idea && (
           <Card className="mt-6 w-full max-w-6xl">
             <CardHeader className="gap-4">
-              {session ? (
+              {session && title ? (
                 <Repo repoName={getRepoFromProjectTitle(title)} />
               ) : (
                 <Button

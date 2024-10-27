@@ -17,8 +17,12 @@ interface ExpandIdeaProps {
 
 export default function ExpandIdea({ idea }: ExpandIdeaProps) {
   const router = useRouter();
-  const { setIdea } = useCreateProjectStore();
+  const { idea: projectIdea, setIdea, resetState } = useCreateProjectStore();
   const [isExpanded, setIsExpanded] = useState(false);
+
+  if (projectIdea && projectIdea.id !== idea.id) {
+    resetState();
+  }
 
   const handleCreateProject = () => {
     setIdea(idea);
