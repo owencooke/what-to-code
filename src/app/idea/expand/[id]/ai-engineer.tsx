@@ -7,6 +7,7 @@ import { Code2, Loader2 } from "lucide-react";
 import CardScrollArea from "@/components/cards/CardScrollArea";
 import { PartialIdea } from "@/types/idea";
 import ky from "ky";
+import FrameworkCard from "@/components/cards/FrameworkCard";
 
 interface Framework {
   title: string;
@@ -54,24 +55,7 @@ export default function AIEngineer({ idea }: { idea: PartialIdea }) {
       <CardContent className="space-y-6">
         <CardScrollArea>
           {frameworks.map((framework, i) => (
-            <Card key={i} className="p-4 bg-white dark:bg-gray-800">
-              <h3 className="text-lg font-semibold text-cyan-600 dark:text-cyan-300">
-                {framework.title}
-              </h3>
-              <p className="text-gray-600 dark:text-gray-300 mt-2">
-                {framework.description}
-              </p>
-              <div className="flex flex-wrap gap-2 mt-3">
-                {framework.tools.map((tool, j) => (
-                  <span
-                    key={j}
-                    className="px-2 py-1 bg-blue-100 dark:bg-blue-800 text-blue-800 dark:text-blue-200 rounded-full text-sm"
-                  >
-                    {tool}
-                  </span>
-                ))}
-              </div>
-            </Card>
+            <FrameworkCard key={i} framework={framework} />
           ))}
         </CardScrollArea>
         {frameworks.length === 0 && (
