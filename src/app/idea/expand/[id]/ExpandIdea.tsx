@@ -7,7 +7,8 @@ import { PartialIdea } from "@/types/idea";
 import AIProductManager from "./ai-product-manager";
 import AIEngineer from "./ai-engineer";
 import { motion } from "framer-motion";
-import { Lightbulb, Rocket, ArrowRight, ArrowDown } from "lucide-react";
+import { Rocket, ArrowDown } from "lucide-react";
+import { useState } from "react";
 
 interface ExpandIdeaProps {
   idea: PartialIdea;
@@ -15,6 +16,7 @@ interface ExpandIdeaProps {
 
 export default function ExpandIdea({ idea }: ExpandIdeaProps) {
   const router = useRouter();
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const handleCreateProject = () => {
     localStorage.setItem("idea", JSON.stringify(idea));
@@ -22,14 +24,13 @@ export default function ExpandIdea({ idea }: ExpandIdeaProps) {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center min-h-screen w-full py-12 px-4">
+    <div className="flex flex-col justify-center items-center min-h-screen w-full py-8 px-2">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
         className="w-full max-w-6xl"
       >
-        {/* <div className="flex flex-col lg:flex-row items-center"> */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-12">
           <div className="text-center mb-12 flex justify-center items-center flex-col">
             <motion.h1
@@ -47,7 +48,7 @@ export default function ExpandIdea({ idea }: ExpandIdeaProps) {
               className="text-lg text-gray-600 dark:text-gray-300 max-w-4xl mx-auto"
             >
               {`Let's take your idea to the next level by transforming it into a
-            fully-fledged project plan with help from our AI-powered dev team.`}
+            fully-fledged plan with help from our AI-powered project team.`}
             </motion.p>
           </div>
 
@@ -74,11 +75,9 @@ export default function ExpandIdea({ idea }: ExpandIdeaProps) {
           <ArrowDown className="w-12 h-12 text-primary animate-bounce" />
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1, duration: 0.5 }}
-          className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12"
+        <div
+          className={`grid grid-cols-1 ${!isExpanded && "lg:grid-cols-2"} gap-8 mb-12`}
+          onClick={() => setIsExpanded(true)}
         >
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -94,7 +93,7 @@ export default function ExpandIdea({ idea }: ExpandIdeaProps) {
           >
             <AIEngineer idea={idea} />
           </motion.div>
-        </motion.div>
+        </div>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -102,19 +101,18 @@ export default function ExpandIdea({ idea }: ExpandIdeaProps) {
           transition={{ delay: 1.6, duration: 0.5 }}
           className="flex flex-col items-center"
         >
+          <p className="mb-4 text-sm text-gray-600 dark:text-gray-400 text-center max-w-md">
+            You can use these ideas as starting points for your next project.
+            Ready to bring your project to life?
+          </p>
           <Button
             size="lg"
             onClick={handleCreateProject}
             className="font-bold py-4 px-8 rounded-lg transition-all duration-200 transform hover:scale-105 flex items-center space-x-2"
           >
             <Rocket className="w-6 h-6" />
-            <span>Launch Your Project Journey</span>
+            <span>Help Me Launch This Project</span>
           </Button>
-          <p className="mt-4 text-sm text-gray-600 dark:text-gray-400 text-center max-w-md">
-            Ready to bring your expanded idea to life? Click above to start
-            crafting your project with our AI-assisted tools and expert
-            guidance.
-          </p>
         </motion.div>
       </motion.div>
     </div>

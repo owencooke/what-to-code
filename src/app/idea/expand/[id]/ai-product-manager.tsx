@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Loader2 } from "lucide-react";
+import { ScrollText, Loader2, Sparkles } from "lucide-react";
 import { Feature, PartialIdea } from "@/types/idea";
 import CardScrollArea from "@/components/cards/CardScrollArea";
 import FeatureCard from "@/components/cards/FeatureCard";
@@ -35,11 +35,9 @@ export default function AIProductManager({ idea }: { idea: PartialIdea }) {
   return (
     <Card className="w-full bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 border-none shadow-lg">
       <CardHeader className="gap-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-3xl font-bold text-purple-700 dark:text-purple-300">
-            Product Manager
-          </h2>
-          <Sparkles className="w-8 h-8 text-yellow-500" />
+        <div className="flex items-center justify-between text-purple-700 dark:text-purple-300">
+          <h2 className="text-3xl font-bold">Product Manager</h2>
+          <ScrollText className="w-8 h-8" />
         </div>
         <p className="text-lg text-gray-600 dark:text-gray-300">
           Transform your initial ideas into a comprehensive product vision with
@@ -67,7 +65,7 @@ export default function AIProductManager({ idea }: { idea: PartialIdea }) {
             ) : (
               <>
                 <Sparkles className="mr-2 h-4 w-4" />
-                Unleash AI-Powered User Features
+                Generate Detailed Features
               </>
             )}
           </Button>

@@ -8,7 +8,7 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Code2, Loader2 } from "lucide-react";
+import { Code2, Loader2, Sparkles } from "lucide-react";
 import CardScrollArea from "@/components/cards/CardScrollArea";
 import { PartialIdea } from "@/types/idea";
 import ky from "ky";
@@ -46,11 +46,9 @@ export default function AIEngineer({ idea }: { idea: PartialIdea }) {
   return (
     <Card className="w-full bg-gradient-to-br from-cyan-50 to-blue-50 dark:from-cyan-900/20 dark:to-blue-900/20 border-none shadow-lg">
       <CardHeader className="gap-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-3xl font-bold text-cyan-700 dark:text-cyan-300">
-            Software Architect
-          </h2>
-          <Code2 className="w-8 h-8 text-blue-500" />
+        <div className="flex items-center justify-between text-cyan-700 dark:text-cyan-300">
+          <h2 className="text-3xl font-bold">Software Architect</h2>
+          <Code2 className="w-8 h-8" />
         </div>
         <p className="text-lg text-gray-600 dark:text-gray-300">
           Discover optimal tech stacks for your project with AI-powered
@@ -80,7 +78,7 @@ export default function AIEngineer({ idea }: { idea: PartialIdea }) {
               </>
             ) : (
               <>
-                <Code2 className="mr-2 h-4 w-4" />
+                <Sparkles className="mr-2 h-4 w-4" />
                 Generate Tech Stacks
               </>
             )}
