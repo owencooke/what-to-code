@@ -68,7 +68,7 @@ const PartialIdeaSchema = IdeaSchema.omit({
     .optional()
     .nullable(),
   likes: z.number().optional(),
-  id: z.number(),
+  id: z.number().optional(),
 });
 
 // Define TS types from schemas

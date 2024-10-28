@@ -26,7 +26,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { PlusCircle, MinusCircle } from "lucide-react";
-import { PartialIdeaSchema } from "@/types/idea";
+import { PartialIdea, PartialIdeaSchema } from "@/types/idea";
 import FormInput from "@/components/FormInput";
 
 const formSchema = PartialIdeaSchema.omit({ likes: true, id: true }).extend({
@@ -56,12 +56,11 @@ export default function CreateIdea() {
 
   const onSubmit = async (data: FormValues) => {
     setIsSubmitting(true);
-    console.log("data", data);
     try {
       const response = await ky
         .post("/api/idea", { json: data })
-        .json<{ id: string }>();
-      router.push(`/idea/expand/${response.id}`);
+        .json<{ idea: PartialIdea }>();
+      router.push(`/idea/expand/${response.idea.id}`);
     } catch (error) {
       console.error("Error creating idea:", error);
       // Handle error (e.g., show error message to user)

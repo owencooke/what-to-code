@@ -105,11 +105,9 @@ async function createIdeaAndMarkAsSeen(
   idea: PartialIdea,
   userId: string,
 ): Promise<PartialIdea> {
-  const ideaWithoutId = { ...idea } as Omit<PartialIdea, "id">;
-
   const insertedIdea = await db.transaction(async (tx) => {
     // Insert the new idea
-    const [newIdea] = await tx.insert(ideas).values(ideaWithoutId).returning();
+    const [newIdea] = await tx.insert(ideas).values(idea).returning();
 
     // Create the user-idea view record
     await tx.insert(userIdeaViews).values({

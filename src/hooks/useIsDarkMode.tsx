@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useTheme } from "@/components/providers/theme-provider";
+import { useTheme } from "next-themes";
 
 // Hook to determine if dark mode is active based on theme or system preference
 // NOTE: don't use this for tailwind classes, use :dark selector instead

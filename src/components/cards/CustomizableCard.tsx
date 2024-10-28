@@ -12,7 +12,6 @@ import { Edit } from "lucide-react";
 import { Modal } from "@/components/Modal";
 import { UseFormReturn } from "react-hook-form";
 import { Form } from "../ui/form";
-import { useTheme } from "@/components/providers/theme-provider";
 
 type SelectableCardProps = {
   className?: string;
