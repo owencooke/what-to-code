@@ -8,7 +8,6 @@ import { PartialIdea } from "@/types/idea";
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import { ProgrammingCodeIdeaIcon } from "@/components/landing/Icons";
-import useScreenSize from "@/hooks/useScreenSize";
 
 const IdeaCard: React.FC<PropsWithChildren<{}>> = ({ children }) => (
   <Card className="w-full max-w-lg lg:max-w-xl">
@@ -19,7 +18,6 @@ const IdeaCard: React.FC<PropsWithChildren<{}>> = ({ children }) => (
 export default function IdeaPage() {
   const [idea, setIdea] = useState<PartialIdea>();
   const [isIdeaLoading, setIsIdeaLoading] = useState(false);
-  const { isLarge } = useScreenSize();
 
   return (
     <div className="flex flex-col lg:flex-row justify-center items-center h-full gap-12 lg:gap-24 mt-4">
@@ -57,8 +55,8 @@ export default function IdeaPage() {
         </IdeaCard>
       ) : (
         <IdeaCard>
-          <CardContent className="flex flex-col items-center text-center text-muted-foreground">
-            <ProgrammingCodeIdeaIcon size={isLarge ? 24 : 12} />
+          <CardContent className="flex flex-col items-center text-center text-muted-foreground select-none">
+            <ProgrammingCodeIdeaIcon className="lg:w-20 lg:h-20" />
             <p className="lg:max-w-sm">
               {`"Start with something simple and small, then expand over time."`}
             </p>
