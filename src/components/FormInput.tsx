@@ -32,15 +32,16 @@ const FormInput: React.FC<FormInputProps> = ({
   description,
   maxLength,
 }) => {
+  // Use form field name as label if no label is provided
+  label = label || name[0].toUpperCase() + name.slice(1);
+
   return (
     <FormField
       control={form.control}
       name={name}
       render={({ field }) => (
         <FormItem>
-          {label && (
-            <FormLabel className="font-semibold text-md">{label}</FormLabel>
-          )}
+          <FormLabel className="font-semibold text-md">{label}</FormLabel>
           {description && <FormDescription>{description}</FormDescription>}
           <FormControl>
             {typeof type === "function" ? (

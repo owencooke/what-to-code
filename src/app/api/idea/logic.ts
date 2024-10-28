@@ -4,6 +4,7 @@ import {
   PartialIdea,
   Feature,
   Framework,
+  PartialIdeaSchema,
 } from "@/types/idea";
 import { IDEA_PROMPT, FEATURES_PROMPT, FRAMEWORK_PROMPT } from "./prompts";
 import { generateZodSchemaFromPrompt } from "@/lib/llm/utils";
@@ -13,18 +14,24 @@ import { z } from "zod";
 export const generateIdea = async (
   topic: string,
   recentIdeaTitles: string[],
-) => {
+): Promise<PartialIdea> => {
   // Modify prompt to avoid using recent ideas (if any)
   const prompt = `${IDEA_PROMPT} ${
     recentIdeaTitles.length > 0 &&
     `Do not suggest already taken ideas: ${recentIdeaTitles.join()}`
   }`;
 
-  return generateZodSchemaFromPrompt(
-    IdeaSchema.pick({ title: true, description: true }),
+  const data = await generateZodSchemaFromPrompt(
+    PartialIdeaSchema.pick({ title: true, description: true, features: true }),
     prompt,
     { topic, recentIdeaTitles },
   );
+
+  return {
+    ...data,
+    likes: 0,
+    id: -1,
+  };
 };
 
 // Expand Features for a given idea

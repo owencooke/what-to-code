@@ -8,7 +8,7 @@ const IDEA_PROMPT = `
 
     It's CRUCIAL that the description: 
         1. be less than 300 characters 
-        2. not discuss specific software features, only describe high level benefits for users
+        2. not discuss specific software details, only describe high level benefits for users
 `;
 
 const FEATURES_PROMPT = `

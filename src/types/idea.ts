@@ -59,8 +59,14 @@ const IdeaSchema = z.object({
     ),
 });
 
-const PartialIdeaSchema = IdeaSchema.omit({ frameworks: true }).extend({
-  features: IdeaSchema.shape.features.nullable().optional(),
+const PartialIdeaSchema = IdeaSchema.omit({
+  frameworks: true,
+  features: true,
+}).extend({
+  features: z
+    .array(FeatureSchema.pick({ title: true }))
+    .optional()
+    .nullable(),
   likes: z.number().optional(),
   id: z.number(),
 });

@@ -8,6 +8,7 @@ import {
   createIdeaAndMarkAsSeen,
   getLastSeenIdeasForUser,
 } from "@/lib/db/query/idea";
+import { PartialIdeaSchema } from "@/types/idea";
 
 export const runtime = "edge";
 
@@ -42,5 +43,37 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(idea);
   } catch (e: any) {
     return NextResponse.json({ error: e.message }, { status: e.status ?? 500 });
+  }
+}
+
+export async function POST(req: NextRequest) {
+  try {
+    const { userId } = await getAuthInfo(req);
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const body = await req.json();
+    const parsedIdea = PartialIdeaSchema.safeParse(body);
+
+    if (!parsedIdea.success) {
+      return NextResponse.json(
+        { error: "Invalid idea data", details: parsedIdea.error.errors },
+        { status: 400 },
+      );
+    }
+
+    const idea = await createIdeaAndMarkAsSeen(parsedIdea.data, userId);
+
+    return NextResponse.json(
+      { message: "Sucessfully created new idea", idea },
+      { status: 201 },
+    );
+  } catch (error) {
+    console.error("Error creating idea:", error);
+    return NextResponse.json(
+      { error: "Failed to create idea" },
+      { status: 500 },
+    );
   }
 }

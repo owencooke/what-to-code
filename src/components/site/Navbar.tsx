@@ -48,7 +48,7 @@ const routeList: RouteProps[] = [
     children: [
       { href: "/idea", label: "Explore" },
       { href: "/idea/generate", label: "Generate New" },
-      { href: "/idea/create", label: "Use My Own" },
+      { href: "/idea/new", label: "Use My Own" },
     ],
   },
   {
