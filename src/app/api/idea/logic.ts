@@ -30,7 +30,6 @@ export const generateIdea = async (
   return {
     ...data,
     likes: 0,
-    id: -1,
   };
 };
 

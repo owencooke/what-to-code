@@ -16,7 +16,7 @@ interface FormInputProps {
   type?: "input" | "area" | ((field: ControllerRenderProps) => React.ReactNode);
   form: UseFormReturn<any>;
   name: string;
-  label?: string;
+  label?: string | null;
   placeholder?: string;
   description?: string;
   maxLength?: number;
@@ -27,13 +27,13 @@ const FormInput: React.FC<FormInputProps> = ({
   type = "input",
   form,
   name,
-  label,
+  label = undefined,
   placeholder,
   description,
   maxLength,
 }) => {
   // Use form field name as label if no label is provided
-  label = label || name[0].toUpperCase() + name.slice(1);
+  label = label || label === null ? "" : name[0].toUpperCase() + name.slice(1);
 
   return (
     <FormField

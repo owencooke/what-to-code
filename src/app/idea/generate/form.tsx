@@ -105,6 +105,7 @@ export function IdeaForm({ onSubmit, onClick }: IdeaFormProps) {
                 form={form}
                 type={isMobile ? "area" : "input"}
                 name="customIdeaPrompt"
+                label={null}
                 placeholder="start brainstorming here..."
                 maxLength={50}
               />
