@@ -11,7 +11,7 @@ import { ProgrammingCodeIdeaIcon } from "@/components/landing/Icons";
 import useScreenSize from "@/hooks/useScreenSize";
 
 const IdeaCard: React.FC<PropsWithChildren<{}>> = ({ children }) => (
-  <Card className="max-w-lg lg:max-w-2xl">
+  <Card className="w-full max-w-lg lg:max-w-xl">
     <CardHeader className="gap-8">{children}</CardHeader>
   </Card>
 );
@@ -22,8 +22,8 @@ export default function IdeaPage() {
   const { isLarge } = useScreenSize();
 
   return (
-    <div className="flex flex-col lg:flex-row h-full items-center justify-center gap-12 lg:gap-24 mt-4">
-      <div className="flex flex-col items-center justify-center w-full ">
+    <div className="flex flex-col lg:flex-row justify-center items-center h-full gap-12 lg:gap-24 mt-4">
+      <div className="flex flex-col items-center justify-start w-full">
         <h1 className="text-5xl lg:text-6xl mb-6 text-center">
           hmm, what to code?
         </h1>
@@ -59,7 +59,7 @@ export default function IdeaPage() {
         <IdeaCard>
           <CardContent className="flex flex-col items-center text-center text-muted-foreground">
             <ProgrammingCodeIdeaIcon size={isLarge ? 24 : 12} />
-            <p>
+            <p className="lg:max-w-sm">
               {`"Start with something simple and small, then expand over time."`}
             </p>
             <cite>— Aaron Levie</cite>

@@ -4,11 +4,11 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { shuffleArray } from "@/lib/utils";
 import categories from "../data/categories";
-import { Idea, PartialIdea, PartialIdeaSchema } from "@/types/idea";
+import { PartialIdea, PartialIdeaSchema } from "@/types/idea";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import FormInput from "@/components/FormInput";
 import { Form } from "@/components/ui/form";
-import { useForm, useWatch } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import {
@@ -42,7 +42,7 @@ const FormSchema = z.object({
 
 export function IdeaForm({ onSubmit, onClick }: IdeaFormProps) {
   const [showMore, setShowMore] = useState(false);
-  const { isSmall, isLarge } = useScreenSize();
+  const { isSmall } = useScreenSize();
   const [topics, setTopics] = useState<string[]>([]);
 
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -91,7 +91,7 @@ export function IdeaForm({ onSubmit, onClick }: IdeaFormProps) {
         >
           <CollapsibleTrigger asChild>
             <Button variant="secondary" className="w-full">
-              {showMore ? "hide" : "use"} custom topics
+              {showMore ? "hide" : "show"} custom topics
               {showMore ? (
                 <ChevronUp className="h-4 w-4 ml-2" />
               ) : (
@@ -99,11 +99,8 @@ export function IdeaForm({ onSubmit, onClick }: IdeaFormProps) {
               )}
             </Button>
           </CollapsibleTrigger>
-          <CollapsibleContent forceMount={isLarge ? true : undefined}>
-            <div
-              className={`flex flex-col gap-4 w-[50vw] max-w-xl 
-                ${showMore ? "opacity-100" : "lg:opacity-0 lg:pointer-events-none"}`}
-            >
+          <CollapsibleContent>
+            <div className="flex flex-col gap-4 w-[50vw] max-w-xl">
               <FormInput
                 form={form}
                 type={isSmall ? "area" : "input"}

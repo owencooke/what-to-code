@@ -9,11 +9,17 @@ import {
   getLastSeenIdeasForUser,
 } from "@/lib/db/query/idea";
 import { PartialIdeaSchema } from "@/types/idea";
+import { mockIdea } from "./mock";
 
 export const runtime = "edge";
 
 export async function GET(req: NextRequest) {
   try {
+    // Check if MOCK_LLM is set and return mock data if true
+    if (process.env.MOCK_LLM) {
+      return NextResponse.json(mockIdea);
+    }
+
     let topic = req.nextUrl.searchParams.get("topic");
     const { userId } = await getAuthInfo(req);
 
