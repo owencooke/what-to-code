@@ -57,12 +57,12 @@ export default function IdeaPage() {
         </IdeaCard>
       ) : (
         <IdeaCard>
-          <CardContent className="flex flex-col items-center text-center">
+          <CardContent className="flex flex-col items-center text-center text-muted-foreground">
             <ProgrammingCodeIdeaIcon size={isLarge ? 24 : 12} />
-            <p className="text-muted-foreground">
-              Looking for inspiration? Click the button to start ideating your
-              next software project!
+            <p>
+              {`"Start with something simple and small, then expand over time."`}
             </p>
+            <cite>— Aaron Levie</cite>
           </CardContent>
         </IdeaCard>
       )}
