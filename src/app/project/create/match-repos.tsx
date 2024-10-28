@@ -8,7 +8,7 @@ import { useSession } from "next-auth/react";
 import { GitHubRepo } from "@/types/github";
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
-import useIsMobile from "@/hooks/useIsMobile";
+import useScreenSize from "@/hooks/useScreenSize";
 import CustomizableCard from "@/components/cards/CustomizableCard";
 import { UseFormReturn } from "react-hook-form";
 
@@ -21,7 +21,7 @@ const MatchedRepos: React.FC<MatchedReposProps> = ({ form }) => {
   const starterRepo = form.watch("starterRepo");
 
   const { status } = useSession();
-  const isMobile = useIsMobile();
+  const { isSmall } = useScreenSize();
 
   const fetchRepos = async (): Promise<GitHubRepo[]> => {
     if (!framework) {
@@ -76,7 +76,7 @@ const MatchedRepos: React.FC<MatchedReposProps> = ({ form }) => {
     );
   }
 
-  const topicsToShow = isMobile ? 4 : 8;
+  const topicsToShow = isSmall ? 4 : 8;
 
   const handleSelectRepo = (repo: GitHubRepo) => {
     const url = repo.url !== starterRepo ? repo.url : null;

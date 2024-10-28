@@ -25,7 +25,7 @@ import {
   CollapsibleTrigger,
   CollapsibleContent,
 } from "@radix-ui/react-collapsible";
-import useIsMobile from "@/hooks/useIsMobile";
+import useScreenSize from "@/hooks/useScreenSize";
 import ky from "ky";
 
 interface IdeaFormProps {
@@ -42,7 +42,7 @@ const FormSchema = z.object({
 
 export function IdeaForm({ onSubmit, onClick }: IdeaFormProps) {
   const [showMore, setShowMore] = useState(false);
-  const isMobile = useIsMobile();
+  const { isSmall, isLarge } = useScreenSize();
   const [topics, setTopics] = useState<string[]>([]);
 
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -91,7 +91,7 @@ export function IdeaForm({ onSubmit, onClick }: IdeaFormProps) {
         >
           <CollapsibleTrigger asChild>
             <Button variant="secondary" className="w-full">
-              {showMore ? "hide" : "show"} custom topics
+              {showMore ? "hide" : "use"} custom topics
               {showMore ? (
                 <ChevronUp className="h-4 w-4 ml-2" />
               ) : (
@@ -99,11 +99,14 @@ export function IdeaForm({ onSubmit, onClick }: IdeaFormProps) {
               )}
             </Button>
           </CollapsibleTrigger>
-          <CollapsibleContent>
-            <div className="flex flex-col gap-4 w-[50vw] max-w-xl">
+          <CollapsibleContent forceMount={isLarge ? true : undefined}>
+            <div
+              className={`flex flex-col gap-4 w-[50vw] max-w-xl 
+                ${showMore ? "opacity-100" : "lg:opacity-0 lg:pointer-events-none"}`}
+            >
               <FormInput
                 form={form}
-                type={isMobile ? "area" : "input"}
+                type={isSmall ? "area" : "input"}
                 name="customIdeaPrompt"
                 label={null}
                 placeholder="start brainstorming here..."
