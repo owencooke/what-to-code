@@ -69,14 +69,13 @@ export default function CreateIdea() {
     }
   };
 
-  console.log("fields", fields);
   return (
-    <div className="container mx-auto py-8 px-4">
+    <div className="container mx-auto py-8 px-2">
       <Card className="max-w-2xl mx-auto">
         <CardHeader>
-          <CardTitle>Create Your Idea</CardTitle>
-          <CardDescription>
-            Share your innovative concept and optional features
+          <CardTitle>Already have an idea in mind?</CardTitle>
+          <CardDescription className="pt-2">
+            Tell us more about it so our AI dev team can help you get started 🚀
           </CardDescription>
         </CardHeader>
         <Form {...form}>
@@ -85,13 +84,14 @@ export default function CreateIdea() {
               <FormInput
                 form={form}
                 name="title"
-                placeholder="Enter your idea title"
+                placeholder="Summarize your idea in a few words"
               />
               <FormInput
                 form={form}
                 name="description"
                 placeholder="Describe your idea in detail"
                 type="area"
+                className="max-h-32"
               />
 
               <div className="space-y-2">
@@ -108,7 +108,7 @@ export default function CreateIdea() {
                         <FormControl>
                           <div className="flex items-center space-x-2">
                             <Input
-                              placeholder={`Feature ${index + 1}`}
+                              placeholder="Short description of a feature"
                               {...field}
                               value={field.value || ""}
                             />
