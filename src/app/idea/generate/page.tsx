@@ -7,10 +7,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { PartialIdea } from "@/types/idea";
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
-import { Lightbulb } from "lucide-react";
+import { ProgrammingCodeIdeaIcon } from "@/components/landing/Icons";
+import useScreenSize from "@/hooks/useScreenSize";
 
 const IdeaCard: React.FC<PropsWithChildren<{}>> = ({ children }) => (
-  <Card className="w-full">
+  <Card className="max-w-lg lg:max-w-2xl">
     <CardHeader className="gap-8">{children}</CardHeader>
   </Card>
 );
@@ -18,6 +19,7 @@ const IdeaCard: React.FC<PropsWithChildren<{}>> = ({ children }) => (
 export default function IdeaPage() {
   const [idea, setIdea] = useState<PartialIdea>();
   const [isIdeaLoading, setIsIdeaLoading] = useState(false);
+  const { isLarge } = useScreenSize();
 
   return (
     <div className="flex flex-col lg:flex-row h-full items-center justify-center gap-12 lg:gap-24 mt-4">
@@ -56,11 +58,10 @@ export default function IdeaPage() {
       ) : (
         <IdeaCard>
           <CardContent className="flex flex-col items-center text-center">
-            <Lightbulb className="w-24 h-24 mb-4 text-yellow-400" />
-            <h2 className="text-2xl font-semibold mb-2">No Idea Yet</h2>
+            <ProgrammingCodeIdeaIcon size={isLarge ? 24 : 12} />
             <p className="text-muted-foreground">
-              Click the button to generate a brilliant coding idea. Who knows
-              what amazing project you'll create next!
+              Looking for inspiration? Click the button to start ideating your
+              next software project!
             </p>
           </CardContent>
         </IdeaCard>
