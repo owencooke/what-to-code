@@ -20,7 +20,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="h-full">
+    <html lang="en" className="h-full" suppressHydrationWarning>
       <head>
         <title>what to code?</title>
         <link rel="shortcut icon" href="favicon.ico" />
@@ -32,7 +32,12 @@ export default function RootLayout({
       </head>
       <body className={`h-full flex flex-col ${publicSans.className}`}>
         <SessionProvider>
-          <ThemeProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="dark"
+            enableSystem
+            disableTransitionOnChange
+          >
             <QueryClientProvider client={queryClient}>
               <Navbar />
               <div className="flex-grow m-4 md:m-8 lg:m-12">{children}</div>
