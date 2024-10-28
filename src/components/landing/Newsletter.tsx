@@ -139,6 +139,7 @@ export const Newsletter = () => {
                 className="bg-muted/50 dark:bg-muted/80"
                 form={form}
                 name="email"
+                label={null}
                 placeholder="someone@example.com"
               />
               <Button type="submit">Sign Up</Button>

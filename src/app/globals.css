@@ -4,9 +4,9 @@
 
 @layer base {
   :root {
-    --background: 0 0% 97.65%;
+    --background: 0 0% 96.65%;
     --foreground: 0 0% 12.55%;
-    --muted: 0 0% 93.73%;
+    --muted: 0 0% 92.73%;
     --muted-foreground: 0 0% 39.22%;
     --popover: 0 0% 98.82%;
     --popover-foreground: 0 0% 12.55%;

@@ -9,7 +9,6 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { motion, AnimatePresence } from "framer-motion";
 import type { PartialIdea } from "@/types/idea";
 import { useRouter } from "next/navigation";
@@ -66,7 +65,7 @@ export default function IdeasGrid({ ideas }: { ideas: PartialIdea[] }) {
                 </DialogHeader>
                 <DialogDescription className="text-muted-foreground text-sm">
                   {selectedIdea.description}
-                  {selectedIdea.features && (
+                  {selectedIdea.features?.length && (
                     <div className="mt-4">
                       <h4 className="font-semibold text-lg">Features</h4>
                       <ul className="list-disc list-inside">
