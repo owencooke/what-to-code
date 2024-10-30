@@ -17,13 +17,7 @@ export default async function IdeasPage({
   searchParams: { search?: string; tags?: string[] | string };
 }) {
   const { search, tags } = searchParams;
-  const normalizedTopics = tags
-    ? Array.isArray(tags)
-      ? tags
-      : [tags]
-    : undefined;
-
-  const ideas = await searchIdeas(search, normalizedTopics);
+  const ideas = await searchIdeas(search, tags);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -36,7 +30,7 @@ export default async function IdeasPage({
           tags={topics}
           className="w-4/5"
           initialSearchQuery={search}
-          initialTags={normalizedTopics}
+          initialTags={tags}
         />
       </div>
       <Suspense fallback={<IdeasGridSkeleton />}>

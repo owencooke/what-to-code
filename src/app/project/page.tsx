@@ -4,6 +4,7 @@ import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import dynamic from "next/dynamic";
 import ProjectsGrid from "./ProjectsGrid";
 import { searchProjects } from "@/lib/db/query/project";
+import categories from "../idea/data/categories";
 
 // Dynamically import client side SearchInput component
 const SearchInput = dynamic(() => import("@/components/SearchInput"), {
@@ -13,14 +14,14 @@ const SearchInput = dynamic(() => import("@/components/SearchInput"), {
 export default async function ProjectsPage({
   searchParams,
 }: {
-  searchParams: { search?: string };
+  searchParams: { search?: string; tags?: string[] | string };
 }) {
-  const searchTerm = searchParams.search || "";
+  const { search, tags } = searchParams;
   let projects: Project[] = [];
   let error: Error | null = null;
 
   try {
-    projects = await searchProjects(searchTerm);
+    projects = await searchProjects(search, tags);
   } catch (e) {
     error = e instanceof Error ? e : new Error("An unknown error occurred");
   }
@@ -32,7 +33,12 @@ export default async function ProjectsPage({
       </h1>
 
       <div className="mb-8">
-        <SearchInput route="project" />
+        <SearchInput
+          route="project"
+          tags={categories}
+          initialTags={tags}
+          initialSearchQuery={search}
+        />
       </div>
 
       {error && (

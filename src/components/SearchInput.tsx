@@ -30,7 +30,7 @@ interface SearchInputProps {
   tags?: string[];
   className?: string;
   initialSearchQuery?: string;
-  initialTags?: string[];
+  initialTags?: string[] | string;
 }
 
 export default function SearchInput({
@@ -43,10 +43,16 @@ export default function SearchInput({
   initialTags = [],
   className = "",
 }: SearchInputProps) {
+  const normalizedTags = initialTags
+    ? Array.isArray(initialTags)
+      ? initialTags
+      : [initialTags]
+    : [];
+
   route = route.startsWith("/") ? route : `/${route}`;
   const router = useRouter();
 
-  const [selectedTags, setSelectedTags] = useState<string[]>(initialTags);
+  const [selectedTags, setSelectedTags] = useState<string[]>(normalizedTags);
   const [open, setOpen] = useState(false);
 
   const handleSearch = useDebouncedCallback((term: string) => {

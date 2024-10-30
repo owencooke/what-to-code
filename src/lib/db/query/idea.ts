@@ -125,12 +125,12 @@ async function createIdeaAndMarkAsSeen(
  * Fetches ideas from the database based on an optional search query and topics.
  *
  * @param {string | undefined} query - The optional search query to filter ideas by title or description.
- * @param {string[] | undefined} topics - The optional topics to filter ideas by.
+ * @param {string | string[] | undefined} topics - The optional topics to filter ideas by.
  * @returns {Promise<PartialIdea[]>} - A promise that resolves to an array of ideas.
  */
 async function searchIdeas(
   query: string | undefined,
-  topics: string[] | undefined,
+  topics: string | string[] | undefined,
 ): Promise<PartialIdea[]> {
   const conditions = [];
 
@@ -144,8 +144,11 @@ async function searchIdeas(
     );
   }
 
-  // Add topics conditions
-  if (topics && topics.length > 0) {
+  // Add tags conditions
+  if (topics) {
+    if (!Array.isArray(topics)) {
+      topics = [topics];
+    }
     conditions.push(
       and(
         ...topics.map((topic) =>
@@ -158,7 +161,6 @@ async function searchIdeas(
     );
   }
 
-  console.log({ query, topics });
   // Build the final query with all conditions
   const result = await db
     .select()

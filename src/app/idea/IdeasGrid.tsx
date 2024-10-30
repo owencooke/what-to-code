@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { useSearchParams } from "next/navigation";
+import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Dialog,
@@ -17,7 +16,6 @@ import { Button } from "@/components/ui/button";
 
 export default function IdeasGrid({ ideas }: { ideas: PartialIdea[] }) {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [selectedIdea, setSelectedIdea] = useState<PartialIdea | null>(null);
 
   const openIdeaDetails = (idea: PartialIdea) => {
