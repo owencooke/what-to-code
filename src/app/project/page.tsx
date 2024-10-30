@@ -13,9 +13,9 @@ const SearchInput = dynamic(() => import("@/components/SearchInput"), {
 export default async function ProjectsPage({
   searchParams,
 }: {
-  searchParams: { q?: string };
+  searchParams: { search?: string };
 }) {
-  const searchTerm = searchParams.q || "";
+  const searchTerm = searchParams.search || "";
   let projects: Project[] = [];
   let error: Error | null = null;
 

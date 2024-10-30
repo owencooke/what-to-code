@@ -13,9 +13,9 @@ const SearchInput = dynamic(() => import("@/components/SearchInput"), {
 export default async function IdeasPage({
   searchParams,
 }: {
-  searchParams: { q?: string };
+  searchParams: { search?: string };
 }) {
-  const ideas = await searchIdeas(searchParams.q);
+  const ideas = await searchIdeas(searchParams.search);
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-4xl md:text-5xl mb-8 text-center">

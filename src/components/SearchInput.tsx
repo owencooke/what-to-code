@@ -15,7 +15,7 @@ interface SearchInputProps {
 export default function SearchInput({
   route,
   placeholder = "Search...",
-  searchParamKey = "q",
+  searchParamKey = "search",
   debounceDelay = 300,
 }: SearchInputProps) {
   route = route.startsWith("/") ? route : `/${route}`;
