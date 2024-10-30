@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { Search, Filter, X } from "lucide-react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Search, Filter, X, Check } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -27,8 +27,10 @@ interface SearchInputProps {
   placeholder?: string;
   searchParamKey?: string;
   debounceDelay?: number;
-  topics?: string[];
+  tags?: string[];
   className?: string;
+  initialSearchQuery?: string;
+  initialTags?: string[];
 }
 
 export default function SearchInput({
@@ -36,53 +38,48 @@ export default function SearchInput({
   placeholder = "Search...",
   searchParamKey = "search",
   debounceDelay = 300,
-  topics = [],
+  tags = [],
+  initialSearchQuery = "",
+  initialTags = [],
   className = "",
 }: SearchInputProps) {
   route = route.startsWith("/") ? route : `/${route}`;
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
+
+  const [selectedTags, setSelectedTags] = useState<string[]>(initialTags);
   const [open, setOpen] = useState(false);
 
-  useEffect(() => {
-    const topicsParam = searchParams.get("topics");
-    if (topicsParam) {
-      setSelectedTopics(topicsParam.split(","));
-    }
-  }, [searchParams]);
-
   const handleSearch = useDebouncedCallback((term: string) => {
-    updateQueryParams(term, selectedTopics);
+    updateQueryParams(term, selectedTags);
   }, debounceDelay);
 
-  const updateQueryParams = (term: string, topics: string[]) => {
-    const params = new URLSearchParams(searchParams);
+  const updateQueryParams = (term: string, tags: string[]) => {
+    const params = new URLSearchParams();
     if (term) {
       params.set(searchParamKey, term);
     } else {
       params.delete(searchParamKey);
     }
-    if (topics.length > 0) {
-      params.set("topics", topics.join(","));
+    if (tags.length > 0) {
+      params.set("tags", tags.join(","));
     } else {
-      params.delete("topics");
+      params.delete("tags");
     }
     router.push(`${route}?${params.toString()}`);
   };
 
-  const toggleTopic = (topic: string) => {
-    const newTopics = selectedTopics.includes(topic)
-      ? selectedTopics.filter((t) => t !== topic)
-      : [...selectedTopics, topic];
-    setSelectedTopics(newTopics);
-    updateQueryParams(searchParams.get(searchParamKey) || "", newTopics);
+  const toggleTopic = (tag: string) => {
+    const newTags = selectedTags.includes(tag)
+      ? selectedTags.filter((t) => t !== tag)
+      : [...selectedTags, tag];
+    setSelectedTags(newTags);
+    updateQueryParams(initialSearchQuery, newTags);
   };
 
-  const removeTopic = (topic: string) => {
-    const newTopics = selectedTopics.filter((t) => t !== topic);
-    setSelectedTopics(newTopics);
-    updateQueryParams(searchParams.get(searchParamKey) || "", newTopics);
+  const removeTag = (tag: string) => {
+    const newTags = selectedTags.filter((t) => t !== tag);
+    setSelectedTags(newTags);
+    updateQueryParams(initialSearchQuery, newTags);
   };
 
   return (
@@ -94,38 +91,35 @@ export default function SearchInput({
           placeholder={placeholder}
           className="pl-10 pr-20 w-full"
           onChange={(e) => handleSearch(e.target.value)}
-          defaultValue={searchParams.get(searchParamKey)?.toString()}
+          defaultValue={initialSearchQuery}
         />
         <div className="absolute right-1 top-1/2 transform -translate-y-1/2">
           <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
               <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
                 <Filter className="h-4 w-4" />
-                <span className="sr-only">Filter topics</span>
+                <span className="sr-only">Filter tags</span>
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-[200px] p-0" align="end">
               <Command>
-                <CommandInput placeholder="Search topics..." />
+                <CommandInput placeholder="Search tags..." />
                 <CommandList>
-                  <CommandEmpty>No topics found.</CommandEmpty>
+                  <CommandEmpty>No tags found.</CommandEmpty>
                   <CommandGroup>
-                    {topics.map((topic) => (
-                      <CommandItem
-                        key={topic}
-                        onSelect={() => toggleTopic(topic)}
-                      >
+                    {tags.map((tag) => (
+                      <CommandItem key={tag} onSelect={() => toggleTopic(tag)}>
                         <div
                           className={cn(
                             "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
-                            selectedTopics.includes(topic)
+                            selectedTags.includes(tag)
                               ? "bg-primary text-primary-foreground"
                               : "opacity-50 [&_svg]:invisible",
                           )}
                         >
-                          <Search className="h-4 w-4" />
+                          <Check className="h-4 w-4" />
                         </div>
-                        {topic}
+                        {tag}
                       </CommandItem>
                     ))}
                   </CommandGroup>
@@ -136,19 +130,19 @@ export default function SearchInput({
         </div>
       </div>
       {/* Filter display tags */}
-      {selectedTopics.length > 0 && (
+      {selectedTags.length > 0 && (
         <div className="flex flex-wrap gap-2 mt-3 w-full">
-          {selectedTopics.map((topic) => (
-            <Badge key={topic} variant="secondary" className="text-sm">
-              {topic}
+          {selectedTags.map((tag) => (
+            <Badge key={tag} variant="secondary" className="text-sm">
+              {tag}
               <Button
                 variant="ghost"
                 size="sm"
                 className="ml-1 h-auto p-0 text-muted-foreground hover:text-foreground"
-                onClick={() => removeTopic(topic)}
+                onClick={() => removeTag(tag)}
               >
                 <X className="h-3 w-3" />
-                <span className="sr-only">Remove {topic} topic</span>
+                <span className="sr-only">Remove {tag} tag</span>
               </Button>
             </Badge>
           ))}
