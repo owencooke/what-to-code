@@ -67,7 +67,7 @@ export default function SearchInput({
       params.delete(searchParamKey);
     }
     if (tags.length > 0) {
-      params.set("tags", tags.join(","));
+      tags.forEach((tag) => params.append("tags", tag));
     } else {
       params.delete("tags");
     }

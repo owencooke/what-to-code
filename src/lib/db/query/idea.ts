@@ -144,13 +144,15 @@ async function searchIdeas(
     );
   }
 
+  console.log({ topics });
+
   // Add tags conditions
   if (topics) {
     if (!Array.isArray(topics)) {
       topics = [topics];
     }
     conditions.push(
-      and(
+      or(
         ...topics.map((topic) =>
           or(
             ilike(ideas.title, `%${topic}%`),

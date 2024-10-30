@@ -97,7 +97,7 @@ async function searchProjects(
       tags = [tags];
     }
     conditions.push(
-      and(
+      or(
         ...tags.map((topic) =>
           or(
             ilike(projects.title, `%${topic}%`),
