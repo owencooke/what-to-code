@@ -10,7 +10,7 @@ export async function GET(req: NextRequest) {
   try {
     const query = req.nextUrl.searchParams.get("query") || "";
 
-    const projects = await searchProjects(query);
+    const projects = await searchProjects(query, []);
 
     return NextResponse.json(projects);
   } catch (e: any) {

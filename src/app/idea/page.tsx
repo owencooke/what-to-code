@@ -28,7 +28,7 @@ export default async function IdeasPage({
         <SearchInput
           route="idea"
           tags={topics}
-          className="w-4/5"
+          className="w-full"
           initialSearchQuery={search}
           initialTags={tags}
         />

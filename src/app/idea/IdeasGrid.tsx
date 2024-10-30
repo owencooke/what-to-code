@@ -34,11 +34,11 @@ export default function IdeasGrid({ ideas }: { ideas: PartialIdea[] }) {
 
   return (
     <>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {ideas.map((idea) => (
           <Card
             key={idea.id}
-            className="cursor-pointer hover:shadow-md transition-shadow"
+            className="cursor-pointer transition-colors hover:bg-border"
             onClick={() => openIdeaDetails(idea)}
           >
             <CardContent className="p-4">

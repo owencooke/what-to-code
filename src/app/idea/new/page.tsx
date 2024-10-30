@@ -28,6 +28,7 @@ import {
 import { Plus, X } from "lucide-react";
 import { PartialIdea, PartialIdeaSchema } from "@/types/idea";
 import FormInput from "@/components/FormInput";
+import { useToast } from "@/components/ui/use-toast";
 
 const formSchema = PartialIdeaSchema.omit({ likes: true, id: true }).extend({
   description: PartialIdeaSchema.shape.description.min(10, {
@@ -41,6 +42,7 @@ const MotionInput = motion(Input);
 const MotionButton = motion(Button);
 
 export default function CreateIdea() {
+  const { toast } = useToast();
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -66,10 +68,14 @@ export default function CreateIdea() {
         .json<{ idea: PartialIdea }>();
       router.push(`/idea/expand/${response.idea.id}`);
     } catch (error) {
-      console.error("Error creating idea:", error);
-      // Handle error (e.g., show error message to user)
-    } finally {
       setIsSubmitting(false);
+      console.error("Error creating idea:", error);
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description:
+          "There was a problem while creating your idea. Please try again later.",
+      });
     }
   };
 
