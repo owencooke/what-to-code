@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import { useSearchParams } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Dialog,
@@ -13,9 +14,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import type { PartialIdea } from "@/types/idea";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import TopicSelector from "@/components/TopicSelector";
 
 export default function IdeasGrid({ ideas }: { ideas: PartialIdea[] }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [selectedIdea, setSelectedIdea] = useState<PartialIdea | null>(null);
 
   const openIdeaDetails = (idea: PartialIdea) => {
@@ -42,9 +45,31 @@ export default function IdeasGrid({ ideas }: { ideas: PartialIdea[] }) {
             onClick={() => openIdeaDetails(idea)}
           >
             <CardContent className="p-4">
-              <h3 className="font-semibold text-lg line-clamp-2">
+              <h3 className="font-semibold text-lg mb-2 line-clamp-2">
                 {idea.title}
               </h3>
+              <p className="text-sm text-muted-foreground mb-2 line-clamp-2">
+                {idea.description}
+              </p>
+              {idea.features && idea.features.length > 0 && (
+                <div>
+                  <h4 className="text-sm font-semibold mb-1">Features:</h4>
+                  <ul className="text-xs text-muted-foreground list-disc list-inside">
+                    {idea.features
+                      .slice(0, 3)
+                      .map((feature: { title: string }, idx: number) => (
+                        <li key={idx} className="line-clamp-1">
+                          {feature.title}
+                        </li>
+                      ))}
+                  </ul>
+                  {idea.features.length > 3 && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      + {idea.features.length - 3} more
+                    </p>
+                  )}
+                </div>
+              )}
             </CardContent>
           </Card>
         ))}

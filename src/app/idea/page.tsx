@@ -9,6 +9,9 @@ import IdeasGrid from "./IdeasGrid";
 const SearchInput = dynamic(() => import("@/components/SearchInput"), {
   ssr: false,
 });
+const TopicSelector = dynamic(() => import("@/components/TopicSelector"), {
+  ssr: false,
+});
 
 export default async function IdeasPage({
   searchParams,
@@ -21,8 +24,9 @@ export default async function IdeasPage({
       <h1 className="text-4xl md:text-5xl mb-8 text-center">
         Brainstorm Ideas
       </h1>
-      <div className="mb-8">
+      <div className="mb-8 flex items-center gap-4 w-full bg-red-300">
         <SearchInput route="idea" />
+        <TopicSelector />
       </div>
       <Suspense fallback={<IdeasGridSkeleton />}>
         <IdeasGrid ideas={ideas} />
