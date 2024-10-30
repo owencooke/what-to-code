@@ -122,26 +122,48 @@ async function createIdeaAndMarkAsSeen(
 }
 
 /**
- * Fetches ideas from the database based on an optional search query.
+ * Fetches ideas from the database based on an optional search query and topics.
  *
  * @param {string | undefined} query - The optional search query to filter ideas by title or description.
+ * @param {string[] | undefined} topics - The optional topics to filter ideas by.
  * @returns {Promise<PartialIdea[]>} - A promise that resolves to an array of ideas.
  */
-async function searchIdeas(query: string | undefined): Promise<PartialIdea[]> {
-  let result;
+async function searchIdeas(
+  query: string | undefined,
+  topics: string[] | undefined,
+): Promise<PartialIdea[]> {
+  const conditions = [];
+
+  // Add search query conditions
   if (query) {
-    result = await db
-      .select()
-      .from(ideas)
-      .where(
-        or(
-          ilike(ideas.title, `%${query}%`),
-          ilike(ideas.description, `%${query}%`),
-        ),
-      );
-  } else {
-    result = await db.select().from(ideas);
+    conditions.push(
+      or(
+        ilike(ideas.title, `%${query}%`),
+        ilike(ideas.description, `%${query}%`),
+      ),
+    );
   }
+
+  // Add topics conditions
+  if (topics && topics.length > 0) {
+    conditions.push(
+      and(
+        ...topics.map((topic) =>
+          or(
+            ilike(ideas.title, `%${topic}%`),
+            ilike(ideas.description, `%${topic}%`),
+          ),
+        ),
+      ),
+    );
+  }
+
+  console.log({ query, topics });
+  // Build the final query with all conditions
+  const result = await db
+    .select()
+    .from(ideas)
+    .where(and(...conditions));
 
   return result.map((record) => PartialIdeaSchema.parse(record));
 }

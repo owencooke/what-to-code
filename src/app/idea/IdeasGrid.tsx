@@ -14,7 +14,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import type { PartialIdea } from "@/types/idea";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import TopicSelector from "@/components/TopicSelector";
 
 export default function IdeasGrid({ ideas }: { ideas: PartialIdea[] }) {
   const router = useRouter();
