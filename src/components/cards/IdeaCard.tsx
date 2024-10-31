@@ -8,6 +8,7 @@ import { PropsWithChildren } from "react";
 import { Skeleton } from "../ui/skeleton";
 import Link from "next/link";
 import { cn } from "@/components/ui/utils";
+import { ProgrammingCodeIdeaIcon } from "../landing/Icons";
 
 type IdeaCardProps = {
   idea: PartialIdea;
@@ -22,13 +23,13 @@ export function IdeaCard({
 }: IdeaCardProps) {
   return (
     <IdeaBaseCard bare={bare}>
-      <CardHeader className={cn(bare && "p-0")}>
-        <div className="flex items-center gap-4">
-          {!bare && <Lightbulb className="text-yellow-500" />}
-          <h2 className="text-2xl font-bold !m-0 !p-0">{idea.title}</h2>
-        </div>
+      <CardHeader className={cn("relative pb-4", bare && "p-0")}>
+        {!bare && (
+          <ProgrammingCodeIdeaIcon className="absolute top-6 right-6 fill-yellow-500 w-8 h-8" />
+        )}
+        <h2 className="text-2xl font-bold pr-8">{idea.title}</h2>
       </CardHeader>
-      <CardContent className={cn("mt-4", bare && "p-0")}>
+      <CardContent className={cn("", bare && "p-0 mt-4")}>
         <p className="text-muted-foreground">{idea.description}</p>
         <ul className="ml-4 mt-4 space-y-2 text-foreground/90">
           {idea.features &&
@@ -55,7 +56,7 @@ type IdeaBaseCardProps = PropsWithChildren<{
   bare?: boolean;
 }>;
 
-export const IdeaBaseCard: React.FC<IdeaBaseCardProps> = ({
+const IdeaBaseCard: React.FC<IdeaBaseCardProps> = ({
   children,
   bare = false,
 }) => (
@@ -85,5 +86,17 @@ export const IdeaSkeletonCard: React.FC = () => (
     <CardFooter>
       <Skeleton className="h-10 w-full" />
     </CardFooter>
+  </IdeaBaseCard>
+);
+
+export const EmptyIdeaCard: React.FC = () => (
+  <IdeaBaseCard>
+    <CardHeader className="flex flex-col items-center text-center text-muted-foreground select-none my-4">
+      <ProgrammingCodeIdeaIcon className="lg:w-20 lg:h-20 fill-yellow-500" />
+      <p className="lg:max-w-sm">
+        {`"Start with something simple and small, then expand over time."`}
+      </p>
+      <cite>— Aaron Levie</cite>
+    </CardHeader>
   </IdeaBaseCard>
 );

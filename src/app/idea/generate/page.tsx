@@ -1,12 +1,10 @@
 "use client";
 
-import { CardHeader } from "@/components/ui/card";
 import { useState } from "react";
 import { IdeaForm } from "./form";
 import { PartialIdea } from "@/types/idea";
-import { ProgrammingCodeIdeaIcon } from "@/components/landing/Icons";
 import {
-  IdeaBaseCard,
+  EmptyIdeaCard,
   IdeaCard,
   IdeaSkeletonCard,
 } from "@/components/cards/IdeaCard";
@@ -36,15 +34,7 @@ export default function IdeaPage() {
       ) : idea ? (
         <IdeaCard idea={idea} showInterestButton></IdeaCard>
       ) : (
-        <IdeaBaseCard>
-          <CardHeader className="flex flex-col items-center text-center text-muted-foreground select-none my-4">
-            <ProgrammingCodeIdeaIcon className="lg:w-20 lg:h-20" />
-            <p className="lg:max-w-sm">
-              {`"Start with something simple and small, then expand over time."`}
-            </p>
-            <cite>— Aaron Levie</cite>
-          </CardHeader>
-        </IdeaBaseCard>
+        <EmptyIdeaCard />
       )}
     </div>
   );
