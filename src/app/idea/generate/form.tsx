@@ -103,7 +103,7 @@ export function IdeaForm({ onSubmit, onClick }: IdeaFormProps) {
             <div className="flex flex-col gap-4 w-[50vw] max-w-xl">
               <FormInput
                 form={form}
-                type={isSmall ? "area" : "input"}
+                type={!isSmall ? "area" : "input"}
                 name="customIdeaPrompt"
                 label={null}
                 placeholder="start brainstorming here..."

@@ -10,6 +10,7 @@ import { motion } from "framer-motion";
 import { Rocket, ArrowDown } from "lucide-react";
 import { useState } from "react";
 import { useCreateProjectStore } from "@/store/useCreateProjectStore";
+import { IdeaCard } from "@/components/cards/IdeaCard";
 
 interface ExpandIdeaProps {
   idea: PartialIdea;
@@ -69,12 +70,7 @@ export default function ExpandIdea({ idea }: ExpandIdeaProps) {
             transition={{ delay: 0.6, duration: 0.5 }}
             className="mb-12 flex justify-center items-center"
           >
-            <Card className="shadow-xl">
-              <CardHeader>
-                <h2 className="text-2xl font-bold">{idea.title}</h2>
-              </CardHeader>
-              <CardContent>{idea.description}</CardContent>
-            </Card>
+            <IdeaCard idea={idea} />
           </motion.div>
         </div>
         <motion.div
