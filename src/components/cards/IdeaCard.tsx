@@ -89,14 +89,42 @@ export const IdeaSkeletonCard: React.FC = () => (
   </IdeaBaseCard>
 );
 
-export const EmptyIdeaCard: React.FC = () => (
-  <IdeaBaseCard>
-    <CardHeader className="flex flex-col items-center text-center text-muted-foreground select-none my-4">
-      <ProgrammingCodeIdeaIcon className="lg:w-20 lg:h-20 fill-yellow-500" />
-      <p className="lg:max-w-sm">
+type EmptyIdeaCardProps = {
+  bare?: boolean;
+};
+
+export const EmptyIdeaCard: React.FC<EmptyIdeaCardProps> = ({
+  bare = false,
+}) => (
+  <div
+    className={cn(
+      "w-full max-w-lg lg:max-w-xl transition-all duration-300",
+      !bare && "hover:shadow-xl rounded-2xl",
+    )}
+  >
+    {bare ? (
+      <EmptyIdeaCardContent />
+    ) : (
+      <Card>
+        <EmptyIdeaCardContent />
+      </Card>
+    )}
+  </div>
+);
+
+const EmptyIdeaCardContent: React.FC = () => (
+  <CardHeader className="flex flex-col lg:flex-row items-center text-center lg:text-left text-muted-foreground select-none my-4 p-6 gap-4 lg:gap-8">
+    <ProgrammingCodeIdeaIcon
+      className="w-16 h-16 lg:w-20 lg:h-20 fill-yellow-500 animate-pulse shrink-0"
+      aria-hidden="true"
+    />
+    <div>
+      <p className="text-sm lg:text-base">
         {`"Start with something simple and small, then expand over time."`}
       </p>
-      <cite>— Aaron Levie</cite>
-    </CardHeader>
-  </IdeaBaseCard>
+      <cite className="mt-2 text-xs lg:text-sm font-medium block">
+        — Aaron Levie
+      </cite>
+    </div>
+  </CardHeader>
 );
