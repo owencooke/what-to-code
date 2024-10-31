@@ -7,22 +7,28 @@ import { PartialIdea } from "@/types/idea";
 import { PropsWithChildren } from "react";
 import { Skeleton } from "../ui/skeleton";
 import Link from "next/link";
+import { cn } from "@/components/ui/utils";
 
 type IdeaCardProps = {
   idea: PartialIdea;
   showInterestButton?: boolean;
+  bare?: boolean;
 };
 
-export function IdeaCard({ idea, showInterestButton = false }: IdeaCardProps) {
+export function IdeaCard({
+  idea,
+  showInterestButton = false,
+  bare = false,
+}: IdeaCardProps) {
   return (
-    <IdeaBaseCard>
-      <CardHeader>
+    <IdeaBaseCard bare={bare}>
+      <CardHeader className={cn(bare && "p-0")}>
         <div className="flex items-center gap-4">
-          <Lightbulb className="text-yellow-500" />
+          {!bare && <Lightbulb className="text-yellow-500" />}
           <h2 className="text-2xl font-bold !m-0 !p-0">{idea.title}</h2>
         </div>
       </CardHeader>
-      <CardContent className="mt-2">
+      <CardContent className={cn("mt-4", bare && "p-0")}>
         <p className="text-muted-foreground">{idea.description}</p>
         <ul className="ml-4 mt-4 space-y-2 text-foreground/90">
           {idea.features &&
@@ -35,11 +41,9 @@ export function IdeaCard({ idea, showInterestButton = false }: IdeaCardProps) {
         </ul>
       </CardContent>
       {showInterestButton && (
-        <CardFooter className="flex justify-center">
+        <CardFooter className={cn("flex justify-center", bare && "p-0 mt-4")}>
           <Button asChild>
-            <Link href={`/idea/expand/${idea.id}`}>
-              {`i'm interested, tell me more`}
-            </Link>
+            <Link href={`/idea/expand/${idea.id}`}>{`Expand this idea`}</Link>
           </Button>
         </CardFooter>
       )}
@@ -47,10 +51,23 @@ export function IdeaCard({ idea, showInterestButton = false }: IdeaCardProps) {
   );
 }
 
-export const IdeaBaseCard: React.FC<PropsWithChildren<{}>> = ({ children }) => (
-  <Card className="w-full max-w-lg lg:max-w-xl shadow-lg transition-all duration-300 hover:shadow-xl rounded-2xl">
-    {children}
-  </Card>
+type IdeaBaseCardProps = PropsWithChildren<{
+  bare?: boolean;
+}>;
+
+export const IdeaBaseCard: React.FC<IdeaBaseCardProps> = ({
+  children,
+  bare = false,
+}) => (
+  <div
+    className={cn(
+      "w-full max-w-lg lg:max-w-xl",
+      !bare &&
+        "shadow-lg transition-all duration-300 hover:shadow-xl rounded-2xl",
+    )}
+  >
+    {bare ? children : <Card>{children}</Card>}
+  </div>
 );
 
 export const IdeaSkeletonCard: React.FC = () => (

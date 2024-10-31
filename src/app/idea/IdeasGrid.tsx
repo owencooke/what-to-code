@@ -13,6 +13,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import type { PartialIdea } from "@/types/idea";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { IdeaCard } from "@/components/cards/IdeaCard";
 
 export default function IdeasGrid({ ideas }: { ideas: PartialIdea[] }) {
   const router = useRouter();
@@ -82,25 +83,7 @@ export default function IdeasGrid({ ideas }: { ideas: PartialIdea[] }) {
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.2, ease: "easeOut" }}
               >
-                <DialogHeader>
-                  <DialogTitle>{selectedIdea.title}</DialogTitle>
-                </DialogHeader>
-                <DialogDescription className="text-muted-foreground text-sm">
-                  {selectedIdea.description}
-                  {selectedIdea.features?.length && (
-                    <div className="mt-4">
-                      <h4 className="font-semibold text-lg">Features</h4>
-                      <ul className="list-disc list-inside">
-                        {selectedIdea.features.map((feature, idx) => (
-                          <li key={idx}>{feature.title}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                  <div className="flex justify-center mt-4">
-                    <Button onClick={handleTryIdea}>Use this Idea</Button>
-                  </div>
-                </DialogDescription>
+                <IdeaCard idea={selectedIdea} showInterestButton bare />
               </motion.div>
             </DialogContent>
           </Dialog>
