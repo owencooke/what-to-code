@@ -15,14 +15,16 @@ const IDEA_PROMPT = `
 
     Input topic: social media
     Output: {{
-        "title": "Personal Link Page",
+        "title": "Personal Link Showcase",
         "description": "Your personal page to show everything you are and create. Just a link in bio, but rich and beautiful.",
         "features": [
             "Social Media Links",
             "Creative Content Cards",
             "Discover Other Creators"
         ] 
-}}
+    }}
+
+    Descriptions in the output should use a casual, startup-like tone.
 `;
 
 const FEATURES_PROMPT = `
