@@ -8,7 +8,7 @@ export const runtime = "edge";
 export async function POST(req: NextRequest) {
   try {
     // Check if MOCK_LLM is set and return mock data if true
-    if (process.env.MOCK_LLM) {
+    if (process.env.MOCK_LLM === "true") {
       return NextResponse.json(mockFrameworks);
     }
 

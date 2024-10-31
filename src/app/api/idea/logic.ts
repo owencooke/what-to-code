@@ -21,11 +21,22 @@ export const generateIdea = async (
     `Do not suggest already taken ideas: ${recentIdeaTitles.join()}`
   }`;
 
-  const data = await generateZodSchemaFromPrompt(
-    PartialIdeaSchema.pick({ title: true, description: true, features: true }),
-    prompt,
-    { topic, recentIdeaTitles },
-  );
+  const outputSchema = PartialIdeaSchema.pick({
+    title: true,
+  }).extend({
+    description: z
+      .string()
+      .max(200)
+      .describe("Catchy selling point of the software project"),
+    features: z
+      .array(FeatureSchema.pick({ title: true }))
+      .describe("Key aspects of the software project"),
+  });
+
+  const data = await generateZodSchemaFromPrompt(outputSchema, prompt, {
+    topic,
+    recentIdeaTitles,
+  });
 
   return {
     ...data,
