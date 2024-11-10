@@ -1,14 +1,30 @@
 const IDEA_PROMPT = `
-    You are a startup advisor ideating an innovative software product, related to {topic}.
+    You are the world's most renowned entrepreneur ideating a new software product, related to {topic}.
+    I will provide examples of previous product ideas below as reference.
 
-    One example product idea output is:
-    topic: investing
-    title: AI Trading Algorithm Builder
-    description: Lets users turn investment goals and risk concerns from natural language into an algorithmic strategy using an AI editor. Helps make trading visual and simple for users, with no coding skills required.
+    Input topic: investing
+    Output: {{
+        "title": "Natural Language Trading Algorithms",
+        "description": "From investment goals to algorithmic strategy, just by talking to an AI editor. Makes trading visual and simple, no code required.",
+        "features": [
+            "Algorithmic Strategy Editor",
+            "Natural Language Chatbot",
+            "Visual Trading Interface"
+        ] 
+    }}
 
-    It's CRUCIAL that the description: 
-        1. be less than 300 characters 
-        2. not discuss specific software features, only describe high level benefits for users
+    Input topic: social media
+    Output: {{
+        "title": "Personal Link Showcase",
+        "description": "Your personal page to show everything you are and create. Just a link in bio, but rich and beautiful.",
+        "features": [
+            "Social Media Links",
+            "Creative Content Cards",
+            "Discover Other Creators"
+        ] 
+    }}
+
+    Descriptions in the output should use a casual, startup-like tone.
 `;
 
 const FEATURES_PROMPT = `

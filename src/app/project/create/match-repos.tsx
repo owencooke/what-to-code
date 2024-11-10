@@ -8,42 +8,40 @@ import { useSession } from "next-auth/react";
 import { GitHubRepo } from "@/types/github";
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
-import useIsMobile from "@/hooks/useIsMobile";
+import useScreenSize from "@/hooks/useScreenSize";
 import CustomizableCard from "@/components/cards/CustomizableCard";
-import { useState } from "react";
-import { NewProject } from "@/types/project";
+import { UseFormReturn } from "react-hook-form";
 
 interface MatchedReposProps {
-  project: NewProject;
-  onRepoClick: (templateRepo?: GitHubRepo) => void;
+  form: UseFormReturn<any>;
 }
 
-const MatchedRepos: React.FC<MatchedReposProps> = ({
-  project,
-  onRepoClick,
-}) => {
-  const { framework } = project;
-
-  // The content used in vector search for matching project --> template
-  const techDescription = `${framework.title} using ${framework.tools.join()}`;
+const MatchedRepos: React.FC<MatchedReposProps> = ({ form }) => {
+  const framework = form.watch("framework");
+  const starterRepo = form.watch("starterRepo");
 
   const { status } = useSession();
-  const isMobile = useIsMobile();
-  const [selectedRepo, setSelectedRepo] = useState<GitHubRepo>();
+  const { isSmall } = useScreenSize();
 
-  const fetchRepos = async (): Promise<GitHubRepo[]> =>
-    ky
+  const fetchRepos = async (): Promise<GitHubRepo[]> => {
+    if (!framework) {
+      return [];
+    }
+    // The content used in vector search for matching project --> template
+    const techDescription = `${framework.title} using ${framework.tools.join()}`;
+    return ky
       .get("/api/templates", {
         searchParams: { techDescription },
       })
       .json();
+  };
 
   const {
     data: repos,
     isLoading,
     error,
   } = useQuery<GitHubRepo[], Error>({
-    queryKey: ["repos", techDescription],
+    queryKey: ["repos", framework],
     queryFn: fetchRepos,
     enabled: status === "authenticated",
     retry: false,
@@ -78,12 +76,11 @@ const MatchedRepos: React.FC<MatchedReposProps> = ({
     );
   }
 
-  const topicsToShow = isMobile ? 4 : 8;
+  const topicsToShow = isSmall ? 4 : 8;
 
   const handleSelectRepo = (repo: GitHubRepo) => {
-    const newSelectedRepo = repo !== selectedRepo ? repo : undefined;
-    setSelectedRepo(newSelectedRepo);
-    onRepoClick(newSelectedRepo);
+    const url = repo.url !== starterRepo ? repo.url : null;
+    form.setValue("starterRepo", url);
   };
 
   return (
@@ -93,7 +90,7 @@ const MatchedRepos: React.FC<MatchedReposProps> = ({
           key={repo.url}
           title={repo.name}
           description={repo.description}
-          selected={repo.name === selectedRepo?.name}
+          selected={repo.url === starterRepo}
           onSelect={() => handleSelectRepo(repo)}
           renderContent={() => (
             <div className="flex items-center gap-4">

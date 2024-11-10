@@ -98,62 +98,88 @@ async function getRandomIdea(): Promise<PartialIdea> {
  *
  * @param {PartialIdea} idea - The idea to add to the database.
  * @param {string} userId - The ID of the user who has seen the idea.
- * @returns {Promise<void>} - A promise that resolves when the operation is complete.
+ * @returns {Promise<PartialIdea>} - A promise that resolves to the inserted idea.
  * @throws {Error} - Throws an error if the insertion fails.
  */
 async function createIdeaAndMarkAsSeen(
   idea: PartialIdea,
   userId: string,
-): Promise<void> {
-  // Use a transaction to ensure both operations succeed or fail together
-  await db.transaction(async (tx) => {
+): Promise<PartialIdea> {
+  const insertedIdea = await db.transaction(async (tx) => {
     // Insert the new idea
-    const [insertedIdea] = await tx
-      .insert(ideas)
-      .values(idea)
-      .returning({ id: ideas.id });
+    const [newIdea] = await tx.insert(ideas).values(idea).returning();
 
     // Create the user-idea view record
     await tx.insert(userIdeaViews).values({
       user_id: userId,
-      idea_id: insertedIdea.id,
+      idea_id: newIdea.id,
     });
+
+    return newIdea;
   });
+
+  return PartialIdeaSchema.parse(insertedIdea);
 }
 
 /**
- * Fetches ideas from the database based on an optional search query.
+ * Fetches ideas from the database based on an optional search query and topics.
  *
  * @param {string | undefined} query - The optional search query to filter ideas by title or description.
+ * @param {string | string[] | undefined} topics - The optional topics to filter ideas by.
  * @returns {Promise<PartialIdea[]>} - A promise that resolves to an array of ideas.
- * @throws {Error} - Throws an error if the query fails.
  */
-async function getIdeas(query: string | undefined): Promise<PartialIdea[]> {
-  try {
-    let result;
-    if (query) {
-      result = await db
-        .select()
-        .from(ideas)
-        .where(
-          or(
-            ilike(ideas.title, `%${query}%`),
-            ilike(ideas.description, `%${query}%`),
-          ),
-        );
-    } else {
-      result = await db.select().from(ideas);
-    }
+async function searchIdeas(
+  query: string | undefined,
+  topics: string | string[] | undefined,
+): Promise<PartialIdea[]> {
+  const conditions = [];
 
-    return result.map((record) => PartialIdeaSchema.parse(record));
-  } catch (error) {
-    console.error("Error fetching ideas:", error);
-    throw new Error("Failed to fetch ideas");
+  // Add search query conditions
+  if (query) {
+    conditions.push(
+      or(
+        ilike(ideas.title, `%${query}%`),
+        ilike(ideas.description, `%${query}%`),
+      ),
+    );
   }
+
+  console.log({ topics });
+
+  // Add tags conditions
+  if (topics) {
+    if (!Array.isArray(topics)) {
+      topics = [topics];
+    }
+    conditions.push(
+      or(
+        ...topics.map((topic) =>
+          or(
+            ilike(ideas.title, `%${topic}%`),
+            ilike(ideas.description, `%${topic}%`),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Build the final query with all conditions
+  const result = await db
+    .select()
+    .from(ideas)
+    .where(and(...conditions));
+
+  return result.map((record) => PartialIdeaSchema.parse(record));
+}
+
+async function getIdeaById(id: number): Promise<PartialIdea> {
+  const idea = await db.select().from(ideas).where(eq(ideas.id, id));
+  return PartialIdeaSchema.parse(idea[0]);
 }
 
 export {
-  getIdeas,
+  getIdeaById,
+  searchIdeas,
   getUnseenIdeaWithTopic,
   getRandomIdea,
   createIdeaAndMarkAsSeen,

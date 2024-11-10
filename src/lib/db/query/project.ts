@@ -1,7 +1,7 @@
 import { db } from "@/lib/db/config";
 import { projects, users } from "@/lib/db/schema";
 import { NewProject, Project, ProjectSchema } from "@/types/project";
-import { eq, ilike, or, not, getTableColumns } from "drizzle-orm";
+import { eq, ilike, or, not, getTableColumns, and } from "drizzle-orm";
 
 /**
  * Creates a new project in the database.
@@ -70,11 +70,45 @@ async function getProjectById(projectId: string): Promise<Project> {
 /**
  * Searches for projects by title or description, including the GitHub user information.
  *
- * @param {string} searchTerm - The search term to use.
+ * @param {string | undefined} searchTerm - The search term to use.
+ * @param {string | string[] | undefined} tags - The optional tags to filter projects by.
  * @returns {Promise<Project[]>} - A promise that resolves to an array of projects.
  * @throws {Error} - Throws an error if the search fails.
  */
-async function searchProjects(searchTerm: string): Promise<Project[]> {
+async function searchProjects(
+  searchTerm: string | undefined,
+  tags: string | string[] | undefined,
+): Promise<Project[]> {
+  const conditions = [];
+
+  // Add search query conditions
+  if (searchTerm) {
+    conditions.push(
+      or(
+        ilike(projects.title, `%${searchTerm}%`),
+        ilike(projects.description, `%${searchTerm}%`),
+      ),
+    );
+  }
+
+  // Add tags conditions
+  if (tags) {
+    if (!Array.isArray(tags)) {
+      tags = [tags];
+    }
+    conditions.push(
+      or(
+        ...tags.map((topic) =>
+          or(
+            ilike(projects.title, `%${topic}%`),
+            ilike(projects.description, `%${topic}%`),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Build the final query with all conditions
   const projectsList = await db
     .select({
       ...getTableColumns(projects),
@@ -82,12 +116,7 @@ async function searchProjects(searchTerm: string): Promise<Project[]> {
     })
     .from(projects)
     .leftJoin(users, eq(users.id, projects.owner_id))
-    .where(
-      or(
-        ilike(projects.title, `%${searchTerm}%`),
-        ilike(projects.description, `%${searchTerm}%`),
-      ),
-    );
+    .where(and(...conditions));
 
   if (!projectsList) {
     throw new Error("Error searching projects");

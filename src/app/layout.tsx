@@ -7,7 +7,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Analytics } from "@vercel/analytics/react";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { Footer } from "@/components/site/Footer";
-import { Navbar } from "@/components/site/Navbar";
+import Navbar from "@/components/site/Navbar";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { QueryClient } from "@tanstack/react-query";
 
@@ -20,7 +20,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="h-full">
+    <html lang="en" className="h-full" suppressHydrationWarning>
       <head>
         <title>what to code?</title>
         <link rel="shortcut icon" href="favicon.ico" />
@@ -32,7 +32,12 @@ export default function RootLayout({
       </head>
       <body className={`h-full flex flex-col ${publicSans.className}`}>
         <SessionProvider>
-          <ThemeProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="dark"
+            enableSystem
+            disableTransitionOnChange
+          >
             <QueryClientProvider client={queryClient}>
               <Navbar />
               <div className="flex-grow m-4 md:m-8 lg:m-12">{children}</div>

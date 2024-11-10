@@ -4,25 +4,25 @@
 
 @layer base {
   :root {
-    --background: 0 0% 97.65%;
-    --foreground: 0 0% 12.55%;
-    --muted: 0 0% 93.73%;
-    --muted-foreground: 0 0% 39.22%;
-    --popover: 0 0% 98.82%;
-    --popover-foreground: 0 0% 12.55%;
-    --card: 0 0% 98.82%;
-    --card-foreground: 0 0% 12.55%;
-    --border: 155 13% 90%;
-    --input: 0 0% 70.12%;
-    --primary: 155 58% 29%;
+    --background: 0 0% 94%;
+    --foreground: 0 0% 12%;
+    --muted: 0 0% 90%;
+    --muted-foreground: 0 0% 45%;
+    --popover: 0 0% 96%;
+    --popover-foreground: 0 0% 12%;
+    --card: 0 0% 96%;
+    --card-foreground: 0 0% 12%;
+    --border: 155 13% 85%;
+    --input: 0 0% 75%;
+    --primary: 155 58% 27%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 155 14% 80%;
+    --secondary: 155 14% 75%;
     --secondary-foreground: 155 14% 20%;
-    --accent: 155 23% 71%;
+    --accent: 155 23% 65%;
     --accent-foreground: 155 23% 11%;
     --destructive: 8 87% 43%;
     --destructive-foreground: 0 0% 100%;
-    --ring: 155 58% 29%;
+    --ring: 155 58% 27%;
     --radius: 0.5rem;
   }
 
@@ -33,7 +33,7 @@
     --muted-foreground: 0 0% 70.59%;
     --popover: 0 0% 9.8%;
     --popover-foreground: 0 0% 93.33%;
-    --card: 0 0% 9.8%;
+    --card: 0 0% 10.8%;
     --card-foreground: 0 0% 93.33%;
     --border: 155 13% 20%;
     --input: 0 0% 48.24%;
@@ -56,12 +56,13 @@
   }
   body {
     @apply bg-background text-foreground;
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease;
   }
 }
 
-/* Typography 
-  - Creds to Jorge Sader: https://github.com/shadcn-ui/ui/discussions/1527#discussioncomment-9396350
-*/
+/* Typography */
 h1 {
   @apply scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl;
 }

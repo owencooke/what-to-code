@@ -8,11 +8,18 @@ import {
   createIdeaAndMarkAsSeen,
   getLastSeenIdeasForUser,
 } from "@/lib/db/query/idea";
+import { PartialIdeaSchema } from "@/types/idea";
+import { mockIdea } from "./mock";
 
 export const runtime = "edge";
 
 export async function GET(req: NextRequest) {
   try {
+    // Check if MOCK_LLM is set and return mock data if true
+    if (process.env.MOCK_LLM === "true") {
+      return NextResponse.json(mockIdea);
+    }
+
     let topic = req.nextUrl.searchParams.get("topic");
     const { userId } = await getAuthInfo(req);
 
@@ -36,11 +43,43 @@ export async function GET(req: NextRequest) {
         recentIdeas.map((idea) => idea.title),
       );
       // Add idea to DB
-      await createIdeaAndMarkAsSeen(idea, userId);
+      idea = await createIdeaAndMarkAsSeen(idea, userId);
     }
 
     return NextResponse.json(idea);
   } catch (e: any) {
     return NextResponse.json({ error: e.message }, { status: e.status ?? 500 });
+  }
+}
+
+export async function POST(req: NextRequest) {
+  try {
+    const { userId } = await getAuthInfo(req);
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const body = await req.json();
+    const parsedIdea = PartialIdeaSchema.safeParse(body);
+
+    if (!parsedIdea.success) {
+      return NextResponse.json(
+        { error: "Invalid idea data", details: parsedIdea.error.errors },
+        { status: 400 },
+      );
+    }
+
+    const idea = await createIdeaAndMarkAsSeen(parsedIdea.data, userId);
+
+    return NextResponse.json(
+      { message: "Sucessfully created new idea", idea },
+      { status: 201 },
+    );
+  } catch (error) {
+    console.error("Error creating idea:", error);
+    return NextResponse.json(
+      { error: "Failed to create idea" },
+      { status: 500 },
+    );
   }
 }

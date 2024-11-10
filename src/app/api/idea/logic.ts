@@ -1,4 +1,11 @@
-import { IdeaSchema, FeatureSchema } from "@/types/idea";
+import {
+  IdeaSchema,
+  FeatureSchema,
+  PartialIdea,
+  Feature,
+  Framework,
+  PartialIdeaSchema,
+} from "@/types/idea";
 import { IDEA_PROMPT, FEATURES_PROMPT, FRAMEWORK_PROMPT } from "./prompts";
 import { generateZodSchemaFromPrompt } from "@/lib/llm/utils";
 import { z } from "zod";
@@ -7,23 +14,38 @@ import { z } from "zod";
 export const generateIdea = async (
   topic: string,
   recentIdeaTitles: string[],
-) => {
+): Promise<PartialIdea> => {
   // Modify prompt to avoid using recent ideas (if any)
   const prompt = `${IDEA_PROMPT} ${
     recentIdeaTitles.length > 0 &&
     `Do not suggest already taken ideas: ${recentIdeaTitles.join()}`
   }`;
 
-  return generateZodSchemaFromPrompt(
-    IdeaSchema.pick({ title: true, description: true }),
-    prompt,
-    { topic, recentIdeaTitles },
-  );
+  const outputSchema = PartialIdeaSchema.pick({
+    title: true,
+  }).extend({
+    description: z
+      .string()
+      .max(200)
+      .describe("Catchy selling point of the software project"),
+    features: z
+      .array(FeatureSchema.pick({ title: true }))
+      .describe("Key aspects of the software project"),
+  });
+
+  const data = await generateZodSchemaFromPrompt(outputSchema, prompt, {
+    topic,
+    recentIdeaTitles,
+  });
+
+  return {
+    ...data,
+    likes: 0,
+  };
 };
 
-// Expand Initial IdeaSchema with Features and Frameworks
-export async function expandIdea(title: string, description: string) {
-  // Major features to develop for project
+// Expand Features for a given idea
+export async function expandFeatures(idea: PartialIdea): Promise<Feature[]> {
   const featuresWithTwoBullets = z
     .array(
       FeatureSchema.extend({
@@ -31,18 +53,25 @@ export async function expandIdea(title: string, description: string) {
       }),
     )
     .length(3);
+
   const features = await generateZodSchemaFromPrompt(
     featuresWithTwoBullets,
     FEATURES_PROMPT,
-    { title, description },
+    { title: idea.title, description: idea.description },
   );
 
-  // Ways they could possibly build project
+  return features;
+}
+
+// Expand Frameworks for a given idea
+export async function expandFrameworks(
+  idea: PartialIdea,
+): Promise<Framework[]> {
   const frameworks = await generateZodSchemaFromPrompt(
     IdeaSchema.shape.frameworks.length(3),
     FRAMEWORK_PROMPT,
-    { title, features },
+    { title: idea.title, features: idea.features },
   );
 
-  return { features, frameworks };
+  return frameworks;
 }

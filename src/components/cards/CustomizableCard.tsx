@@ -50,11 +50,12 @@ export default function CustomizableCard({
   return (
     <>
       <Card
-        className={`min-w-[19.25rem] text-sm ${className} ${
-          selected ? "[border-color:var(--accent)]" : ""
+        className={`min-w-[19.25rem] bg-inherit border-2 relative text-sm ${className} ${
+          selected ? "border-accent" : "border-transparent"
         } ${isSelectable ? "cursor-pointer" : ""}`}
         onClick={handleClick}
       >
+        <div className="absolute inset-0 bg-black dark:bg-white opacity-5 pointer-events-none rounded-lg"></div>
         <CardHeader>
           <CardTitle className="flex justify-between items-start gap-2">
             {title}

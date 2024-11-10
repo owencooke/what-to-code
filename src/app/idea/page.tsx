@@ -2,8 +2,9 @@
 
 import dynamic from "next/dynamic";
 import { Suspense } from "react";
-import { getIdeas } from "@/lib/db/query/idea";
+import { searchIdeas } from "@/lib/db/query/idea";
 import IdeasGrid from "./IdeasGrid";
+import topics from "@/app/idea/data/categories";
 
 // Dynamically import client side SearchInput component
 const SearchInput = dynamic(() => import("@/components/SearchInput"), {
@@ -13,16 +14,24 @@ const SearchInput = dynamic(() => import("@/components/SearchInput"), {
 export default async function IdeasPage({
   searchParams,
 }: {
-  searchParams: { q?: string };
+  searchParams: { search?: string; tags?: string[] | string };
 }) {
-  const ideas = await getIdeas(searchParams.q);
+  const { search, tags } = searchParams;
+  const ideas = await searchIdeas(search, tags);
+
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-4xl md:text-5xl mb-8 text-center">
         Brainstorm Ideas
       </h1>
-      <div className="mb-8">
-        <SearchInput route="idea" />
+      <div className="mb-8 flex justify-center">
+        <SearchInput
+          route="idea"
+          tags={topics}
+          className="w-full"
+          initialSearchQuery={search}
+          initialTags={tags}
+        />
       </div>
       <Suspense fallback={<IdeasGridSkeleton />}>
         <IdeasGrid ideas={ideas} />

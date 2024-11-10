@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { FrameworkSchema, IdeaSchema } from "./idea";
+import { FeatureSchema, FrameworkSchema, IdeaSchema } from "./idea";
 
 // Project not yet saved to DB
 const NewProjectSchema = IdeaSchema.pick({
@@ -18,7 +18,8 @@ const NewProjectSchema = IdeaSchema.pick({
 // Project created and stored in DB
 const ProjectSchema = NewProjectSchema.omit({ starterRepo: true }).extend({
   id: z.string(),
-  features: IdeaSchema.shape.features,
+  features: z.array(FeatureSchema.omit({ id: true })),
+  framework: FrameworkSchema.omit({ id: true }),
 });
 
 type NewProject = z.infer<typeof NewProjectSchema>;

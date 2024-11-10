@@ -1,5 +1,9 @@
 import React from "react";
 
+interface IconProps {
+  className?: string;
+}
+
 const ICON_CLASSES = "w-14 h-14 fill-primary";
 
 export const ProgrammingBrowserIcon = () => (
@@ -48,10 +52,12 @@ export const ProgrammingBrowserIcon = () => (
   </svg>
 );
 
-export const ProgrammingCodeIdeaIcon = () => (
+export const ProgrammingCodeIdeaIcon: React.FC<IconProps> = ({
+  className = "",
+}) => (
   <svg
     viewBox="0 0 24 24"
-    className={ICON_CLASSES}
+    className={`${ICON_CLASSES} ${className}`}
     xmlns="http://www.w3.org/2000/svg"
   >
     <g clipPath="url(#clip0_1034_4397)">
