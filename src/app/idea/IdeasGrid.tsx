@@ -2,21 +2,13 @@
 
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { motion, AnimatePresence } from "framer-motion";
+import { ChevronRight } from "lucide-react";
 import type { PartialIdea } from "@/types/idea";
-import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
 import { IdeaCard } from "@/components/cards/IdeaCard";
 
-export default function IdeasGrid({ ideas }: { ideas: PartialIdea[] }) {
-  const router = useRouter();
+export default function Component({ ideas }: { ideas: PartialIdea[] }) {
   const [selectedIdea, setSelectedIdea] = useState<PartialIdea | null>(null);
 
   const openIdeaDetails = (idea: PartialIdea) => {
@@ -27,44 +19,37 @@ export default function IdeasGrid({ ideas }: { ideas: PartialIdea[] }) {
     setSelectedIdea(null);
   };
 
-  const handleTryIdea = () => {
-    if (selectedIdea) {
-      router.push(`/idea/expand/${selectedIdea.id}`);
-    }
-  };
-
   return (
     <>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {ideas.map((idea) => (
           <Card
             key={idea.id}
-            className="cursor-pointer transition-colors hover:bg-border"
+            className="cursor-pointer transition-all hover:bg-accent hover:shadow-md"
             onClick={() => openIdeaDetails(idea)}
           >
             <CardContent className="p-4">
-              <h3 className="font-semibold text-lg mb-2 line-clamp-2">
+              <h3 className="font-semibold text-lg mb-3 line-clamp-2">
                 {idea.title}
               </h3>
-              <p className="text-sm text-muted-foreground mb-2 line-clamp-2">
-                {idea.description}
-              </p>
               {idea.features && idea.features.length > 0 && (
-                <div>
-                  <h4 className="text-sm font-semibold mb-1">Features:</h4>
-                  <ul className="text-xs text-muted-foreground list-disc list-inside">
-                    {idea.features
-                      .slice(0, 3)
-                      .map((feature: { title: string }, idx: number) => (
-                        <li key={idx} className="line-clamp-1">
-                          {feature.title}
-                        </li>
-                      ))}
-                  </ul>
+                <div className="space-y-2">
+                  {idea.features
+                    .slice(0, 3)
+                    .map((feature: { title: string }, idx: number) => (
+                      <div
+                        key={idx}
+                        className="flex items-center text-sm text-muted-foreground"
+                      >
+                        <ChevronRight className="w-4 h-4 mr-2 text-primary" />
+                        <span className="flex-1">{feature.title}</span>
+                      </div>
+                    ))}
                   {idea.features.length > 3 && (
-                    <p className="text-xs text-muted-foreground mt-1">
-                      + {idea.features.length - 3} more
-                    </p>
+                    <div className="flex items-center text-sm text-primary font-medium">
+                      <ChevronRight className="w-4 h-4 mr-1" />
+                      <span>+{idea.features.length - 3} more</span>
+                    </div>
                   )}
                 </div>
               )}
