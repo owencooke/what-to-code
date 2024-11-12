@@ -2,13 +2,12 @@
 
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { PartialIdea } from "@/types/idea";
 import AIProductManager from "./ai-product-manager";
 import AIEngineer from "./ai-engineer";
 import { motion } from "framer-motion";
 import { Rocket, ArrowDown } from "lucide-react";
-import { useState } from "react";
+import { useEffect } from "react";
 import { useCreateProjectStore } from "@/store/useCreateProjectStore";
 import { IdeaCard } from "@/components/cards/IdeaCard";
 
@@ -26,14 +25,14 @@ export default function ExpandIdea({ idea }: ExpandIdeaProps) {
     frameworks,
   } = useCreateProjectStore();
 
-  if (projectIdea && projectIdea.id !== idea.id) {
-    resetState();
-  }
+  useEffect(() => {
+    if (projectIdea && idea.id !== projectIdea?.id) {
+      resetState();
+      setIdea(idea);
+    }
+  }, [idea, projectIdea, resetState, setIdea]);
 
-  const handleCreateProject = () => {
-    setIdea(idea);
-    router.push("/project/create");
-  };
+  const handleCreateProject = () => router.push("/project/create");
 
   return (
     <div className="flex flex-col justify-center items-center min-h-screen w-full py-8 px-2">
