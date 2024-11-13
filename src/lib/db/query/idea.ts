@@ -6,17 +6,17 @@ import { PartialIdea, PartialIdeaSchema } from "@/types/idea";
 import { subDays, isAfter } from "date-fns";
 
 /**
- * Fetches ideas that the user hasn't seen yet.
+ * Fetches an idea that the user hasn't seen yet.
  *
  * @param {string} userId - The ID of the user.
  * @param {string | null} topic - The topic to filter ideas by.
- * @returns {Promise<PartialIdea[]>} - A promise that resolves to unseen ideas for user/topic
+ * @returns {Promise<PartialIdea | null>} - A random unseen idea for user/topic
  * @throws {Error} - Throws an error if the query fails.
  */
-async function getUnseenIdeasWithTopic(
+async function getUnseenIdeaWithTopic(
   userId: string,
   topic: string | null,
-): Promise<PartialIdea[]> {
+): Promise<PartialIdea | null> {
   // Get all idea IDs that the user has seen
   const seenIdeasSubquery = db
     .select({ ideaId: userIdeaViews.idea_id })
@@ -31,13 +31,16 @@ async function getUnseenIdeasWithTopic(
     conditions.push(ilike(ideas.description, `%${topic}%`));
   }
 
-  // Execute query with all conditions
-  const unseenIdeas = await db
+  // Execute query with all conditions, order by random and limit to 1
+  const unseenIdea = await db
     .select()
     .from(ideas)
-    .where(and(...conditions));
+    .where(and(...conditions))
+    .orderBy(sql`RANDOM()`)
+    .limit(1)
+    .then((results) => results[0] || null);
 
-  return unseenIdeas.map((record) => PartialIdeaSchema.parse(record));
+  return unseenIdea ? PartialIdeaSchema.parse(unseenIdea) : null;
 }
 
 /**
@@ -185,7 +188,7 @@ export {
   markIdeaAsViewed,
   getIdeaById,
   searchIdeas,
-  getUnseenIdeasWithTopic,
+  getUnseenIdeaWithTopic,
   getRandomIdea,
   createIdeaAndMarkAsSeen,
   getLastSeenIdeasForUser,

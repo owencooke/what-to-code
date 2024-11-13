@@ -5,7 +5,7 @@ import { getAuthInfo, selectRandom } from "@/lib/utils";
 import {
   createIdeaAndMarkAsSeen,
   getRandomIdea,
-  getUnseenIdeasWithTopic,
+  getUnseenIdeaWithTopic,
   getLastSeenIdeasForUser,
   markIdeaAsViewed,
 } from "@/lib/db/query/idea";
@@ -43,10 +43,8 @@ export async function GET(req: NextRequest) {
       },
     )();
     if (!bypassUnseen) {
-      const ideas = await getUnseenIdeasWithTopic(userId, topic);
-      if (ideas.length > 0) {
-        // Return a random unseen idea
-        const idea = selectRandom(ideas);
+      const idea = await getUnseenIdeaWithTopic(userId, topic);
+      if (idea) {
         markIdeaAsViewed(userId, idea.id);
         return NextResponse.json(idea);
       } else {
