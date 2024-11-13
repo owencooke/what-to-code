@@ -6,17 +6,17 @@ import { PartialIdea, PartialIdeaSchema } from "@/types/idea";
 import { subDays, isAfter } from "date-fns";
 
 /**
- * Fetches a random idea that the user hasn't seen yet.
+ * Fetches ideas that the user hasn't seen yet.
  *
  * @param {string} userId - The ID of the user.
  * @param {string | null} topic - The topic to filter ideas by.
- * @returns {Promise<PartialIdea | null>} - A promise that resolves to a random idea or null if no unseen ideas are found.
+ * @returns {Promise<PartialIdea[]>} - A promise that resolves to unseen ideas for user/topic
  * @throws {Error} - Throws an error if the query fails.
  */
-async function getUnseenIdeaWithTopic(
+async function getUnseenIdeasWithTopic(
   userId: string,
   topic: string | null,
-): Promise<PartialIdea | null> {
+): Promise<PartialIdea[]> {
   // Get all idea IDs that the user has seen
   const seenIdeasSubquery = db
     .select({ ideaId: userIdeaViews.idea_id })
@@ -37,11 +37,7 @@ async function getUnseenIdeaWithTopic(
     .from(ideas)
     .where(and(...conditions));
 
-  if (!unseenIdeas.length) {
-    return null;
-  }
-
-  return PartialIdeaSchema.parse(selectRandom(unseenIdeas));
+  return unseenIdeas.map((record) => PartialIdeaSchema.parse(record));
 }
 
 /**
@@ -177,10 +173,19 @@ async function getIdeaById(id: number): Promise<PartialIdea> {
   return PartialIdeaSchema.parse(idea[0]);
 }
 
+async function markIdeaAsViewed(userId: string, ideaId: number) {
+  await db
+    .insert(userIdeaViews)
+    .values({ user_id: userId, idea_id: ideaId })
+    .onConflictDoNothing()
+    .execute();
+}
+
 export {
+  markIdeaAsViewed,
   getIdeaById,
   searchIdeas,
-  getUnseenIdeaWithTopic,
+  getUnseenIdeasWithTopic,
   getRandomIdea,
   createIdeaAndMarkAsSeen,
   getLastSeenIdeasForUser,
