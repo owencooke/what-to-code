@@ -41,7 +41,7 @@ async function getUnseenIdeaWithTopic(
     return null;
   }
 
-  return PartialIdeaSchema.parse(unseenIdeas[0]);
+  return PartialIdeaSchema.parse(unseenIdeas[0].ideas);
 }
 
 /**
@@ -113,17 +113,16 @@ async function createIdeaAndMarkAsSeen(
     // Insert the idea-topic association
     if (topic) {
       // Check if the topic already exists
-      const existingTopic = await tx
+      const [existingTopic] = await tx
         .select()
         .from(topics)
         .where(eq(topics.name, topic))
         .limit(1);
 
       let topicId;
-
       if (existingTopic) {
         // If the topic exists, use its ID
-        topicId = existingTopic[0].id;
+        topicId = existingTopic.id;
       } else {
         // If the topic does not exist, insert it and get the new ID
         const [newTopic] = await tx
