@@ -12,6 +12,8 @@ import { and, eq, getTableColumns, sql } from "drizzle-orm";
 import { ideas } from "@/lib/db/schema";
 
 export const runtime = "edge";
+const CACHE_TAG = "ideas";
+const CACHE_REVALIDATE_SECONDS = 3600;
 
 type IdeaWithViewStatus = PartialIdea & { viewed: boolean };
 
@@ -41,50 +43,45 @@ async function getUnviewedIdeaForTopic(
   return unviewedIdeas.length > 0 ? selectRandom(unviewedIdeas) : null;
 }
 
-/**
- * Retrieves cached ideas with view status for a given user.
- *
- * This function uses an unstable cache to fetch ideas from the database and
- * determine if each idea has been viewed by the specified user. The cache
- * is tagged with "ideas" and revalidates every 3600 seconds (1 hour).
- *
- * @param userId - The ID of the user for whom to retrieve ideas with view status.
- * @returns A promise that resolves to an array of ideas with view status.
- */
-const getCachedIdeasWithViewStatus = unstable_cache(
-  async (userId: string): Promise<IdeaWithViewStatus[]> => {
-    const ideasWithViewStatus = await db
-      .select({
-        ...getTableColumns(ideas),
-        viewed:
-          sql`CASE WHEN ${userIdeaViews}.idea_id IS NOT NULL THEN true ELSE false END`.as(
-            "viewed",
-          ),
-      })
-      .from(ideas)
-      .leftJoin(
-        userIdeaViews,
-        and(
-          eq(ideas.id, userIdeaViews.idea_id),
-          eq(userIdeaViews.user_id, userId),
+async function getIdeasWithViewStatus(
+  userId: string,
+): Promise<IdeaWithViewStatus[]> {
+  const ideasWithViewStatus = await db
+    .select({
+      ...getTableColumns(ideas),
+      viewed:
+        sql`CASE WHEN ${userIdeaViews}.idea_id IS NOT NULL THEN true ELSE false END`.as(
+          "viewed",
         ),
-      )
-      .execute();
+    })
+    .from(ideas)
+    .leftJoin(
+      userIdeaViews,
+      and(
+        eq(ideas.id, userIdeaViews.idea_id),
+        eq(userIdeaViews.user_id, userId),
+      ),
+    )
+    .execute();
 
-    return ideasWithViewStatus.map((idea) => ({
-      ...idea,
-      features: idea.features as Features | null,
-      viewed: idea.viewed as boolean,
-    }));
-  },
-  [],
-  {
-    tags: ["ideas"],
-    revalidate: 3600,
-  },
-);
+  return ideasWithViewStatus.map((idea) => ({
+    ...idea,
+    features: idea.features as Features | null,
+    viewed: idea.viewed as boolean,
+  }));
+}
 
-// Updated function to modify cache instead of invalidating it
+// Wrapper function that handles caching
+const getCachedIdeasWithViewStatus = (userId: string) =>
+  unstable_cache(
+    async () => getIdeasWithViewStatus(userId),
+    [`user_ideas:${userId}`],
+    {
+      tags: [CACHE_TAG],
+      revalidate: CACHE_REVALIDATE_SECONDS,
+    },
+  )();
+
 async function markIdeaAsViewed(userId: string, ideaId: number) {
   // Update database
   await db
@@ -93,23 +90,12 @@ async function markIdeaAsViewed(userId: string, ideaId: number) {
     .onConflictDoNothing()
     .execute();
 
-  // Update the cache directly using unstable_cache
-  await unstable_cache(
-    async () => {
-      // Get current cached data
-      const currentCache = await getCachedIdeasWithViewStatus(userId);
-
-      // Update the viewed status for the specific idea
-      return currentCache.map((idea) =>
-        idea.id === ideaId ? { ...idea, viewed: true } : idea,
-      );
-    },
-    [getUserIdeasCacheKey(userId)],
-    {
-      tags: ["ideas"],
-      revalidate: 3600,
-    },
-  )();
+  // Instead of trying to update the cache directly,
+  // we force a revalidation of the cache for this user
+  await unstable_cache(async () => null, [`user_ideas:${userId}`], {
+    tags: [CACHE_TAG],
+    revalidate: 0, // Force immediate revalidation
+  })();
 }
 
 export async function GET(req: NextRequest) {
@@ -131,6 +117,7 @@ export async function GET(req: NextRequest) {
     let idea = await getUnviewedIdeaForTopic(ideasWithViewStatus, topic);
     if (idea) {
       await markIdeaAsViewed(userId, idea.id);
+      // The next request will get fresh data
       return NextResponse.json(idea);
     }
 
