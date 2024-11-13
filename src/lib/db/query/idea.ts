@@ -44,8 +44,9 @@ async function getUnseenIdeaWithTopic(
 }
 
 /**
- * Retrieves the most recently viewed ideas for a specific user.
- * Clears view history if user hasn't viewed any ideas in the last 3 days.
+ * Retrieves the most recently viewed ideas for a specific user, in last 3 days.
+ *
+ * TODO: might need a job to clear idea views for inactive users / more than 3 days old.
  *
  * @param userId - The unique identifier of the user.
  * @param topic - The topic to filter ideas by.
@@ -58,6 +59,8 @@ async function getLastSeenIdeasForUserAndTopic(
   limit: number,
 ): Promise<PartialIdea[]> {
   topic = topic || "";
+  const threeDaysAgo = subDays(new Date(), 3);
+
   const seenIdeas = await db
     .select({
       idea: ideas,
@@ -69,22 +72,11 @@ async function getLastSeenIdeasForUserAndTopic(
       and(
         eq(userIdeaViews.user_id, userId),
         ilike(ideas.description, `%${topic}%`),
+        sql`${userIdeaViews.viewed_at} > ${threeDaysAgo}`,
       ),
     )
     .orderBy(desc(userIdeaViews.viewed_at))
     .limit(limit);
-
-  // Check if the most recent seen idea is more than 3 days old
-  if (seenIdeas.length) {
-    const mostRecentViewDate = seenIdeas[0].viewed_at;
-    const threeDaysAgo = subDays(new Date(), 3);
-
-    if (isAfter(threeDaysAgo, mostRecentViewDate)) {
-      // Clear view history for user
-      await db.delete(userIdeaViews).where(eq(userIdeaViews.user_id, userId));
-      return [];
-    }
-  }
 
   return seenIdeas.map((record) => PartialIdeaSchema.parse(record.idea));
 }
