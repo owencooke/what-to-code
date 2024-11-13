@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { shuffleArray } from "@/lib/utils";
 import categories from "../data/categories";
 import { PartialIdea, PartialIdeaSchema } from "@/types/idea";
-import { ChevronDown, ChevronUp, Link, LogIn } from "lucide-react";
+import { ChevronDown, ChevronUp, LogIn } from "lucide-react";
 import FormInput from "@/components/FormInput";
 import { Form } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
@@ -20,8 +20,7 @@ import {
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 import { Card, CardContent } from "@/components/ui/card";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircle } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Collapsible,
   CollapsibleTrigger,
@@ -60,14 +59,18 @@ export function IdeaForm({ onSubmit, onClick }: IdeaFormProps) {
 
   const handleSubmit = async (data: z.infer<typeof FormSchema>) => {
     onClick();
-    const response = await ky.get(
-      `/api/idea?topic=${encodeURIComponent(data.customIdeaPrompt as string)}`,
-    );
 
+    const params = new URLSearchParams();
+    if (showMore && data.customIdeaPrompt) {
+      params.append("topic", data.customIdeaPrompt);
+    }
+
+    const response = await ky.get(`/api/idea?${params.toString()}`);
     if (!response.ok) {
       console.error("Failed to fetch new idea:", response.statusText);
       return;
     }
+
     const idea = PartialIdeaSchema.parse(await response.json());
     onSubmit(idea);
   };
