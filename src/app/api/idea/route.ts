@@ -2,10 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { generateIdea } from "./logic";
 import topics from "@/app/idea/data/categories";
 import { getAuthInfo, selectRandom } from "@/lib/utils";
-import { createIdeaAndMarkAsSeen } from "@/lib/db/query/idea";
+import { createIdeaAndMarkAsSeen, getRandomIdea } from "@/lib/db/query/idea";
 import { PartialIdeaSchema, PartialIdea } from "@/types/idea";
 import { mockIdea } from "./mock";
-import { unstable_cache, revalidateTag } from "next/cache";
+import { unstable_cache } from "next/cache";
 import { db } from "@/lib/db/config";
 import { userIdeaViews } from "@/lib/db/schema";
 import { and, eq, getTableColumns, sql } from "drizzle-orm";
@@ -20,10 +20,17 @@ type Features = { title: string }[];
 // Cache key generator
 const getUserIdeasCacheKey = (userId: string) => `user_ideas:${userId}`;
 
-// Cache function for getting all ideas with view status
+// Function to get a random unviewed idea
+async function getRandomUnviewedIdea(
+  ideas: IdeaWithViewStatus[],
+): Promise<IdeaWithViewStatus | null> {
+  const unviewedIdeas = ideas.filter((idea) => !idea.viewed);
+  return unviewedIdeas.length > 0 ? selectRandom(unviewedIdeas) : null;
+}
+
+// Cache function for getting all ideas with view status (unchanged)
 const getCachedIdeasWithViewStatus = unstable_cache(
   async (userId: string): Promise<IdeaWithViewStatus[]> => {
-    // Use SQL join to get all ideas with view status
     const ideasWithViewStatus = await db
       .select({
         ...getTableColumns(ideas),
@@ -50,32 +57,12 @@ const getCachedIdeasWithViewStatus = unstable_cache(
   },
   [],
   {
-    tags: ["ideas"], // For cache invalidation
-    revalidate: 3600, // Cache for 1 hour
+    tags: ["ideas"],
+    revalidate: 3600,
   },
 );
 
-// Function to get a random unviewed idea
-async function getRandomUnviewedIdea(
-  ideas: IdeaWithViewStatus[],
-): Promise<IdeaWithViewStatus | null> {
-  const unviewedIdeas = ideas.filter((idea) => !idea.viewed);
-  return unviewedIdeas.length > 0 ? selectRandom(unviewedIdeas) : null;
-}
-
-// Function to get a completely random idea (for anonymous users)
-async function getRandomIdea(): Promise<typeof ideas.$inferSelect> {
-  const [idea] = await db
-    .select()
-    .from(ideas)
-    .orderBy(sql`RANDOM()`)
-    .limit(1)
-    .execute();
-
-  return idea;
-}
-
-// Function to mark idea as viewed and update cache
+// Updated function to modify cache instead of invalidating it
 async function markIdeaAsViewed(userId: string, ideaId: number) {
   // Update database
   await db
@@ -84,8 +71,26 @@ async function markIdeaAsViewed(userId: string, ideaId: number) {
     .onConflictDoNothing()
     .execute();
 
-  // Revalidate cache
-  revalidateTag(getUserIdeasCacheKey(userId));
+  // Get the current cache key
+  const cacheKey = getUserIdeasCacheKey(userId);
+
+  // Update the cache directly using unstable_cache
+  await unstable_cache(
+    async () => {
+      // Get current cached data
+      const currentCache = await getCachedIdeasWithViewStatus(userId);
+
+      // Update the viewed status for the specific idea
+      return currentCache.map((idea) =>
+        idea.id === ideaId ? { ...idea, viewed: true } : idea,
+      );
+    },
+    [cacheKey],
+    {
+      tags: ["ideas"],
+      revalidate: 3600,
+    },
+  )();
 }
 
 export async function GET(req: NextRequest) {
@@ -96,16 +101,12 @@ export async function GET(req: NextRequest) {
 
     const { userId } = await getAuthInfo(req);
 
-    // For anonymous users, return a random idea without caching
     if (!userId) {
       const randomIdea = await getRandomIdea();
       return NextResponse.json(randomIdea);
     }
 
-    // Get cached ideas with view status
     const ideasWithViewStatus = await getCachedIdeasWithViewStatus(userId);
-
-    // Try to get an unviewed idea
     let idea = await getRandomUnviewedIdea(ideasWithViewStatus);
 
     if (!idea) {
@@ -133,8 +134,26 @@ export async function GET(req: NextRequest) {
         return [newIdeaRecord];
       });
 
-      // Revalidate cache after adding new idea
-      revalidateTag(getUserIdeasCacheKey(userId));
+      // Update cache with new idea
+      await unstable_cache(
+        async () => {
+          const currentCache = await getCachedIdeasWithViewStatus(userId);
+          return [
+            ...currentCache,
+            {
+              ...savedIdea,
+              viewed: true,
+              features: savedIdea.features as Features | null,
+            },
+          ];
+        },
+        [getUserIdeasCacheKey(userId)],
+        {
+          tags: ["ideas"],
+          revalidate: 3600,
+        },
+      )();
+
       idea = {
         ...savedIdea,
         viewed: true,
