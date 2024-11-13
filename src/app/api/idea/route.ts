@@ -63,7 +63,7 @@ export async function GET(req: NextRequest) {
       topic || selectRandom(topics),
       recentIdeas,
     );
-    newIdea = await createIdeaAndMarkAsSeen(newIdea, userId);
+    newIdea = await createIdeaAndMarkAsSeen(newIdea, userId, topic);
 
     return NextResponse.json(newIdea);
   } catch (e: any) {

@@ -1,17 +1,16 @@
 import { and, desc, eq, ilike, not, or, sql } from "drizzle-orm";
 import { db } from "@/lib/db/config";
-import { ideas, userIdeaViews } from "@/lib/db/schema";
+import { ideas, userIdeaViews, topics, ideaTopics } from "@/lib/db/schema";
 import { selectRandom } from "@/lib/utils";
 import { PartialIdea, PartialIdeaSchema } from "@/types/idea";
-import { subDays, isAfter } from "date-fns";
+import { subDays } from "date-fns";
 
 /**
- * Fetches an idea that the user hasn't seen yet.
+ * Fetches an unseen idea for a user with a specific topic.
  *
- * @param {string} userId - The ID of the user.
- * @param {string | null} topic - The topic to filter ideas by.
- * @returns {Promise<PartialIdea | null>} - A random unseen idea for user/topic
- * @throws {Error} - Throws an error if the query fails.
+ * @param userId - The unique identifier of the user.
+ * @param topic - The topic to filter ideas by.
+ * @returns {Promise<PartialIdea | null>} - A promise that resolves to an unseen idea or null if none found.
  */
 async function getUnseenIdeaWithTopic(
   userId: string,
@@ -23,24 +22,26 @@ async function getUnseenIdeaWithTopic(
     .from(userIdeaViews)
     .where(eq(userIdeaViews.user_id, userId));
 
-  // Build the conditions array
-  const conditions = [not(sql`${ideas.id} IN (${seenIdeasSubquery})`)];
-
-  // Add topic filter if provided
-  if (topic) {
-    conditions.push(ilike(ideas.description, `%${topic}%`));
-  }
-
   // Execute query with all conditions, order by random and limit to 1
-  const unseenIdea = await db
+  const unseenIdeas = await db
     .select()
     .from(ideas)
-    .where(and(...conditions))
+    .innerJoin(ideaTopics, eq(ideas.id, ideaTopics.idea_id))
+    .innerJoin(topics, eq(ideaTopics.topic_id, topics.id))
+    .where(
+      and(
+        not(sql`${ideas.id} IN (${seenIdeasSubquery})`),
+        ilike(topics.name, `%${topic || ""}%`),
+      ),
+    )
     .orderBy(sql`RANDOM()`)
-    .limit(1)
-    .then((results) => results[0] || null);
+    .limit(1);
 
-  return unseenIdea ? PartialIdeaSchema.parse(unseenIdea) : null;
+  if (unseenIdeas.length === 0) {
+    return null;
+  }
+
+  return PartialIdeaSchema.parse(unseenIdeas[0]);
 }
 
 /**
@@ -58,7 +59,6 @@ async function getLastSeenIdeasForUserAndTopic(
   topic: string | null,
   limit: number,
 ): Promise<PartialIdea[]> {
-  topic = topic || "";
   const threeDaysAgo = subDays(new Date(), 3);
 
   const seenIdeas = await db
@@ -68,10 +68,12 @@ async function getLastSeenIdeasForUserAndTopic(
     })
     .from(userIdeaViews)
     .innerJoin(ideas, eq(userIdeaViews.idea_id, ideas.id))
+    .innerJoin(ideaTopics, eq(ideas.id, ideaTopics.idea_id))
+    .innerJoin(topics, eq(ideaTopics.topic_id, topics.id))
     .where(
       and(
         eq(userIdeaViews.user_id, userId),
-        ilike(ideas.description, `%${topic}%`),
+        ilike(topics.name, `%${topic || ""}%`),
         sql`${userIdeaViews.viewed_at} > ${threeDaysAgo}`,
       ),
     )
@@ -103,10 +105,26 @@ async function getRandomIdea(): Promise<PartialIdea> {
 async function createIdeaAndMarkAsSeen(
   idea: Omit<PartialIdea, "id" | "likes">,
   userId: string,
+  topic: string | null = null,
 ): Promise<PartialIdea> {
   const insertedIdea = await db.transaction(async (tx) => {
     // Insert the new idea
     const [newIdea] = await tx.insert(ideas).values(idea).returning();
+
+    // Insert the idea-topic association
+    if (topic) {
+      const [newTopic] = await tx
+        .insert(topics)
+        .values({ name: topic })
+        .onConflictDoNothing()
+        .returning();
+      if (newTopic) {
+        await tx.insert(ideaTopics).values({
+          idea_id: newIdea.id,
+          topic_id: newTopic.id,
+        });
+      }
+    }
 
     // Create the user-idea view record
     await tx.insert(userIdeaViews).values({
@@ -143,9 +161,7 @@ async function searchIdeas(
     );
   }
 
-  console.log({ topics });
-
-  // Add tags conditions
+  // Add topics conditions
   if (topics) {
     if (!Array.isArray(topics)) {
       topics = [topics];
