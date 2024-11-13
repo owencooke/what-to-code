@@ -61,7 +61,7 @@ export async function GET(req: NextRequest) {
     const recentIdeas = await getLastSeenIdeasForUserAndTopic(userId, topic, 6);
     let newIdea = await generateIdea(
       topic || selectRandom(topics),
-      recentIdeas.map((idea) => idea.features?.join(" ") || ""),
+      recentIdeas,
     );
     newIdea = await createIdeaAndMarkAsSeen(newIdea, userId);
 

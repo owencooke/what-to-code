@@ -13,12 +13,24 @@ import { z } from "zod";
 // Generate Title and Description of Idea
 export const generateIdea = async (
   topic: string,
-  recentIdeaTitles: string[],
+  recentIdeas: PartialIdea[],
 ): Promise<Omit<PartialIdea, "id" | "likes">> => {
   // Modify prompt to avoid using recent ideas (if any)
+  // TODO: this should probably be done via ChatCompletions history, if we allow
+  // for better prompt refinement by user also
+  console.log({ recentIdeas });
+
+  const recentIdeasDetails = recentIdeas
+    .map((idea) => {
+      const features = idea.features?.join(", ") || "";
+      return `Title: ${idea.title}, Features: ${features}`;
+    })
+    .join("; ");
+
   const prompt = `${IDEA_PROMPT} ${
-    recentIdeaTitles.length > 0 &&
-    `Do not suggest features you have already suggested: ${recentIdeaTitles.join()}`
+    recentIdeas.length > 0 &&
+    `It is mandatory that you do not re-suggest titles and 
+    features, such as: ${recentIdeasDetails}`
   }`;
 
   const outputSchema = PartialIdeaSchema.pick({
@@ -35,7 +47,6 @@ export const generateIdea = async (
 
   return generateZodSchemaFromPrompt(outputSchema, prompt, {
     topic,
-    recentIdeaTitles,
   });
 };
 
