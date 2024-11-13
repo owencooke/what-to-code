@@ -20,15 +20,37 @@ type Features = { title: string }[];
 // Cache key generator
 const getUserIdeasCacheKey = (userId: string) => `user_ideas:${userId}`;
 
-// Function to get a random unviewed idea
-async function getRandomUnviewedIdea(
+/**
+ * Retrieves an unviewed idea for a given topic from a list of ideas.
+ *
+ * @param ideas - An array of ideas with their view status.
+ * @param topic - The topic to filter ideas by. If null, all topics are considered.
+ * @returns A promise that resolves to an unviewed idea that matches the topic, or null if no such idea exists.
+ */
+async function getUnviewedIdeaForTopic(
   ideas: IdeaWithViewStatus[],
+  topic: string | null,
 ): Promise<IdeaWithViewStatus | null> {
-  const unviewedIdeas = ideas.filter((idea) => !idea.viewed);
+  topic = topic ? topic.toLowerCase() : "";
+  const unviewedIdeas = ideas.filter(
+    (idea) =>
+      !idea.viewed &&
+      (idea.title.toLowerCase().includes(topic) ||
+        (idea.description && idea.description.toLowerCase().includes(topic))),
+  );
   return unviewedIdeas.length > 0 ? selectRandom(unviewedIdeas) : null;
 }
 
-// Cache function for getting all ideas with view status (unchanged)
+/**
+ * Retrieves cached ideas with view status for a given user.
+ *
+ * This function uses an unstable cache to fetch ideas from the database and
+ * determine if each idea has been viewed by the specified user. The cache
+ * is tagged with "ideas" and revalidates every 3600 seconds (1 hour).
+ *
+ * @param userId - The ID of the user for whom to retrieve ideas with view status.
+ * @returns A promise that resolves to an array of ideas with view status.
+ */
 const getCachedIdeasWithViewStatus = unstable_cache(
   async (userId: string): Promise<IdeaWithViewStatus[]> => {
     const ideasWithViewStatus = await db
@@ -71,9 +93,6 @@ async function markIdeaAsViewed(userId: string, ideaId: number) {
     .onConflictDoNothing()
     .execute();
 
-  // Get the current cache key
-  const cacheKey = getUserIdeasCacheKey(userId);
-
   // Update the cache directly using unstable_cache
   await unstable_cache(
     async () => {
@@ -85,7 +104,7 @@ async function markIdeaAsViewed(userId: string, ideaId: number) {
         idea.id === ideaId ? { ...idea, viewed: true } : idea,
       );
     },
-    [cacheKey],
+    [getUserIdeasCacheKey(userId)],
     {
       tags: ["ideas"],
       revalidate: 3600,
@@ -99,72 +118,57 @@ export async function GET(req: NextRequest) {
       return NextResponse.json(mockIdea);
     }
 
+    // Anonymous users get a random idea
     const { userId } = await getAuthInfo(req);
-
     if (!userId) {
       const randomIdea = await getRandomIdea();
       return NextResponse.json(randomIdea);
     }
 
+    // Authenticated users get a random idea they haven't seen yet, if available
+    const topic = req.nextUrl.searchParams.get("topic");
     const ideasWithViewStatus = await getCachedIdeasWithViewStatus(userId);
-    let idea = await getRandomUnviewedIdea(ideasWithViewStatus);
-
-    if (!idea) {
-      // No unviewed ideas, generate new one
-      const recentIdeas = ideasWithViewStatus
-        .filter((idea) => idea.viewed)
-        .slice(-6)
-        .map((idea) => idea.title);
-
-      const topic = selectRandom(topics);
-      const newIdea = await generateIdea(topic, recentIdeas);
-
-      // Save new idea and mark as viewed
-      const [savedIdea] = await db.transaction(async (tx) => {
-        const [newIdeaRecord] = await tx
-          .insert(ideas)
-          .values(newIdea)
-          .returning();
-
-        await tx
-          .insert(userIdeaViews)
-          .values({ user_id: userId, idea_id: newIdeaRecord.id })
-          .execute();
-
-        return [newIdeaRecord];
-      });
-
-      // Update cache with new idea
-      await unstable_cache(
-        async () => {
-          const currentCache = await getCachedIdeasWithViewStatus(userId);
-          return [
-            ...currentCache,
-            {
-              ...savedIdea,
-              viewed: true,
-              features: savedIdea.features as Features | null,
-            },
-          ];
-        },
-        [getUserIdeasCacheKey(userId)],
-        {
-          tags: ["ideas"],
-          revalidate: 3600,
-        },
-      )();
-
-      idea = {
-        ...savedIdea,
-        viewed: true,
-        features: savedIdea.features as Features | null,
-      };
-    } else {
-      // Mark the idea as viewed and update cache
+    let idea = await getUnviewedIdeaForTopic(ideasWithViewStatus, topic);
+    if (idea) {
       await markIdeaAsViewed(userId, idea.id);
+      return NextResponse.json(idea);
     }
 
-    return NextResponse.json(idea);
+    // No unviewed ideas, must generate new one
+    const recentIdeas = ideasWithViewStatus
+      .filter((idea) => idea.viewed)
+      .slice(-6)
+      .map((idea) => idea.title);
+
+    const newIdea = await generateIdea(
+      topic || selectRandom(topics),
+      recentIdeas,
+    );
+
+    // Save new idea and mark as viewed
+    const savedIdea = await createIdeaAndMarkAsSeen(newIdea, userId);
+
+    // Update cache with new idea
+    await unstable_cache(
+      async () => {
+        const currentCache = await getCachedIdeasWithViewStatus(userId);
+        return [
+          ...currentCache,
+          {
+            ...savedIdea,
+            viewed: true,
+            features: savedIdea.features as Features | null,
+          },
+        ];
+      },
+      [getUserIdeasCacheKey(userId)],
+      {
+        tags: ["ideas"],
+        revalidate: 3600,
+      },
+    )();
+
+    return NextResponse.json(savedIdea);
   } catch (e: any) {
     console.error("Error in idea route:", e);
     return NextResponse.json({ error: e.message }, { status: e.status ?? 500 });
