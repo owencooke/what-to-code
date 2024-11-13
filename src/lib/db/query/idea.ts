@@ -73,7 +73,6 @@ async function getLastSeenIdeasForUserAndTopic(
     .where(
       and(
         eq(userIdeaViews.user_id, userId),
-        ilike(topics.name, `%${topic || ""}%`),
         sql`${userIdeaViews.viewed_at} > ${threeDaysAgo}`,
       ),
     )
@@ -113,17 +112,32 @@ async function createIdeaAndMarkAsSeen(
 
     // Insert the idea-topic association
     if (topic) {
-      const [newTopic] = await tx
-        .insert(topics)
-        .values({ name: topic })
-        .onConflictDoNothing()
-        .returning();
-      if (newTopic) {
-        await tx.insert(ideaTopics).values({
-          idea_id: newIdea.id,
-          topic_id: newTopic.id,
-        });
+      // Check if the topic already exists
+      const existingTopic = await tx
+        .select()
+        .from(topics)
+        .where(eq(topics.name, topic))
+        .limit(1);
+
+      let topicId;
+
+      if (existingTopic) {
+        // If the topic exists, use its ID
+        topicId = existingTopic[0].id;
+      } else {
+        // If the topic does not exist, insert it and get the new ID
+        const [newTopic] = await tx
+          .insert(topics)
+          .values({ name: topic })
+          .returning();
+        topicId = newTopic.id;
       }
+
+      // Insert the idea-topic mapping
+      await tx.insert(ideaTopics).values({
+        idea_id: newIdea.id,
+        topic_id: topicId,
+      });
     }
 
     // Create the user-idea view record

@@ -30,7 +30,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json(idea);
     }
 
-    const topic = req.nextUrl.searchParams.get("topic");
+    let topic = req.nextUrl.searchParams.get("topic");
 
     // Try to show user an unseen idea first
     const bypassCacheKey = `bypassUnseen-${userId}-${topic}`;
@@ -58,11 +58,9 @@ export async function GET(req: NextRequest) {
     }
 
     // Otherwise, generate a brand new idea using GenAI
+    topic = topic || selectRandom(topics);
     const recentIdeas = await getLastSeenIdeasForUserAndTopic(userId, topic, 6);
-    let newIdea = await generateIdea(
-      topic || selectRandom(topics),
-      recentIdeas,
-    );
+    let newIdea = await generateIdea(topic, recentIdeas);
     newIdea = await createIdeaAndMarkAsSeen(newIdea, userId, topic);
 
     return NextResponse.json(newIdea);
