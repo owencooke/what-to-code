@@ -48,13 +48,16 @@ async function getUnseenIdeaWithTopic(
  * Clears view history if user hasn't viewed any ideas in the last 3 days.
  *
  * @param userId - The unique identifier of the user.
+ * @param topic - The topic to filter ideas by.
  * @param limit - The maximum number of ideas to retrieve.
  * @returns {Promise<PartialIdea[]>} - A promise that resolves to an array of partially parsed ideas.
  */
-async function getLastSeenIdeasForUser(
+async function getLastSeenIdeasForUserAndTopic(
   userId: string,
+  topic: string | null,
   limit: number,
 ): Promise<PartialIdea[]> {
+  topic = topic || "";
   const seenIdeas = await db
     .select({
       idea: ideas,
@@ -62,7 +65,12 @@ async function getLastSeenIdeasForUser(
     })
     .from(userIdeaViews)
     .innerJoin(ideas, eq(userIdeaViews.idea_id, ideas.id))
-    .where(eq(userIdeaViews.user_id, userId))
+    .where(
+      and(
+        eq(userIdeaViews.user_id, userId),
+        ilike(ideas.description, `%${topic}%`),
+      ),
+    )
     .orderBy(desc(userIdeaViews.viewed_at))
     .limit(limit);
 
@@ -95,13 +103,13 @@ async function getRandomIdea(): Promise<PartialIdea> {
 /**
  * Adds a new idea to the database and associates it with a user as seen.
  *
- * @param {PartialIdea} idea - The idea to add to the database.
+ * @param {Omit<PartialIdea, "id" | "likes">} idea - The idea to add to the database.
  * @param {string} userId - The ID of the user who has seen the idea.
  * @returns {Promise<PartialIdea>} - A promise that resolves to the inserted idea.
  * @throws {Error} - Throws an error if the insertion fails.
  */
 async function createIdeaAndMarkAsSeen(
-  idea: PartialIdea,
+  idea: Omit<PartialIdea, "id" | "likes">,
   userId: string,
 ): Promise<PartialIdea> {
   const insertedIdea = await db.transaction(async (tx) => {
@@ -191,5 +199,5 @@ export {
   getUnseenIdeaWithTopic,
   getRandomIdea,
   createIdeaAndMarkAsSeen,
-  getLastSeenIdeasForUser,
+  getLastSeenIdeasForUserAndTopic,
 };

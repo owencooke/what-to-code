@@ -14,11 +14,11 @@ import { z } from "zod";
 export const generateIdea = async (
   topic: string,
   recentIdeaTitles: string[],
-): Promise<PartialIdea> => {
+): Promise<Omit<PartialIdea, "id" | "likes">> => {
   // Modify prompt to avoid using recent ideas (if any)
   const prompt = `${IDEA_PROMPT} ${
     recentIdeaTitles.length > 0 &&
-    `Do not suggest already taken ideas: ${recentIdeaTitles.join()}`
+    `Do not suggest features you have already suggested: ${recentIdeaTitles.join()}`
   }`;
 
   const outputSchema = PartialIdeaSchema.pick({
@@ -33,15 +33,10 @@ export const generateIdea = async (
       .describe("Key aspects of the software project"),
   });
 
-  const data = await generateZodSchemaFromPrompt(outputSchema, prompt, {
+  return generateZodSchemaFromPrompt(outputSchema, prompt, {
     topic,
     recentIdeaTitles,
   });
-
-  return {
-    ...data,
-    likes: 0,
-  };
 };
 
 // Expand Features for a given idea

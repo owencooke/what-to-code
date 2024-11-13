@@ -6,7 +6,7 @@ import {
   createIdeaAndMarkAsSeen,
   getRandomIdea,
   getUnseenIdeaWithTopic,
-  getLastSeenIdeasForUser,
+  getLastSeenIdeasForUserAndTopic,
   markIdeaAsViewed,
 } from "@/lib/db/query/idea";
 import { PartialIdeaSchema } from "@/types/idea";
@@ -58,7 +58,7 @@ export async function GET(req: NextRequest) {
     }
 
     // Otherwise, generate a brand new idea using GenAI
-    const recentIdeas = await getLastSeenIdeasForUser(userId, 6);
+    const recentIdeas = await getLastSeenIdeasForUserAndTopic(userId, topic, 6);
     let newIdea = await generateIdea(
       topic || selectRandom(topics),
       recentIdeas.map((idea) => idea.features?.join(" ") || ""),
