@@ -63,12 +63,9 @@ const PartialIdeaSchema = IdeaSchema.omit({
   frameworks: true,
   features: true,
 }).extend({
-  features: z
-    .array(FeatureSchema.pick({ title: true }))
-    .optional()
-    .nullable(),
-  likes: z.number().optional(),
-  id: z.number().optional(),
+  features: z.array(FeatureSchema.pick({ title: true })).nullable(),
+  likes: z.number(),
+  id: z.number(),
 });
 
 // Define TS types from schemas
