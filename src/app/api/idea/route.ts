@@ -3,15 +3,18 @@ import { generateIdea } from "./logic";
 import topics from "@/app/idea/data/categories";
 import { getAuthInfo, selectRandom } from "@/lib/utils";
 import {
-  getUnseenIdeaWithTopic,
-  getRandomIdea,
   createIdeaAndMarkAsSeen,
-  getLastSeenIdeasForUser,
+  getRandomIdea,
+  getUnseenIdeaWithTopic,
+  getLastSeenIdeasForUserAndTopic,
+  markIdeaAsViewed,
 } from "@/lib/db/query/idea";
 import { PartialIdeaSchema } from "@/types/idea";
 import { mockIdea } from "./mock";
+import { unstable_cache } from "next/cache";
 
 export const runtime = "edge";
+const BYPASS_CACHE_TIME = 24 * 60 * 60; // 24 hours
 
 export async function GET(req: NextRequest) {
   try {
@@ -20,33 +23,47 @@ export async function GET(req: NextRequest) {
       return NextResponse.json(mockIdea);
     }
 
-    let topic = req.nextUrl.searchParams.get("topic");
+    // Unauthorized users can only fetch random ideas
     const { userId } = await getAuthInfo(req);
-
     if (!userId) {
-      // User not logged in, fetch a random existing idea from DB
       const idea = await getRandomIdea();
       return NextResponse.json(idea);
     }
 
-    // Check for ideas user hasn't seen yet
-    let idea = await getUnseenIdeaWithTopic(userId, topic);
+    let topic = req.nextUrl.searchParams.get("topic");
 
-    if (!idea) {
-      // No unseen ideas in DB, so generate a new idea using GenAI
-      if (!topic) {
-        topic = selectRandom(topics);
+    // Try to show user an unseen idea first
+    const bypassCacheKey = `bypassUnseen-${userId}-${topic}`;
+    const bypassUnseen = await unstable_cache(
+      async () => false,
+      [bypassCacheKey],
+      {
+        tags: ["ideas"],
+        revalidate: BYPASS_CACHE_TIME,
+      },
+    )();
+    if (!bypassUnseen) {
+      const idea = await getUnseenIdeaWithTopic(userId, topic);
+      if (idea) {
+        markIdeaAsViewed(userId, idea.id);
+        return NextResponse.json(idea);
+      } else {
+        // Set the bypass flag in the cache
+        // This is to avoid Vercel gateway timeouts from too long DB calls
+        await unstable_cache(async () => true, [bypassCacheKey], {
+          tags: ["ideas"],
+          revalidate: BYPASS_CACHE_TIME,
+        })();
       }
-      const recentIdeas = await getLastSeenIdeasForUser(userId, 6);
-      idea = await generateIdea(
-        topic,
-        recentIdeas.map((idea) => idea.title),
-      );
-      // Add idea to DB
-      idea = await createIdeaAndMarkAsSeen(idea, userId);
     }
 
-    return NextResponse.json(idea);
+    // Otherwise, generate a brand new idea using GenAI
+    topic = topic || selectRandom(topics);
+    const recentIdeas = await getLastSeenIdeasForUserAndTopic(userId, topic, 6);
+    let newIdea = await generateIdea(topic, recentIdeas);
+    newIdea = await createIdeaAndMarkAsSeen(newIdea, userId, topic);
+
+    return NextResponse.json(newIdea);
   } catch (e: any) {
     return NextResponse.json({ error: e.message }, { status: e.status ?? 500 });
   }

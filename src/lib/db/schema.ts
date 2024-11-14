@@ -24,12 +24,34 @@ export const users = pgTable(`users`, {
 
 // Define the "ideas" table
 export const ideas = pgTable(`ideas`, {
-  title: varchar("title", { length: 100 }).notNull(),
   id: serial("id").primaryKey(),
+  title: varchar("title", { length: 100 }).notNull(),
+  description: varchar("description", { length: 350 }).notNull(),
   features: jsonb("features"),
   likes: integer("likes").default(0).notNull(),
-  description: varchar("description", { length: 350 }).notNull(),
 });
+
+// Define the "topics" table
+export const topics = pgTable(`topics`, {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 100 }).notNull().unique(),
+});
+
+// Define the "idea_topics" join table
+export const ideaTopics = pgTable(
+  `idea_topics`,
+  {
+    idea_id: integer("idea_id")
+      .notNull()
+      .references(() => ideas.id, { onDelete: "cascade" }),
+    topic_id: integer("topic_id")
+      .notNull()
+      .references(() => topics.id, { onDelete: "cascade" }),
+  },
+  (table) => ({
+    pk: primaryKey({ columns: [table.idea_id, table.topic_id] }),
+  }),
+);
 
 // Define the "projects" table
 export const projects = pgTable(`projects`, {
@@ -100,4 +122,8 @@ export const userIdeaViewsRelations = relations(userIdeaViews, ({ one }) => ({
     fields: [userIdeaViews.idea_id],
     references: [ideas.id],
   }),
+}));
+
+export const ideaRelations = relations(ideas, ({ many }) => ({
+  topics: many(topics),
 }));

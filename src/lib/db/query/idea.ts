@@ -1,17 +1,16 @@
 import { and, desc, eq, ilike, not, or, sql } from "drizzle-orm";
 import { db } from "@/lib/db/config";
-import { ideas, userIdeaViews } from "@/lib/db/schema";
+import { ideas, userIdeaViews, topics, ideaTopics } from "@/lib/db/schema";
 import { selectRandom } from "@/lib/utils";
 import { PartialIdea, PartialIdeaSchema } from "@/types/idea";
-import { subDays, isAfter } from "date-fns";
+import { subDays } from "date-fns";
 
 /**
- * Fetches a random idea that the user hasn't seen yet.
+ * Fetches an unseen idea for a user with a specific topic.
  *
- * @param {string} userId - The ID of the user.
- * @param {string | null} topic - The topic to filter ideas by.
- * @returns {Promise<PartialIdea | null>} - A promise that resolves to a random idea or null if no unseen ideas are found.
- * @throws {Error} - Throws an error if the query fails.
+ * @param userId - The unique identifier of the user.
+ * @param topic - The topic to filter ideas by.
+ * @returns {Promise<PartialIdea | null>} - A promise that resolves to an unseen idea or null if none found.
  */
 async function getUnseenIdeaWithTopic(
   userId: string,
@@ -23,39 +22,45 @@ async function getUnseenIdeaWithTopic(
     .from(userIdeaViews)
     .where(eq(userIdeaViews.user_id, userId));
 
-  // Build the conditions array
-  const conditions = [not(sql`${ideas.id} IN (${seenIdeasSubquery})`)];
-
-  // Add topic filter if provided
-  if (topic) {
-    conditions.push(ilike(ideas.description, `%${topic}%`));
-  }
-
-  // Execute query with all conditions
+  // Execute query with all conditions, order by random and limit to 1
   const unseenIdeas = await db
     .select()
     .from(ideas)
-    .where(and(...conditions));
+    .innerJoin(ideaTopics, eq(ideas.id, ideaTopics.idea_id))
+    .innerJoin(topics, eq(ideaTopics.topic_id, topics.id))
+    .where(
+      and(
+        not(sql`${ideas.id} IN (${seenIdeasSubquery})`),
+        ilike(topics.name, `%${topic || ""}%`),
+      ),
+    )
+    .orderBy(sql`RANDOM()`)
+    .limit(1);
 
-  if (!unseenIdeas.length) {
+  if (unseenIdeas.length === 0) {
     return null;
   }
 
-  return PartialIdeaSchema.parse(selectRandom(unseenIdeas));
+  return PartialIdeaSchema.parse(unseenIdeas[0].ideas);
 }
 
 /**
- * Retrieves the most recently viewed ideas for a specific user.
- * Clears view history if user hasn't viewed any ideas in the last 3 days.
+ * Retrieves the most recently viewed ideas for a specific user, in last 3 days.
+ *
+ * TODO: might need a job to clear idea views for inactive users / more than 3 days old.
  *
  * @param userId - The unique identifier of the user.
+ * @param topic - The topic to filter ideas by.
  * @param limit - The maximum number of ideas to retrieve.
  * @returns {Promise<PartialIdea[]>} - A promise that resolves to an array of partially parsed ideas.
  */
-async function getLastSeenIdeasForUser(
+async function getLastSeenIdeasForUserAndTopic(
   userId: string,
+  topic: string | null,
   limit: number,
 ): Promise<PartialIdea[]> {
+  const threeDaysAgo = subDays(new Date(), 3);
+
   const seenIdeas = await db
     .select({
       idea: ideas,
@@ -63,21 +68,16 @@ async function getLastSeenIdeasForUser(
     })
     .from(userIdeaViews)
     .innerJoin(ideas, eq(userIdeaViews.idea_id, ideas.id))
-    .where(eq(userIdeaViews.user_id, userId))
+    .innerJoin(ideaTopics, eq(ideas.id, ideaTopics.idea_id))
+    .innerJoin(topics, eq(ideaTopics.topic_id, topics.id))
+    .where(
+      and(
+        eq(userIdeaViews.user_id, userId),
+        sql`${userIdeaViews.viewed_at} > ${threeDaysAgo}`,
+      ),
+    )
     .orderBy(desc(userIdeaViews.viewed_at))
     .limit(limit);
-
-  // Check if the most recent seen idea is more than 3 days old
-  if (seenIdeas.length) {
-    const mostRecentViewDate = seenIdeas[0].viewed_at;
-    const threeDaysAgo = subDays(new Date(), 3);
-
-    if (isAfter(threeDaysAgo, mostRecentViewDate)) {
-      // Clear view history for user
-      await db.delete(userIdeaViews).where(eq(userIdeaViews.user_id, userId));
-      return [];
-    }
-  }
 
   return seenIdeas.map((record) => PartialIdeaSchema.parse(record.idea));
 }
@@ -96,18 +96,48 @@ async function getRandomIdea(): Promise<PartialIdea> {
 /**
  * Adds a new idea to the database and associates it with a user as seen.
  *
- * @param {PartialIdea} idea - The idea to add to the database.
+ * @param {Omit<PartialIdea, "id" | "likes">} idea - The idea to add to the database.
  * @param {string} userId - The ID of the user who has seen the idea.
  * @returns {Promise<PartialIdea>} - A promise that resolves to the inserted idea.
  * @throws {Error} - Throws an error if the insertion fails.
  */
 async function createIdeaAndMarkAsSeen(
-  idea: PartialIdea,
+  idea: Omit<PartialIdea, "id" | "likes">,
   userId: string,
+  topic: string | null = null,
 ): Promise<PartialIdea> {
   const insertedIdea = await db.transaction(async (tx) => {
     // Insert the new idea
     const [newIdea] = await tx.insert(ideas).values(idea).returning();
+
+    // Insert the idea-topic association
+    if (topic) {
+      // Check if the topic already exists
+      const [existingTopic] = await tx
+        .select()
+        .from(topics)
+        .where(eq(topics.name, topic))
+        .limit(1);
+
+      let topicId;
+      if (existingTopic) {
+        // If the topic exists, use its ID
+        topicId = existingTopic.id;
+      } else {
+        // If the topic does not exist, insert it and get the new ID
+        const [newTopic] = await tx
+          .insert(topics)
+          .values({ name: topic })
+          .returning();
+        topicId = newTopic.id;
+      }
+
+      // Insert the idea-topic mapping
+      await tx.insert(ideaTopics).values({
+        idea_id: newIdea.id,
+        topic_id: topicId,
+      });
+    }
 
     // Create the user-idea view record
     await tx.insert(userIdeaViews).values({
@@ -144,9 +174,7 @@ async function searchIdeas(
     );
   }
 
-  console.log({ topics });
-
-  // Add tags conditions
+  // Add topics conditions
   if (topics) {
     if (!Array.isArray(topics)) {
       topics = [topics];
@@ -177,11 +205,20 @@ async function getIdeaById(id: number): Promise<PartialIdea> {
   return PartialIdeaSchema.parse(idea[0]);
 }
 
+async function markIdeaAsViewed(userId: string, ideaId: number) {
+  await db
+    .insert(userIdeaViews)
+    .values({ user_id: userId, idea_id: ideaId })
+    .onConflictDoNothing()
+    .execute();
+}
+
 export {
+  markIdeaAsViewed,
   getIdeaById,
   searchIdeas,
   getUnseenIdeaWithTopic,
   getRandomIdea,
   createIdeaAndMarkAsSeen,
-  getLastSeenIdeasForUser,
+  getLastSeenIdeasForUserAndTopic,
 };
