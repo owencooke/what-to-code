@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronRight } from "lucide-react";
-import { Button } from "../ui/button";
+import { Button, ButtonWithLoading } from "../ui/button";
 import { CardHeader, CardContent, CardFooter, Card } from "../ui/card";
 import { NewPartialIdea, PartialIdea } from "@/types/idea";
 import { PropsWithChildren } from "react";
@@ -62,7 +62,10 @@ export function IdeaCard({
       </CardContent>
       {showInterestButton && (
         <CardFooter className={cn("flex justify-center", bare && "p-0 mt-4")}>
-          <Button onClick={handleExpandClick}>{`Expand this idea`}</Button>
+          <ButtonWithLoading
+            loadingText="Creating your idea..."
+            onClick={handleExpandClick}
+          >{`Expand this idea`}</ButtonWithLoading>
         </CardFooter>
       )}
     </IdeaBaseCard>

@@ -74,6 +74,7 @@ async function getLastSeenIdeasForUserAndTopic(
       and(
         eq(userIdeaViews.user_id, userId),
         sql`${userIdeaViews.viewed_at} > ${threeDaysAgo}`,
+        topic ? eq(topics.name, topic) : sql`TRUE`,
       ),
     )
     .orderBy(desc(userIdeaViews.viewed_at))
