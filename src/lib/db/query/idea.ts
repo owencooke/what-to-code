@@ -16,13 +16,7 @@ async function getUnseenIdeaWithTopic(
   userId: string,
   topic: string | null,
 ): Promise<PartialIdea | null> {
-  // Get all idea IDs that the user has seen
-  const seenIdeasSubquery = db
-    .select({ ideaId: userIdeaViews.idea_id })
-    .from(userIdeaViews)
-    .where(eq(userIdeaViews.user_id, userId));
-
-  // Execute query with all conditions, order by random and limit to 1
+  // Execute a single query with all conditions, order by random and limit to 1
   const unseenIdeas = await db
     .select()
     .from(ideas)
@@ -30,7 +24,9 @@ async function getUnseenIdeaWithTopic(
     .innerJoin(topics, eq(ideaTopics.topic_id, topics.id))
     .where(
       and(
-        not(sql`${ideas.id} IN (${seenIdeasSubquery})`),
+        not(
+          sql`${ideas.id} IN (SELECT ${userIdeaViews.idea_id} FROM ${userIdeaViews} WHERE ${userIdeaViews.user_id} = ${userId})`,
+        ),
         ilike(topics.name, `%${topic || ""}%`),
       ),
     )
