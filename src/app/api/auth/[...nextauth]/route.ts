@@ -28,28 +28,32 @@ const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, account }) {
       if (account) {
-        // Add the GitHub user's ID and access token to the token
+        // This only runs on initial sign in
         token.sub = account.providerAccountId;
         token.accessToken = account.access_token;
+
+        // Fetch GitHub username
+        const { login: username } = await getUser(token.accessToken as string);
+        token.username = username;
+
+        // Check first-time user status only on initial sign in
+        const { status } = await createUserIfNotExist(
+          token.sub,
+          username,
+          token.email as string,
+        );
+
+        if (status === "created") {
+          await sendWelcomeEmail(token.email as string, token.name as string);
+        }
       }
+
+      // For subsequent requests, just return the existing token
       return token;
     },
     async session({ session, token }) {
-      // Fetch GitHub username and include in user session info
-      const { login: username } = await getUser(token.accessToken as string);
-      session.user = { ...session.user, username };
-
-      // If first-time user, create a new user in the DB and send a welcome email
-      const email = session.user.email as string;
-      const { status } = await createUserIfNotExist(
-        token.sub as string,
-        username,
-        email,
-      );
-      if (status === "created") {
-        await sendWelcomeEmail(email, session.user.name as string);
-      }
-
+      // Pass relevant token data to session
+      session.user.username = token.username as string;
       return session;
     },
   },
