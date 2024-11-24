@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getProjectById } from "@/lib/db/query/project";
 
+export const runtime = "edge";
+
 export async function GET(
   _: NextRequest,
   { params }: { params: { id: string } },
