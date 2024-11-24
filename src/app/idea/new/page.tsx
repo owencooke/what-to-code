@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import ky from "ky";
@@ -17,7 +17,13 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
-import { Form, FormLabel } from "@/components/ui/form";
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Plus, X } from "lucide-react";
 import { PartialIdea, PartialIdeaSchema } from "@/types/idea";
 import FormInput from "@/components/FormInput";
@@ -29,7 +35,11 @@ const formSchema = PartialIdeaSchema.omit({ likes: true, id: true }).extend({
   description: PartialIdeaSchema.shape.description.min(10, {
     message: "Description must be at least 10 characters.",
   }),
+  features: z.array(
+    z.object({ title: z.string().min(1, "Feature title is required") }),
+  ),
 });
+
 type FormValues = z.infer<typeof formSchema>;
 
 const MotionCard = motion(Card);
@@ -116,50 +126,62 @@ export default function CreateIdea() {
                   className="max-h-32"
                 />
 
-                <div className="space-y-2">
-                  <FormLabel>Features</FormLabel>
-                  <AnimatePresence initial={false}>
-                    {fields.map((field, index) => (
-                      <motion.div
-                        key={field.id}
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        exit={{ opacity: 0, height: 0 }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        <div className="flex items-center space-x-2">
-                          <MotionInput
+                <FormField
+                  control={form.control}
+                  name="features"
+                  render={() => (
+                    <FormItem>
+                      <FormLabel>Features</FormLabel>
+                      <AnimatePresence initial={false}>
+                        {fields.map((field, index) => (
+                          <motion.div
                             key={field.id}
-                            {...field}
-                            placeholder={`Title of feature #${index + 1}`}
-                            className="flex-grow"
-                          />
-                          <MotionButton
-                            type="button"
-                            variant="outline"
-                            size="icon"
-                            onClick={() => remove(index)}
-                            whileHover={{ scale: 1.1 }}
-                            whileTap={{ scale: 0.9 }}
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: "auto" }}
+                            exit={{ opacity: 0, height: 0 }}
+                            transition={{ duration: 0.2 }}
                           >
-                            <X className="h-4 w-4" />
-                          </MotionButton>
-                        </div>
-                      </motion.div>
-                    ))}
-                  </AnimatePresence>
-                  <MotionButton
-                    type="button"
-                    variant="outline"
-                    className="w-full mt-2"
-                    onClick={() => append({ title: "" })}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add a feature
-                  </MotionButton>
-                </div>
+                            <div className="flex items-center space-x-2 mb-2">
+                              <Controller
+                                name={`features.${index}.title`}
+                                control={form.control}
+                                render={({ field }) => (
+                                  <MotionInput
+                                    {...field}
+                                    placeholder={`Title of feature #${index + 1}`}
+                                    className="flex-grow"
+                                  />
+                                )}
+                              />
+                              <MotionButton
+                                type="button"
+                                variant="outline"
+                                size="icon"
+                                onClick={() => remove(index)}
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.9 }}
+                              >
+                                <X className="h-4 w-4" />
+                              </MotionButton>
+                            </div>
+                          </motion.div>
+                        ))}
+                      </AnimatePresence>
+                      <MotionButton
+                        type="button"
+                        variant="outline"
+                        className="w-full mt-2"
+                        onClick={() => append({ title: "" })}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        <Plus className="h-4 w-4 mr-2" />
+                        Add a feature
+                      </MotionButton>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </CardContent>
               <CardFooter>
                 <MotionButton
