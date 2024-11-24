@@ -5,6 +5,7 @@ import {
   Feature,
   Framework,
   PartialIdeaSchema,
+  NewPartialIdea,
 } from "@/types/idea";
 import { IDEA_PROMPT, FEATURES_PROMPT, FRAMEWORK_PROMPT } from "./prompts";
 import { generateZodSchemaFromPrompt } from "@/lib/llm/utils";
@@ -14,7 +15,7 @@ import { z } from "zod";
 export const generateIdea = async (
   topic: string,
   recentIdeas: PartialIdea[],
-): Promise<Omit<PartialIdea, "id" | "likes">> => {
+): Promise<NewPartialIdea> => {
   // Modify prompt to avoid using recent ideas (if any)
   // TODO: this should probably be done via ChatCompletions history, if we allow
   // for better prompt refinement by user also

@@ -73,6 +73,7 @@ type Feature = z.infer<typeof FeatureSchema>;
 type Framework = z.infer<typeof FrameworkSchema>;
 type Idea = z.infer<typeof IdeaSchema>;
 type PartialIdea = z.infer<typeof PartialIdeaSchema>;
+type NewPartialIdea = Omit<PartialIdea, "id" | "likes">;
 
 interface UserIdeaView {
   user_id: string;
@@ -81,4 +82,11 @@ interface UserIdeaView {
 }
 
 export { IdeaSchema, FeatureSchema, FrameworkSchema, PartialIdeaSchema };
-export type { Idea, Feature, Framework, UserIdeaView, PartialIdea };
+export type {
+  Idea,
+  Feature,
+  Framework,
+  UserIdeaView,
+  PartialIdea,
+  NewPartialIdea,
+};
