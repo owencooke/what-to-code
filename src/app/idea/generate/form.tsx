@@ -29,6 +29,7 @@ import {
 import useScreenSize from "@/hooks/useScreenSize";
 import ky from "ky";
 import { signIn, useSession } from "next-auth/react";
+import SignInAlert from "@/components/SignInAlert";
 
 interface IdeaFormProps {
   onSubmit: (idea: PartialIdea | NewPartialIdea) => void;
@@ -154,23 +155,10 @@ export function IdeaForm({ onSubmit, onClick }: IdeaFormProps) {
             </CollapsibleContent>
           </Collapsible>
         ) : (
-          <Alert className="w-full">
-            <AlertDescription className="flex items-center gap-4 text-sm text-muted-foreground">
-              <span>
-                Want to use custom topics and innovate completely new ideas
-                using AI?
-              </span>
-              <Button
-                variant="secondary"
-                size="sm"
-                type="button"
-                onClick={() => signIn("github")}
-              >
-                <LogIn className="mr-2 h-3 w-3" />
-                Sign in
-              </Button>
-            </AlertDescription>
-          </Alert>
+          <SignInAlert
+            className="w-full"
+            description="Want to use custom topics and innovate completely new ideas using AI?"
+          />
         )}
       </form>
     </Form>

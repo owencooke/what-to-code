@@ -29,6 +29,8 @@ import { Plus, X } from "lucide-react";
 import { PartialIdea, PartialIdeaSchema } from "@/types/idea";
 import FormInput from "@/components/FormInput";
 import { useToast } from "@/components/ui/use-toast";
+import { useSession } from "next-auth/react";
+import SignInAlert from "@/components/SignInAlert";
 
 const formSchema = PartialIdeaSchema.omit({ likes: true, id: true }).extend({
   description: PartialIdeaSchema.shape.description.min(10, {
@@ -44,6 +46,8 @@ const MotionButton = motion(Button);
 export default function CreateIdea() {
   const { toast } = useToast();
   const router = useRouter();
+  const { data: session } = useSession();
+
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<FormValues>({
@@ -96,122 +100,133 @@ export default function CreateIdea() {
       >
         <CardHeader>
           <CardTitle>Already have an idea?</CardTitle>
-          <CardDescription className="pt-2">
-            Tell us more about it so our AI dev team can help you get started 🚀
-          </CardDescription>
+          {session?.user ? (
+            <CardDescription className="pt-2">
+              Tell us more about it so our AI dev team can help you get started
+              🚀
+            </CardDescription>
+          ) : (
+            <SignInAlert
+              className="w-full"
+              mode="bare"
+              description="Sign in to expand your idea with help from our AI dev team"
+            />
+          )}
         </CardHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
-            <CardContent className="space-y-4">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-              >
-                <FormInput
-                  form={form}
-                  name="title"
-                  placeholder="Summarize your idea in a few words"
-                />
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-              >
-                <FormInput
-                  form={form}
-                  name="description"
-                  placeholder="Describe your idea in detail"
-                  type="area"
-                  className="max-h-32"
-                />
-              </motion.div>
+        {session?.user && (
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)}>
+              <CardContent className="space-y-4">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
+                >
+                  <FormInput
+                    form={form}
+                    name="title"
+                    placeholder="Summarize your idea in a few words"
+                  />
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
+                >
+                  <FormInput
+                    form={form}
+                    name="description"
+                    placeholder="Describe your idea in detail"
+                    type="area"
+                    className="max-h-32"
+                  />
+                </motion.div>
 
-              <motion.div
-                className="space-y-2"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 }}
-              >
-                <div className="flex justify-between items-center mb-1">
-                  <FormLabel>Features</FormLabel>
-                  <MotionButton
-                    type="button"
-                    variant="outline"
-                    size="icon"
-                    onClick={() => append({ title: "" })}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <Plus className="h-4 w-4" />
-                  </MotionButton>
-                </div>
-                <AnimatePresence initial={false}>
-                  {fields.map((field, index) => (
-                    <motion.div
-                      key={field.id}
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: "auto" }}
-                      exit={{ opacity: 0, height: 0 }}
-                      transition={{ duration: 0.2 }}
+                <motion.div
+                  className="space-y-2"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 }}
+                >
+                  <div className="flex justify-between items-center mb-1">
+                    <FormLabel>Features</FormLabel>
+                    <MotionButton
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      onClick={() => append({ title: "" })}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
                     >
-                      <FormField
-                        control={form.control}
-                        name={`features.${index}.title`}
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormControl>
-                              <div className="flex items-center space-x-2">
-                                <MotionInput
-                                  placeholder="Title of a feature"
-                                  {...field}
-                                  value={field.value || ""}
-                                  whileHover={{ scale: 1.02 }}
-                                  transition={{
-                                    type: "spring",
-                                    stiffness: 300,
-                                  }}
-                                />
-                                <MotionButton
-                                  type="button"
-                                  variant="outline"
-                                  size="icon"
-                                  onClick={() => handleRemove(index)}
-                                  whileHover={{ scale: 1.1 }}
-                                  whileTap={{ scale: 0.9 }}
-                                >
-                                  <X className="h-4 w-4" />
-                                </MotionButton>
-                              </div>
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </motion.div>
-                  ))}
-                </AnimatePresence>
-              </motion.div>
-            </CardContent>
-            <CardFooter>
-              <MotionButton
-                type="submit"
-                className="w-full"
-                disabled={isSubmitting}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                animate={isSubmitting ? { scale: [1, 1.05, 1] } : {}}
-                transition={{
-                  duration: 0.5,
-                  repeat: isSubmitting ? Infinity : 0,
-                }}
-              >
-                {isSubmitting ? "getting ready..." : "expand my idea"}
-              </MotionButton>
-            </CardFooter>
-          </form>
-        </Form>
+                      <Plus className="h-4 w-4" />
+                    </MotionButton>
+                  </div>
+                  <AnimatePresence initial={false}>
+                    {fields.map((field, index) => (
+                      <motion.div
+                        key={field.id}
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <FormField
+                          control={form.control}
+                          name={`features.${index}.title`}
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormControl>
+                                <div className="flex items-center space-x-2">
+                                  <MotionInput
+                                    placeholder="Title of a feature"
+                                    {...field}
+                                    value={field.value || ""}
+                                    whileHover={{ scale: 1.02 }}
+                                    transition={{
+                                      type: "spring",
+                                      stiffness: 300,
+                                    }}
+                                  />
+                                  <MotionButton
+                                    type="button"
+                                    variant="outline"
+                                    size="icon"
+                                    onClick={() => handleRemove(index)}
+                                    whileHover={{ scale: 1.1 }}
+                                    whileTap={{ scale: 0.9 }}
+                                  >
+                                    <X className="h-4 w-4" />
+                                  </MotionButton>
+                                </div>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                </motion.div>
+              </CardContent>
+              <CardFooter>
+                <MotionButton
+                  type="submit"
+                  className="w-full"
+                  disabled={isSubmitting}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  animate={isSubmitting ? { scale: [1, 1.05, 1] } : {}}
+                  transition={{
+                    duration: 0.5,
+                    repeat: isSubmitting ? Infinity : 0,
+                  }}
+                >
+                  {isSubmitting ? "getting ready..." : "expand my idea"}
+                </MotionButton>
+              </CardFooter>
+            </form>
+          </Form>
+        )}
       </MotionCard>
     </div>
   );
