@@ -17,7 +17,6 @@ async function getUnseenIdeaWithTopic(
   topic: string | null,
 ): Promise<PartialIdea | null> {
   // Execute a single query with all conditions, order by random and limit to 1
-  console.log("getUnseenIdeaWithTopic", userId, topic);
   const unseenIdeas = await db
     .select()
     .from(ideas)
@@ -33,11 +32,11 @@ async function getUnseenIdeaWithTopic(
     .where(
       and(
         sql`${userIdeaViews.idea_id} IS NULL`,
-        topic ? ilike(topics.name, `%${topic}%`) : undefined,
+        topic ? ilike(topics.name, `%${topic}%`) : sql`TRUE`,
       ),
     )
     .limit(1);
-  console.log({ unseenIdeas });
+
   if (unseenIdeas.length === 0) {
     return null;
   }
