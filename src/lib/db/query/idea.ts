@@ -91,8 +91,17 @@ async function getLastSeenIdeasForUserAndTopic(
  * @throws {Error} - Throws an error if the query fails.
  */
 async function getRandomIdea(): Promise<PartialIdea> {
-  const allIdeas = await db.select().from(ideas);
-  return PartialIdeaSchema.parse(selectRandom(allIdeas));
+  const randomIdea = await db
+    .select()
+    .from(ideas)
+    .orderBy(sql`RANDOM()`)
+    .limit(1);
+
+  if (randomIdea.length === 0) {
+    throw new Error("No ideas found");
+  }
+
+  return PartialIdeaSchema.parse(randomIdea[0]);
 }
 
 /**
