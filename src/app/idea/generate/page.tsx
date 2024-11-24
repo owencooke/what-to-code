@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { IdeaForm } from "./form";
-import { PartialIdea } from "@/types/idea";
+import { NewPartialIdea, PartialIdea } from "@/types/idea";
 import {
   EmptyIdeaCard,
   IdeaCard,
@@ -11,7 +11,7 @@ import {
 } from "@/components/cards/IdeaCard";
 
 export default function IdeaPage() {
-  const [idea, setIdea] = useState<PartialIdea>();
+  const [idea, setIdea] = useState<PartialIdea | NewPartialIdea>();
   const [isIdeaLoading, setIsIdeaLoading] = useState(false);
 
   return (

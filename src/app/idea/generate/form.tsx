@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { shuffleArray } from "@/lib/utils";
 import categories from "../data/categories";
-import { PartialIdea, PartialIdeaSchema } from "@/types/idea";
+import { NewPartialIdea, PartialIdea, PartialIdeaSchema } from "@/types/idea";
 import { ChevronDown, ChevronUp, LogIn } from "lucide-react";
 import FormInput from "@/components/FormInput";
 import { Form } from "@/components/ui/form";
@@ -31,7 +31,7 @@ import ky from "ky";
 import { signIn, useSession } from "next-auth/react";
 
 interface IdeaFormProps {
-  onSubmit: (idea: PartialIdea) => void;
+  onSubmit: (idea: PartialIdea | NewPartialIdea) => void;
   onClick: () => void;
 }
 
@@ -71,7 +71,7 @@ export function IdeaForm({ onSubmit, onClick }: IdeaFormProps) {
       return;
     }
 
-    const idea = PartialIdeaSchema.parse(await response.json());
+    const idea = await response.json<PartialIdea | NewPartialIdea>();
     onSubmit(idea);
   };
 

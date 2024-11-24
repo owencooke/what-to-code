@@ -1,17 +1,18 @@
 "use client";
 
-import { Lightbulb, ChevronRight } from "lucide-react";
-import { Button } from "../ui/button";
+import { ChevronRight } from "lucide-react";
+import { Button, ButtonWithLoading } from "../ui/button";
 import { CardHeader, CardContent, CardFooter, Card } from "../ui/card";
-import { PartialIdea } from "@/types/idea";
+import { NewPartialIdea, PartialIdea } from "@/types/idea";
 import { PropsWithChildren } from "react";
 import { Skeleton } from "../ui/skeleton";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { cn } from "@/components/ui/utils";
+import ky from "ky";
 import { ProgrammingCodeIdeaIcon } from "../landing/Icons";
 
 type IdeaCardProps = {
-  idea: PartialIdea;
+  idea: PartialIdea | NewPartialIdea;
   showInterestButton?: boolean;
   bare?: boolean;
 };
@@ -21,6 +22,24 @@ export function IdeaCard({
   showInterestButton = false,
   bare = false,
 }: IdeaCardProps) {
+  const router = useRouter();
+
+  const handleExpandClick = async () => {
+    if ("id" in idea) {
+      router.push(`/idea/expand/${idea.id}`);
+    } else {
+      try {
+        const response = await ky
+          .post("/api/idea", { json: idea })
+          .json<{ message: string; idea: PartialIdea }>();
+        const newIdeaId = response.idea.id;
+        router.push(`/idea/expand/${newIdeaId}`);
+      } catch (error) {
+        console.error("Failed to create new idea:", error);
+      }
+    }
+  };
+
   return (
     <IdeaBaseCard bare={bare}>
       <CardHeader className={cn("relative pb-4", bare && "p-0")}>
@@ -43,9 +62,10 @@ export function IdeaCard({
       </CardContent>
       {showInterestButton && (
         <CardFooter className={cn("flex justify-center", bare && "p-0 mt-4")}>
-          <Button asChild>
-            <Link href={`/idea/expand/${idea.id}`}>{`Expand this idea`}</Link>
-          </Button>
+          <ButtonWithLoading
+            loadingText="Creating your idea..."
+            onClick={handleExpandClick}
+          >{`Expand this idea`}</ButtonWithLoading>
         </CardFooter>
       )}
     </IdeaBaseCard>

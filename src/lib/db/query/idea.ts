@@ -2,7 +2,7 @@ import { and, desc, eq, ilike, not, or, sql } from "drizzle-orm";
 import { db } from "@/lib/db/config";
 import { ideas, userIdeaViews, topics, ideaTopics } from "@/lib/db/schema";
 import { selectRandom } from "@/lib/utils";
-import { PartialIdea, PartialIdeaSchema } from "@/types/idea";
+import { NewPartialIdea, PartialIdea, PartialIdeaSchema } from "@/types/idea";
 import { subDays } from "date-fns";
 
 /**
@@ -74,6 +74,7 @@ async function getLastSeenIdeasForUserAndTopic(
       and(
         eq(userIdeaViews.user_id, userId),
         sql`${userIdeaViews.viewed_at} > ${threeDaysAgo}`,
+        topic ? eq(topics.name, topic) : sql`TRUE`,
       ),
     )
     .orderBy(desc(userIdeaViews.viewed_at))
@@ -96,13 +97,13 @@ async function getRandomIdea(): Promise<PartialIdea> {
 /**
  * Adds a new idea to the database and associates it with a user as seen.
  *
- * @param {Omit<PartialIdea, "id" | "likes">} idea - The idea to add to the database.
- * @param {string} userId - The ID of the user who has seen the idea.
+ * @param idea - The idea to add to the database.
+ * @param userId - The ID of the user who has seen the idea.
  * @returns {Promise<PartialIdea>} - A promise that resolves to the inserted idea.
  * @throws {Error} - Throws an error if the insertion fails.
  */
 async function createIdeaAndMarkAsSeen(
-  idea: Omit<PartialIdea, "id" | "likes">,
+  idea: NewPartialIdea,
   userId: string,
   topic: string | null = null,
 ): Promise<PartialIdea> {
