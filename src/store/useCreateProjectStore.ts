@@ -19,6 +19,7 @@ interface CreateProjectState {
   setFramework: (framework: Framework) => void;
   setStarterRepo: (url: string | null) => void;
   resetState: () => void;
+  resetWithIdea: (idea: PartialIdea) => void;
 
   // helpers
   getSelectedFeatures: () => Feature[];
@@ -64,6 +65,14 @@ export const useCreateProjectStore = create<CreateProjectState>()(
         })),
       setStarterRepo: (url) => set({ starterRepo: url }),
       resetState: () => set(initialState),
+      resetWithIdea: (idea: PartialIdea) => {
+        set((state) => {
+          if (idea.id !== state.idea?.id) {
+            return { ...initialState, idea };
+          }
+          return state;
+        });
+      },
 
       // helpers
       getSelectedFeatures: () =>
