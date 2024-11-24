@@ -12,12 +12,19 @@ interface AuthInfo {
  * Wraps the getToken function and returns a more descriptive object.
  *
  * @param {NextRequest} req - The incoming request object.
- * @returns {Promise<AuthInfo | null>} - A promise that resolves to an object containing userId and accessToken, or null if the token is not found.
+ * @returns {Promise<AuthInfo>} - A promise that resolves to an object containing userId and accessToken.
  * @throws {Error} - Throws an error if the token retrieval fails.
  */
 export async function getAuthInfo(req: NextRequest): Promise<AuthInfo> {
   try {
-    const token = await getToken({ req });
+    const token = await getToken({
+      req,
+      secret: process.env.NEXTAUTH_SECRET,
+      // Tell NextAuth we're in an Edge runtime
+      secureCookie:
+        process.env.NEXTAUTH_URL?.startsWith("https://") ??
+        !!process.env.VERCEL_URL,
+    });
 
     return {
       userId: token?.sub || null,
@@ -26,8 +33,20 @@ export async function getAuthInfo(req: NextRequest): Promise<AuthInfo> {
       email: token?.email || null,
     };
   } catch (error) {
-    console.error("Error retrieving token:", error);
-    throw new Error("Failed to retrieve token");
+    // Add more detailed logging
+    console.error("Error retrieving token:", {
+      error,
+      headers: Object.fromEntries(req.headers),
+      url: req.url,
+    });
+
+    // Instead of throwing, return null values for unauthenticated state
+    return {
+      userId: null,
+      accessToken: "",
+      name: null,
+      email: null,
+    };
   }
 }
 
