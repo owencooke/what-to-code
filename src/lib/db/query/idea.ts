@@ -17,22 +17,27 @@ async function getUnseenIdeaWithTopic(
   topic: string | null,
 ): Promise<PartialIdea | null> {
   // Execute a single query with all conditions, order by random and limit to 1
+  console.log("getUnseenIdeaWithTopic", userId, topic);
   const unseenIdeas = await db
     .select()
     .from(ideas)
     .innerJoin(ideaTopics, eq(ideas.id, ideaTopics.idea_id))
     .innerJoin(topics, eq(ideaTopics.topic_id, topics.id))
-    .where(
+    .leftJoin(
+      userIdeaViews,
       and(
-        not(
-          sql`${ideas.id} IN (SELECT ${userIdeaViews.idea_id} FROM ${userIdeaViews} WHERE ${userIdeaViews.user_id} = ${userId})`,
-        ),
-        ilike(topics.name, `%${topic || ""}%`),
+        eq(userIdeaViews.idea_id, ideas.id),
+        eq(userIdeaViews.user_id, userId),
       ),
     )
-    .orderBy(sql`RANDOM()`)
+    .where(
+      and(
+        sql`${userIdeaViews.idea_id} IS NULL`,
+        topic ? ilike(topics.name, `%${topic}%`) : undefined,
+      ),
+    )
     .limit(1);
-
+  console.log({ unseenIdeas });
   if (unseenIdeas.length === 0) {
     return null;
   }

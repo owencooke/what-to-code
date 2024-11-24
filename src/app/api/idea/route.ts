@@ -37,6 +37,7 @@ export async function GET(req: NextRequest) {
     const { userId } = await getAuthInfo(req);
     console.timeEnd("auth-check");
 
+    console.log({ userId });
     if (!userId) {
       // User not logged in, fetch a random existing idea from DB
       console.time("get-random-idea");
@@ -50,6 +51,8 @@ export async function GET(req: NextRequest) {
     console.time("get-unseen-idea");
     let idea = await getUnseenIdeaWithTopic(userId, topic);
     console.timeEnd("get-unseen-idea");
+
+    console.log({ idea });
 
     if (!idea) {
       // Select random topic if none provided
