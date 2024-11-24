@@ -4,7 +4,7 @@ import { matchTemplates } from "@/lib/db/query/templates";
 import { getGitHubRepoDetails } from "@/lib/github/repo";
 import { TemplateMatch } from "@/types/templates";
 import { GitHubRepo } from "@/types/github";
-import { getAuthInfo } from "@/lib/utils";
+import { getAuthInfo } from "@/lib/auth/user";
 
 export const runtime = "edge";
 const SIMILARITY_THRESHOLD = 0.4;

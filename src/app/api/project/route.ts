@@ -4,7 +4,7 @@ import { createRepoFromTemplate } from "@/lib/github/repo";
 import { createIssue } from "@/lib/github/issue";
 import { Feature } from "@/types/idea";
 import { createProject, searchProjects } from "@/lib/db/query/project";
-import { getAuthInfo } from "@/lib/utils";
+import { getAuthInfo } from "@/lib/auth/user";
 
 export async function GET(req: NextRequest) {
   try {
