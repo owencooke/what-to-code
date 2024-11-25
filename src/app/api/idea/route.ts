@@ -74,6 +74,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(idea);
   } catch (e: any) {
     console.timeEnd("total-request");
+    console.error("Error fetching idea:", e);
     return NextResponse.json({ error: e.message }, { status: e.status ?? 500 });
   }
 }
