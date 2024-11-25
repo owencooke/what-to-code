@@ -15,7 +15,7 @@ const SignInAlert = ({
   mode = "alert",
 }: SignInAlertProps) => {
   const content = (
-    <div className="flex items-center justify-between text-sm text-muted-foreground">
+    <div className="flex items-center justify-between gap-4 text-sm text-muted-foreground">
       {description && <span>{description}</span>}
       <Button
         variant="secondary"
