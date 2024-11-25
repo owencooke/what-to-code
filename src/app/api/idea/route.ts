@@ -14,41 +14,66 @@ import { mockIdea } from "./mock";
 export const runtime = "edge";
 
 export async function GET(req: NextRequest) {
+  console.time("total-request");
   try {
     // Check if MOCK_LLM is set and return mock data if true
     if (process.env.MOCK_LLM === "true") {
       return NextResponse.json(mockIdea);
     }
 
+    // Parse request parameters
     let topic = req.nextUrl.searchParams.get("topic");
-    const { userId } = await getAuthInfo(req);
 
+    // Get auth info
+    console.time("auth-check");
+    const { userId } = await getAuthInfo(req);
+    console.timeEnd("auth-check");
+
+    console.log({ userId });
     if (!userId) {
       // User not logged in, fetch a random existing idea from DB
+      console.time("get-random-idea");
       const idea = await getRandomIdea();
+      console.timeEnd("get-random-idea");
+      console.timeEnd("total-request");
       return NextResponse.json(idea);
     }
 
-    // Check for ideas user hasn't seen yet
+    // Check for unseen ideas
+    console.time("get-unseen-idea");
     let idea = await getUnseenIdeaWithTopic(userId, topic);
+    console.timeEnd("get-unseen-idea");
+    console.log({ idea });
 
     if (!idea) {
-      // No unseen ideas in DB, so generate a new idea using GenAI
+      // Select random topic if none provided
+      console.time("topic-selection");
       if (!topic) {
         topic = selectRandom(topics);
       }
+      console.timeEnd("topic-selection");
+      // Get recent ideas for context
+      console.time("get-recent-ideas");
       const recentIdeas = await getLastSeenIdeasForUserAndTopic(
         userId,
         topic,
         6,
       );
+      console.timeEnd("get-recent-ideas");
+      // Generate new idea
+      console.time("generate-idea");
       const generatedIdea = await generateIdea(topic, recentIdeas);
-      // Add idea to DB
+      console.timeEnd("generate-idea");
+      // Save to DB and mark as seen
+      console.time("save-idea");
       idea = await createIdeaAndMarkAsSeen(generatedIdea, userId);
+      console.timeEnd("save-idea");
     }
 
+    console.timeEnd("total-request");
     return NextResponse.json(idea);
   } catch (e: any) {
+    console.timeEnd("total-request");
     return NextResponse.json({ error: e.message }, { status: e.status ?? 500 });
   }
 }

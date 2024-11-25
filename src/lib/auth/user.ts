@@ -20,6 +20,9 @@ export async function getAuthInfo(req: NextRequest): Promise<AuthInfo> {
     const token = await getToken({
       req,
       secret: process.env.NEXTAUTH_SECRET,
+      secureCookie:
+        process.env.NEXTAUTH_URL?.startsWith("https://") ??
+        !!process.env.VERCEL_URL,
     });
 
     return {
