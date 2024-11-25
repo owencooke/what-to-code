@@ -11,8 +11,6 @@ import {
 } from "@/lib/db/query/idea";
 import { mockIdea } from "./mock";
 
-export const runtime = "edge";
-
 export async function GET(req: NextRequest) {
   console.time("total-request");
   try {
