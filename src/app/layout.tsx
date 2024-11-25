@@ -14,6 +14,12 @@ import { QueryClient } from "@tanstack/react-query";
 const queryClient = new QueryClient();
 const publicSans = Roboto_Mono({ subsets: ["latin"] });
 
+export const metadata = {
+  title: "What to Code",
+  description:
+    "An LLM-powered web app that helps developers brainstorm and kickstart new software projects using idea generation, project expansion, and GitHub template matching!",
+};
+
 export default function RootLayout({
   children,
 }: {
@@ -23,7 +29,7 @@ export default function RootLayout({
     <html lang="en" className="h-full" suppressHydrationWarning>
       <head>
         <title>what to code?</title>
-        <link rel="shortcut icon" href="favicon.ico" />
+        <link rel="shortcut icon" href="/favicon.ico" />
         <link
           rel="stylesheet"
           type="text/css"
