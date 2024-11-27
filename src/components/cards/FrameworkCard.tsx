@@ -1,7 +1,7 @@
 import CustomizableCard from "./CustomizableCard";
 import { Framework } from "@/types/idea";
-import { toAlphaLowerCase } from "@/lib/utils";
-import tools from "@/app/idea/data/tools";
+import { toAlphaLowerCase } from "@/app/(server)/lib/utils";
+import tools from "@/app/(client)/idea/data/tools";
 import { useForm } from "react-hook-form";
 import FormInput from "@/components/FormInput";
 import { useEffect } from "react";
