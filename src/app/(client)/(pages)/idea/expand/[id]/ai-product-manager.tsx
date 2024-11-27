@@ -8,14 +8,14 @@ import {
 } from "@/app/(client)/components/ui/card";
 import { Button } from "@/app/(client)/components/ui/button";
 import { ScrollText, Loader2, Sparkles } from "lucide-react";
-import { PartialIdea } from "@/types/idea";
+import { Idea } from "@/types/idea";
 import { Feature } from "@/types/project";
 import CardScrollArea from "@/app/(client)/components/cards/CardScrollArea";
 import FeatureCard from "@/app/(client)/components/cards/FeatureCard";
 import ky from "ky";
 import { useCreateProjectStore } from "@/app/(client)/stores/useCreateProjectStore";
 
-export default function AIProductManager({ idea }: { idea: PartialIdea }) {
+export default function AIProductManager({ idea }: { idea: Idea }) {
   const { features, setFeatures } = useCreateProjectStore();
   const [isExpanding, setIsExpanding] = useState(false);
 

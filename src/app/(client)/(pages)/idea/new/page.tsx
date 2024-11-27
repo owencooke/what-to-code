@@ -25,14 +25,14 @@ import {
   FormMessage,
 } from "@/app/(client)/components/ui/form";
 import { Plus, X } from "lucide-react";
-import { PartialIdea, PartialIdeaSchema } from "@/types/idea";
+import { Idea, IdeaSchema } from "@/types/idea";
 import FormInput from "@/app/(client)/components/FormInput";
 import { useToast } from "@/app/(client)/components/ui/use-toast";
 import { useSession } from "next-auth/react";
 import SignInAlert from "@/app/(client)/components/SignInAlert";
 
-const formSchema = PartialIdeaSchema.omit({ likes: true, id: true }).extend({
-  description: PartialIdeaSchema.shape.description.min(10, {
+const formSchema = IdeaSchema.omit({ likes: true, id: true }).extend({
+  description: IdeaSchema.shape.description.min(10, {
     message: "Description must be at least 10 characters.",
   }),
   features: z.array(
@@ -72,7 +72,7 @@ export default function CreateIdea() {
     try {
       const response = await ky
         .post("/api/idea", { json: data })
-        .json<{ idea: PartialIdea }>();
+        .json<{ idea: Idea }>();
       router.push(`/idea/expand/${response.idea.id}`);
     } catch (error) {
       setIsSubmitting(false);

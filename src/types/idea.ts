@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { FeatureSchema } from "./project";
 
-const PartialIdeaSchema = z.object({
+const IdeaSchema = z.object({
   id: z.number(),
   title: z.string(),
   description: z.string(),
@@ -10,8 +10,8 @@ const PartialIdeaSchema = z.object({
 });
 
 // Define TS types from schemas
-type PartialIdea = z.infer<typeof PartialIdeaSchema>;
-type NewPartialIdea = Omit<PartialIdea, "id" | "likes">;
+type Idea = z.infer<typeof IdeaSchema>;
+type NewIdea = Omit<Idea, "id" | "likes">;
 
-export { FeatureSchema, PartialIdeaSchema };
-export type { PartialIdea, NewPartialIdea };
+export { FeatureSchema, IdeaSchema };
+export type { Idea, NewIdea };

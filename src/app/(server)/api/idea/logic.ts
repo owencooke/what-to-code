@@ -1,9 +1,4 @@
-import {
-  FeatureSchema,
-  PartialIdea,
-  PartialIdeaSchema,
-  NewPartialIdea,
-} from "@/types/idea";
+import { FeatureSchema, Idea, IdeaSchema, NewIdea } from "@/types/idea";
 import { Framework, Feature, FrameworkSchema } from "@/types/project";
 import { IDEA_PROMPT, FEATURES_PROMPT, FRAMEWORK_PROMPT } from "./prompts";
 import { generateZodSchemaFromPrompt } from "@/lib/llm/utils";
@@ -12,8 +7,8 @@ import { z } from "zod";
 // Generate Title and Description of Idea
 export const generateIdea = async (
   topic: string,
-  recentIdeas: PartialIdea[],
-): Promise<NewPartialIdea> => {
+  recentIdeas: Idea[],
+): Promise<NewIdea> => {
   // Modify prompt to avoid using recent ideas (if any)
   // TODO: this should probably be done via ChatCompletions history, if we allow
   // for better prompt refinement by user also
@@ -32,7 +27,7 @@ export const generateIdea = async (
     features, such as: ${recentIdeasDetails}`
   }`;
 
-  const outputSchema = PartialIdeaSchema.pick({
+  const outputSchema = IdeaSchema.pick({
     title: true,
   }).extend({
     description: z
@@ -50,7 +45,7 @@ export const generateIdea = async (
 };
 
 // Expand Features for a given idea
-export async function expandFeatures(idea: PartialIdea): Promise<Feature[]> {
+export async function expandFeatures(idea: Idea): Promise<Feature[]> {
   const featuresWithTwoBullets = z
     .array(
       FeatureSchema.extend({
@@ -69,9 +64,7 @@ export async function expandFeatures(idea: PartialIdea): Promise<Feature[]> {
 }
 
 // Expand Frameworks for a given idea
-export async function expandFrameworks(
-  idea: PartialIdea,
-): Promise<Framework[]> {
+export async function expandFrameworks(idea: Idea): Promise<Framework[]> {
   const frameworks = await generateZodSchemaFromPrompt(
     z.array(FrameworkSchema).length(3),
     FRAMEWORK_PROMPT,

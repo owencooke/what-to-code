@@ -2,7 +2,7 @@ import { and, desc, eq, ilike, not, or, sql } from "drizzle-orm";
 import { db } from "@/lib/db/config";
 import { ideas, userIdeaViews, topics, ideaTopics } from "@/lib/db/schema";
 import { selectRandom } from "@/lib/utils";
-import { NewPartialIdea, PartialIdea, PartialIdeaSchema } from "@/types/idea";
+import { NewIdea, Idea, IdeaSchema } from "@/types/idea";
 import { subDays } from "date-fns";
 
 /**
@@ -10,12 +10,12 @@ import { subDays } from "date-fns";
  *
  * @param userId - The unique identifier of the user.
  * @param topic - The topic to filter ideas by.
- * @returns {Promise<PartialIdea | null>} - A promise that resolves to an unseen idea or null if none found.
+ * @returns {Promise<Idea | null>} - A promise that resolves to an unseen idea or null if none found.
  */
 async function getUnseenIdeaWithTopic(
   userId: string,
   topic: string | null,
-): Promise<PartialIdea | null> {
+): Promise<Idea | null> {
   // Execute a single query with all conditions, order by random and limit to 1
   const unseenIdeas = await db
     .select()
@@ -41,7 +41,7 @@ async function getUnseenIdeaWithTopic(
     return null;
   }
 
-  return PartialIdeaSchema.parse(unseenIdeas[0].ideas);
+  return IdeaSchema.parse(unseenIdeas[0].ideas);
 }
 
 /**
@@ -52,13 +52,13 @@ async function getUnseenIdeaWithTopic(
  * @param userId - The unique identifier of the user.
  * @param topic - The topic to filter ideas by.
  * @param limit - The maximum number of ideas to retrieve.
- * @returns {Promise<PartialIdea[]>} - A promise that resolves to an array of partially parsed ideas.
+ * @returns {Promise<Idea[]>} - A promise that resolves to an array of partially parsed ideas.
  */
 async function getLastSeenIdeasForUserAndTopic(
   userId: string,
   topic: string | null,
   limit: number,
-): Promise<PartialIdea[]> {
+): Promise<Idea[]> {
   const threeDaysAgo = subDays(new Date(), 3);
 
   const seenIdeas = await db
@@ -80,16 +80,16 @@ async function getLastSeenIdeasForUserAndTopic(
     .orderBy(desc(userIdeaViews.viewed_at))
     .limit(limit);
 
-  return seenIdeas.map((record) => PartialIdeaSchema.parse(record.idea));
+  return seenIdeas.map((record) => IdeaSchema.parse(record.idea));
 }
 
 /**
  * Fetches a random idea from all ideas.
  *
- * @returns {Promise<PartialIdea>} - A promise that resolves to a random idea.
+ * @returns {Promise<Idea>} - A promise that resolves to a random idea.
  * @throws {Error} - Throws an error if the query fails.
  */
-async function getRandomIdea(): Promise<PartialIdea> {
+async function getRandomIdea(): Promise<Idea> {
   const randomIdea = await db
     .select()
     .from(ideas)
@@ -100,7 +100,7 @@ async function getRandomIdea(): Promise<PartialIdea> {
     throw new Error("No ideas found");
   }
 
-  return PartialIdeaSchema.parse(randomIdea[0]);
+  return IdeaSchema.parse(randomIdea[0]);
 }
 
 /**
@@ -108,14 +108,14 @@ async function getRandomIdea(): Promise<PartialIdea> {
  *
  * @param idea - The idea to add to the database.
  * @param userId - The ID of the user who has seen the idea.
- * @returns {Promise<PartialIdea>} - A promise that resolves to the inserted idea.
+ * @returns {Promise<Idea>} - A promise that resolves to the inserted idea.
  * @throws {Error} - Throws an error if the insertion fails.
  */
 async function createIdeaAndMarkAsSeen(
-  idea: NewPartialIdea,
+  idea: NewIdea,
   userId: string,
   topic: string | null = null,
-): Promise<PartialIdea> {
+): Promise<Idea> {
   const insertedIdea = await db.transaction(async (tx) => {
     // Insert the new idea
     const [newIdea] = await tx.insert(ideas).values(idea).returning();
@@ -158,7 +158,7 @@ async function createIdeaAndMarkAsSeen(
     return newIdea;
   });
 
-  return PartialIdeaSchema.parse(insertedIdea);
+  return IdeaSchema.parse(insertedIdea);
 }
 
 /**
@@ -166,12 +166,12 @@ async function createIdeaAndMarkAsSeen(
  *
  * @param {string | undefined} query - The optional search query to filter ideas by title or description.
  * @param {string | string[] | undefined} topics - The optional topics to filter ideas by.
- * @returns {Promise<PartialIdea[]>} - A promise that resolves to an array of ideas.
+ * @returns {Promise<Idea[]>} - A promise that resolves to an array of ideas.
  */
 async function searchIdeas(
   query: string | undefined,
   topics: string | string[] | undefined,
-): Promise<PartialIdea[]> {
+): Promise<Idea[]> {
   const conditions = [];
 
   // Add search query conditions
@@ -207,12 +207,12 @@ async function searchIdeas(
     .from(ideas)
     .where(and(...conditions));
 
-  return result.map((record) => PartialIdeaSchema.parse(record));
+  return result.map((record) => IdeaSchema.parse(record));
 }
 
-async function getIdeaById(id: number): Promise<PartialIdea> {
+async function getIdeaById(id: number): Promise<Idea> {
   const idea = await db.select().from(ideas).where(eq(ideas.id, id));
-  return PartialIdeaSchema.parse(idea[0]);
+  return IdeaSchema.parse(idea[0]);
 }
 
 async function markIdeaAsViewed(userId: string, ideaId: number) {

@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { Button } from "@/app/(client)/components/ui/button";
-import { PartialIdea } from "@/types/idea";
+import { Idea } from "@/types/idea";
 import AIProductManager from "./ai-product-manager";
 import AIEngineer from "./ai-engineer";
 import { motion } from "framer-motion";
@@ -12,7 +12,7 @@ import { useCreateProjectStore } from "@/app/(client)/stores/useCreateProjectSto
 import { IdeaCard } from "@/app/(client)/components/cards/IdeaCard";
 
 interface ExpandIdeaProps {
-  idea: PartialIdea;
+  idea: Idea;
 }
 
 export default function ExpandIdea({ idea }: ExpandIdeaProps) {

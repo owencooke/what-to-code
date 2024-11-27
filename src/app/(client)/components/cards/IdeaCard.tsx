@@ -3,7 +3,7 @@
 import { ChevronRight } from "lucide-react";
 import { Button, ButtonWithLoading } from "../ui/button";
 import { CardHeader, CardContent, CardFooter, Card } from "../ui/card";
-import { NewPartialIdea, PartialIdea } from "@/types/idea";
+import { NewIdea, Idea } from "@/types/idea";
 import { PropsWithChildren } from "react";
 import { Skeleton } from "../ui/skeleton";
 import { useRouter } from "next/navigation";
@@ -12,7 +12,7 @@ import ky from "ky";
 import { ProgrammingCodeIdeaIcon } from "../landing/Icons";
 
 type IdeaCardProps = {
-  idea: PartialIdea | NewPartialIdea;
+  idea: Idea | NewIdea;
   showInterestButton?: boolean;
   bare?: boolean;
 };
@@ -31,7 +31,7 @@ export function IdeaCard({
       try {
         const response = await ky
           .post("/api/idea", { json: idea })
-          .json<{ message: string; idea: PartialIdea }>();
+          .json<{ message: string; idea: Idea }>();
         const newIdeaId = response.idea.id;
         router.push(`/idea/expand/${newIdeaId}`);
       } catch (error) {

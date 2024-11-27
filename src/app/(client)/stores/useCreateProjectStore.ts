@@ -1,11 +1,11 @@
 import { create } from "zustand";
 import { persist, PersistOptions } from "zustand/middleware";
-import { PartialIdea } from "@/types/idea";
+import { Idea } from "@/types/idea";
 import { Feature, Framework } from "@/types/project";
 
 interface CreateProjectState {
   // state
-  idea: PartialIdea | null;
+  idea: Idea | null;
   features: Feature[];
   frameworks: Framework[];
   selectedFeatureIds: number[];
@@ -13,14 +13,14 @@ interface CreateProjectState {
   starterRepo: string | null;
 
   // actions
-  setIdea: (idea: PartialIdea) => void;
+  setIdea: (idea: Idea) => void;
   setFeatures: (features: Feature[]) => void;
   setFrameworks: (frameworks: Framework[]) => void;
   setFeature: (feature: Feature) => void;
   setFramework: (framework: Framework) => void;
   setStarterRepo: (url: string | null) => void;
   resetState: () => void;
-  resetWithIdea: (idea: PartialIdea) => void;
+  resetWithIdea: (idea: Idea) => void;
 
   // helpers
   getSelectedFeatures: () => Feature[];
@@ -66,7 +66,7 @@ export const useCreateProjectStore = create<CreateProjectState>()(
         })),
       setStarterRepo: (url) => set({ starterRepo: url }),
       resetState: () => set(initialState),
-      resetWithIdea: (idea: PartialIdea) => {
+      resetWithIdea: (idea: Idea) => {
         set((state) => {
           if (idea.id !== state.idea?.id) {
             return { ...initialState, idea };

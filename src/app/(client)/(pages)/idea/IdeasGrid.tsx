@@ -5,13 +5,13 @@ import { Card, CardContent } from "@/app/(client)/components/ui/card";
 import { Dialog, DialogContent } from "@/app/(client)/components/ui/dialog";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronRight } from "lucide-react";
-import type { PartialIdea } from "@/types/idea";
+import type { Idea } from "@/types/idea";
 import { IdeaCard } from "@/app/(client)/components/cards/IdeaCard";
 
-export default function Component({ ideas }: { ideas: PartialIdea[] }) {
-  const [selectedIdea, setSelectedIdea] = useState<PartialIdea | null>(null);
+export default function Component({ ideas }: { ideas: Idea[] }) {
+  const [selectedIdea, setSelectedIdea] = useState<Idea | null>(null);
 
-  const openIdeaDetails = (idea: PartialIdea) => {
+  const openIdeaDetails = (idea: Idea) => {
     setSelectedIdea(idea);
   };
 

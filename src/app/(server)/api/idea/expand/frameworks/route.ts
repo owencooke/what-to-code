@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { expandFrameworks } from "../../logic";
-import { PartialIdeaSchema } from "@/types/idea";
+import { IdeaSchema } from "@/types/idea";
 import { mockFrameworks } from "../mock";
 
 export const runtime = "edge";
@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const parsedIdea = PartialIdeaSchema.safeParse(body);
+    const parsedIdea = IdeaSchema.safeParse(body);
 
     if (!parsedIdea.success) {
       return NextResponse.json(

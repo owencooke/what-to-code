@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/app/(client)/components/ui/button";
 import { shuffleArray } from "@/lib/utils";
 import { CATEGORIES } from "../../../../../lib/constants/categories";
-import { NewPartialIdea, PartialIdea, PartialIdeaSchema } from "@/types/idea";
+import { NewIdea, Idea, IdeaSchema } from "@/types/idea";
 import { ChevronDown, ChevronUp, LogIn } from "lucide-react";
 import FormInput from "@/app/(client)/components/FormInput";
 import { Form } from "@/app/(client)/components/ui/form";
@@ -32,7 +32,7 @@ import { signIn, useSession } from "next-auth/react";
 import SignInAlert from "@/app/(client)/components/SignInAlert";
 
 interface IdeaFormProps {
-  onSubmit: (idea: PartialIdea | NewPartialIdea) => void;
+  onSubmit: (idea: Idea | NewIdea) => void;
   onClick: () => void;
 }
 
@@ -72,7 +72,7 @@ export function IdeaForm({ onSubmit, onClick }: IdeaFormProps) {
       return;
     }
 
-    const idea = await response.json<PartialIdea | NewPartialIdea>();
+    const idea = await response.json<Idea | NewIdea>();
     onSubmit(idea);
   };
 
