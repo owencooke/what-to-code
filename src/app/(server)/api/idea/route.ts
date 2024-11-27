@@ -2,13 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { generateIdea } from "./logic";
 import { CATEGORIES } from "@/lib/constants/categories";
 import { selectRandom } from "@/lib/utils";
-import { getAuthInfo } from "@/lib/auth/user";
+import { getAuthInfo } from "@/app/(server)/integration/auth/user";
 import {
   createIdeaAndMarkAsSeen,
   getRandomIdea,
   getUnseenIdeaWithTopic,
   getLastSeenIdeasForUserAndTopic,
-} from "@/lib/db/query/idea";
+} from "@/app/(server)/db/query/idea";
 import { mockIdea } from "./mock";
 
 export const runtime = "nodejs";

@@ -9,7 +9,7 @@ import {
 } from "@/app/(client)/components/ui/alert";
 import dynamic from "next/dynamic";
 import ProjectsGrid from "./ProjectsGrid";
-import { searchProjects } from "@/lib/db/query/project";
+import { searchProjects } from "@/app/(server)/db/query/project";
 import { CATEGORIES } from "@/lib/constants/categories";
 
 // Dynamically import client side SearchInput component

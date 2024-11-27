@@ -4,7 +4,7 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@/app/(client)/components/ui/avatar";
-import { getAvatarUrlForUser } from "@/lib/github/string-utils";
+import { getAvatarUrlForUser } from "@/app/(server)/integration/github/string-utils";
 import { CircleUser } from "lucide-react";
 import { useSession } from "next-auth/react";
 

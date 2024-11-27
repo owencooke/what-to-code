@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { OpenAIEmbeddings } from "@langchain/openai";
-import { matchTemplates } from "@/lib/db/query/templates";
-import { getGitHubRepoDetails } from "@/lib/github/repo";
+import { matchTemplates } from "@/app/(server)/db/query/templates";
+import { getGitHubRepoDetails } from "@/app/(server)/integration/github/repo";
 import { TemplateMatch } from "@/types/templates";
 import { GitHubRepo } from "@/types/github";
-import { getAuthInfo } from "@/lib/auth/user";
+import { getAuthInfo } from "@/app/(server)/integration/auth/user";
 
 export const runtime = "edge";
 const SIMILARITY_THRESHOLD = 0.4;

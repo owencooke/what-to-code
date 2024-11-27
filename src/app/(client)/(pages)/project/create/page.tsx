@@ -13,7 +13,7 @@ import { Feature, Framework } from "@/types/project";
 import { useEffect, useState } from "react";
 import { useSession, signIn } from "next-auth/react";
 import { NewProjectSchema, NewProject } from "@/types/project";
-import { getRepoFromProjectTitle } from "@/lib/github/string-utils";
+import { getRepoFromProjectTitle } from "@/app/(server)/integration/github/string-utils";
 import { Github } from "lucide-react";
 import Repo from "@/app/(client)/components/github/Repo";
 import { Modal } from "@/app/(client)/components/Modal";

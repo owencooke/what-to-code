@@ -1,8 +1,8 @@
 import NextAuth, { NextAuthOptions, DefaultSession } from "next-auth";
 import GithubProvider from "next-auth/providers/github";
-import { getUser } from "@/lib/github/user";
-import { createUserIfNotExist } from "@/lib/db/query/user";
-import { sendWelcomeEmail } from "@/lib/email/welcome";
+import { getUser } from "@/app/(server)/integration/github/user";
+import { createUserIfNotExist } from "@/app/(server)/db/query/user";
+import { sendWelcomeEmail } from "@/app/(server)/integration/email/welcome";
 
 declare module "next-auth" {
   interface Session {

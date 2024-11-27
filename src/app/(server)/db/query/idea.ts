@@ -1,6 +1,11 @@
 import { and, desc, eq, ilike, not, or, sql } from "drizzle-orm";
-import { db } from "@/lib/db/config";
-import { ideas, userIdeaViews, topics, ideaTopics } from "@/lib/db/schema";
+import { db } from "@/app/(server)/db/config";
+import {
+  ideas,
+  userIdeaViews,
+  topics,
+  ideaTopics,
+} from "@/app/(server)/db/schema";
 import { selectRandom } from "@/lib/utils";
 import { NewIdea, Idea, IdeaSchema } from "@/types/idea";
 import { subDays } from "date-fns";
