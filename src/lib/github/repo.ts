@@ -1,7 +1,7 @@
 import {
   extractDetailsFromRepoUrl,
   getRepoFromProjectTitle,
-} from "@/app/(server)/lib/github/string-utils";
+} from "@/lib/github/string-utils";
 import { NewProject } from "@/types/project";
 import ky from "ky";
 import { GitHubRepo } from "@/types/github";

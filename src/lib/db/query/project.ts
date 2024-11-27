@@ -1,5 +1,5 @@
-import { db } from "@/app/(server)/lib/db/config";
-import { projects, users } from "@/app/(server)/lib/db/schema";
+import { db } from "@/lib/db/config";
+import { projects, users } from "@/lib/db/schema";
 import { NewProject, Project, ProjectSchema } from "@/types/project";
 import { eq, ilike, or, not, getTableColumns, and } from "drizzle-orm";
 

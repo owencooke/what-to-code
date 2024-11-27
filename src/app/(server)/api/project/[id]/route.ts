@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getProjectById } from "@/app/(server)/lib/db/query/project";
+import { getProjectById } from "@/lib/db/query/project";
 
 export const runtime = "edge";
 

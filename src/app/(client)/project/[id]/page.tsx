@@ -5,7 +5,7 @@ import FeatureCard from "@/components/cards/FeatureCard";
 import { useEffect, useState } from "react";
 import { NewProject } from "@/types/project";
 import RepoDisplay from "@/components/github/Repo";
-import { getRepoFromProjectTitle } from "@/app/(server)/lib/github/string-utils";
+import { getRepoFromProjectTitle } from "@/lib/github/string-utils";
 import { useRouter } from "next/navigation";
 import CardScrollArea from "@/components/cards/CardScrollArea";
 import { Badge } from "@/components/ui/badge";

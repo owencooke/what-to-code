@@ -1,6 +1,6 @@
 // drizzle.config.ts
 import { defineConfig } from "drizzle-kit";
-import { connectionString } from "@/app/(server)/lib/db/config";
+import { connectionString } from "@/lib/db/config";
 
 export default defineConfig({
   dialect: "postgresql",

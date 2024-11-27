@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { Suspense } from "react";
-import { searchIdeas } from "@/app/(server)/lib/db/query/idea";
+import { searchIdeas } from "@/lib/db/query/idea";
 import IdeasGrid from "./IdeasGrid";
 import { CATEGORIES } from "@/lib/constants/categories";
 

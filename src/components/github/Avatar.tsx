@@ -1,6 +1,6 @@
 import React, { forwardRef } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { getAvatarUrlForUser } from "@/app/(server)/lib/github/string-utils";
+import { getAvatarUrlForUser } from "@/lib/github/string-utils";
 import { CircleUser } from "lucide-react";
 import { useSession } from "next-auth/react";
 

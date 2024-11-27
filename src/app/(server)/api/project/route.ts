@@ -1,13 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { NewProjectSchema } from "@/types/project";
-import { createRepoFromTemplate } from "@/app/(server)/lib/github/repo";
-import { createIssue } from "@/app/(server)/lib/github/issue";
+import { createRepoFromTemplate } from "@/lib/github/repo";
+import { createIssue } from "@/lib/github/issue";
 import { Feature } from "@/types/project";
-import {
-  createProject,
-  searchProjects,
-} from "@/app/(server)/lib/db/query/project";
-import { getAuthInfo } from "@/app/(server)/lib/auth/user";
+import { createProject, searchProjects } from "@/lib/db/query/project";
+import { getAuthInfo } from "@/lib/auth/user";
 
 export const runtime = "edge";
 
