@@ -2,6 +2,7 @@
 
 import Repo from "@/components/github/Repo";
 import { Card, CardContent } from "@/components/ui/card";
+import LikeButton from "@/components/github/LikeButton";
 import { getRepoFromProjectTitle } from "@/lib/github/string-utils";
 import { Project } from "@/types/project";
 import { Badge } from "@/components/ui/badge";
@@ -20,12 +21,15 @@ export default function ProjectsGrid({ projects }: { projects: Project[] }) {
         >
           <CardContent className="p-4 flex gap-2 flex-col">
             <h3 className="font-bold text-lg">{project.title}</h3>
+            <LikeButton initialLikes={0 || 0} projectId={project.id} />
+
             {/* RepoDisplay for smaller screens */}
             <Repo
               className="md:hidden block text-xs text-muted-foreground"
               repoName={getRepoFromProjectTitle(project.title)}
               username={project.github_user}
             />
+
             <span className="text-sm text-muted-foreground mb-3 line-clamp-4 md:line-clamp-3">
               {project.description}
             </span>
