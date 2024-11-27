@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { PartialIdeaSchema } from "./idea";
 
 const FeatureSchema = z.object({
   id: z.number(),
@@ -34,10 +33,22 @@ const FrameworkSchema = z.object({
 });
 
 // Project not yet saved to DB
-const NewProjectSchema = PartialIdeaSchema.pick({
-  title: true,
-  description: true,
-}).extend({
+const NewProjectSchema = z.object({
+  title: z
+    .string()
+    .min(2, {
+      message: "Project name must be at least 2 characters.",
+    })
+    .max(100, {
+      message: "Project name must be 100 characters or less.",
+    })
+    .describe("Name of the software project"),
+  description: z
+    .string()
+    .max(350, {
+      message: "Description must be 350 characters or less.",
+    })
+    .describe("Brief overview of the software project"),
   features: z
     .array(FeatureSchema)
     .describe("List of major features to develop")
