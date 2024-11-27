@@ -75,18 +75,5 @@ type Idea = z.infer<typeof IdeaSchema>;
 type PartialIdea = z.infer<typeof PartialIdeaSchema>;
 type NewPartialIdea = Omit<PartialIdea, "id" | "likes">;
 
-interface UserIdeaView {
-  user_id: string;
-  idea_id: number;
-  viewed_at: Date;
-}
-
 export { IdeaSchema, FeatureSchema, FrameworkSchema, PartialIdeaSchema };
-export type {
-  Idea,
-  Feature,
-  Framework,
-  UserIdeaView,
-  PartialIdea,
-  NewPartialIdea,
-};
+export type { Idea, Feature, Framework, PartialIdea, NewPartialIdea };
