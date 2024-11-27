@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { resend, audienceId } from "@/app/(server)/lib/email/config";
+import { resend, audienceId } from "@/lib/email/config";
 
 export async function POST(req: NextRequest) {
   try {
