@@ -1,7 +1,7 @@
 import CustomizableCard from "./CustomizableCard";
 import { Framework } from "@/types/project";
 import { toAlphaLowerCase } from "@/app/(server)/lib/utils";
-import tools from "@/app/(client)/idea/data/tools";
+import { TOOLS } from "@/lib/constants/tools";
 import { useForm } from "react-hook-form";
 import FormInput from "@/components/FormInput";
 import { useEffect } from "react";
@@ -51,7 +51,7 @@ export default function FrameworkCard({
             const tool = framework.tools.find(
               (tool) => toAlphaLowerCase(tool) === toAlphaLowerCase(word),
             );
-            if (tool && tools.includes(tool)) {
+            if (tool && TOOLS.includes(tool)) {
               const punctuation = word.match(/[^a-zA-Z0-9]+$/)?.[0] || "";
               return (
                 <span key={`tool-${j}`} className="font-semibold">

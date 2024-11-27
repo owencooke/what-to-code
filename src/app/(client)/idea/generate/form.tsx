@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { shuffleArray } from "@/app/(server)/lib/utils";
-import categories from "../data/categories";
+import { CATEGORIES } from "../../../../lib/constants/categories";
 import { NewPartialIdea, PartialIdea, PartialIdeaSchema } from "@/types/idea";
 import { ChevronDown, ChevronUp, LogIn } from "lucide-react";
 import FormInput from "@/components/FormInput";
@@ -55,7 +55,7 @@ export function IdeaForm({ onSubmit, onClick }: IdeaFormProps) {
   });
 
   useEffect(() => {
-    setTopics(shuffleArray([...categories]));
+    setTopics(shuffleArray([...CATEGORIES]));
   }, []);
 
   const handleSubmit = async (data: z.infer<typeof FormSchema>) => {

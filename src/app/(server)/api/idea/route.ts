@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generateIdea } from "./logic";
-import topics from "@/app/(client)/idea/data/categories";
+import { CATEGORIES } from "@/lib/constants/categories";
 import { selectRandom } from "@/app/(server)/lib/utils";
 import { getAuthInfo } from "@/app/(server)/lib/auth/user";
 import {
@@ -49,7 +49,7 @@ export async function GET(req: NextRequest) {
       // Select random topic if none provided
       console.time("topic-selection");
       if (!topic) {
-        topic = selectRandom(topics);
+        topic = selectRandom(CATEGORIES);
       }
       console.timeEnd("topic-selection");
       // Get recent ideas for context

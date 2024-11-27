@@ -1,4 +1,4 @@
-const categories: string[] = [
+export const CATEGORIES: string[] = [
   "finance",
   "health",
   "education",
@@ -91,5 +91,3 @@ const categories: string[] = [
   "betting",
   "ticketing",
 ];
-
-export default categories;

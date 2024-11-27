@@ -1,4 +1,4 @@
-const tools: string[] = [
+export const TOOLS: string[] = [
   "aarch64",
   "adonisjs",
   "aftereffects",
@@ -473,5 +473,3 @@ const tools: string[] = [
   "zend",
   "zig",
 ];
-
-export default tools;

@@ -6,7 +6,7 @@ import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import dynamic from "next/dynamic";
 import ProjectsGrid from "./ProjectsGrid";
 import { searchProjects } from "@/app/(server)/lib/db/query/project";
-import categories from "../idea/data/categories";
+import { CATEGORIES } from "@/lib/constants/categories";
 
 // Dynamically import client side SearchInput component
 const SearchInput = dynamic(() => import("@/components/SearchInput"), {
@@ -37,7 +37,7 @@ export default async function ProjectsPage({
       <div className="mb-8">
         <SearchInput
           route="project"
-          tags={categories}
+          tags={CATEGORIES}
           initialTags={tags}
           initialSearchQuery={search}
         />
