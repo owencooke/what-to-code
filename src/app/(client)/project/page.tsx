@@ -1,3 +1,5 @@
+"use server";
+
 import { Suspense } from "react";
 import { Project } from "@/types/project";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";

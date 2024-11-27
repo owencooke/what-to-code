@@ -1,12 +1,10 @@
 import {
-  IdeaSchema,
   FeatureSchema,
   PartialIdea,
-  Feature,
-  Framework,
   PartialIdeaSchema,
   NewPartialIdea,
 } from "@/types/idea";
+import { Framework, Feature, FrameworkSchema } from "@/types/project";
 import { IDEA_PROMPT, FEATURES_PROMPT, FRAMEWORK_PROMPT } from "./prompts";
 import { generateZodSchemaFromPrompt } from "@/app/(server)/lib/llm/utils";
 import { z } from "zod";
@@ -75,7 +73,7 @@ export async function expandFrameworks(
   idea: PartialIdea,
 ): Promise<Framework[]> {
   const frameworks = await generateZodSchemaFromPrompt(
-    IdeaSchema.shape.frameworks.length(3),
+    z.array(FrameworkSchema).length(3),
     FRAMEWORK_PROMPT,
     { title: idea.title, features: idea.features },
   );

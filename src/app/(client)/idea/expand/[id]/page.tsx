@@ -1,3 +1,5 @@
+"use server";
+
 import IdeaClient from "./ExpandIdea";
 import { getIdeaById } from "@/app/(server)/lib/db/query/idea";
 

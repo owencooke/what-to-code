@@ -9,7 +9,7 @@ import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import FormInput from "@/components/FormInput";
 import { Form } from "@/components/ui/form";
-import { Feature, Framework } from "@/types/idea";
+import { Feature, Framework } from "@/types/project";
 import { useEffect, useState } from "react";
 import { useSession, signIn } from "next-auth/react";
 import { NewProjectSchema, NewProject } from "@/types/project";

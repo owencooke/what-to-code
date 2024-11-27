@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import CustomizableCard from "./CustomizableCard";
-import { Feature } from "@/types/idea";
+import { Feature } from "@/types/project";
 import FormInput from "../FormInput";
 import { useEffect } from "react";
 

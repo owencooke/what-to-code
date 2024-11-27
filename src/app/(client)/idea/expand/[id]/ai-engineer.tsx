@@ -10,7 +10,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Code2, Loader2, Sparkles } from "lucide-react";
 import CardScrollArea from "@/components/cards/CardScrollArea";
-import { Framework, PartialIdea } from "@/types/idea";
+import { PartialIdea } from "@/types/idea";
+import { Framework } from "@/types/project";
 import ky from "ky";
 import FrameworkCard from "@/components/cards/FrameworkCard";
 import { useCreateProjectStore } from "@/store/useCreateProjectStore";

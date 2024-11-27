@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist, PersistOptions } from "zustand/middleware";
-import { PartialIdea, Feature, Framework } from "@/types/idea";
+import { PartialIdea } from "@/types/idea";
+import { Feature, Framework } from "@/types/project";
 
 interface CreateProjectState {
   // state

@@ -1,4 +1,4 @@
-import { Feature, Framework } from "@/types/idea";
+import { Feature, Framework } from "@/types/project";
 
 export const mockFeatures: Feature[] = [
   {

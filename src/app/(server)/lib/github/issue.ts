@@ -1,4 +1,4 @@
-import { Feature } from "@/types/idea";
+import { Feature } from "@/types/project";
 import ky from "ky";
 
 const formatFeatureIssueMarkdown = (feature: Feature) => {
