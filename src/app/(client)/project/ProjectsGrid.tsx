@@ -2,7 +2,7 @@
 
 import Repo from "@/components/github/Repo";
 import { Card, CardContent } from "@/components/ui/card";
-import { getRepoFromProjectTitle } from "@/lib/github/string-utils";
+import { getRepoFromProjectTitle } from "@/app/(server)/lib/github/string-utils";
 import { Project } from "@/types/project";
 import { Badge } from "@/components/ui/badge";
 import { useRouter } from "next/navigation";

@@ -1,4 +1,4 @@
-import { db } from "@/lib/db/config";
+import { db } from "@/app/(server)/lib/db/config";
 import { cosineDistance, desc, sql } from "drizzle-orm";
 import { TemplateMatch } from "@/types/templates";
 import { templates } from "../schema";

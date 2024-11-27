@@ -1,4 +1,4 @@
-import { resend } from "@/lib/email/config";
+import { resend } from "@/app/(server)/lib/email/config";
 
 /**
  * Sends a welcome email to a new user.

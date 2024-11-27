@@ -2,9 +2,9 @@
 
 import dynamic from "next/dynamic";
 import { Suspense } from "react";
-import { searchIdeas } from "@/lib/db/query/idea";
+import { searchIdeas } from "@/app/(server)/lib/db/query/idea";
 import IdeasGrid from "./IdeasGrid";
-import { CATEGORIES } from "@/lib/constants/categories";
+import { CATEGORIES } from "@/app/(server)/lib/constants/categories";
 
 // Dynamically import client side SearchInput component
 const SearchInput = dynamic(() => import("@/components/SearchInput"), {

@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { shuffleArray } from "@/lib/utils";
-import { CATEGORIES } from "../../../../lib/constants/categories";
+import { shuffleArray } from "@/app/(server)/lib/utils";
+import { CATEGORIES } from "../../../(server)/lib/constants/categories";
 import { NewPartialIdea, PartialIdea, PartialIdeaSchema } from "@/types/idea";
 import { ChevronDown, ChevronUp, LogIn } from "lucide-react";
 import FormInput from "@/components/FormInput";
