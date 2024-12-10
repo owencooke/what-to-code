@@ -161,7 +161,7 @@ export default function Navbar() {
   );
 
   return (
-    <header className="sticky border-b-[1px] top-0 z-40 w-full bg-muted">
+    <header className="sticky border-b-[1px] top-0 z-40 w-full bg-background">
       <NavigationMenu className="mx-auto">
         <NavigationMenuList className="container h-14 px-4 w-[95vw] flex justify-between items-center">
           <NavigationMenuItem className="flex min-w-fit h-full !mt-0">

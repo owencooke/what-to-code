@@ -31,7 +31,7 @@ export default async function IdeasPage({
         <SearchInput
           route="idea"
           tags={CATEGORIES}
-          className="w-full"
+          className="md:w-4/5"
           initialSearchQuery={search}
           initialTags={tags}
         />
