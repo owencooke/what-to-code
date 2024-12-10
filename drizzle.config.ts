@@ -4,7 +4,7 @@ import { connectionString } from "@/app/(server)/db/config";
 
 export default defineConfig({
   dialect: "postgresql",
-  schema: "./src/lib/db/schema.ts",
+  schema: "./src/app/(server)/db/schema.ts",
   dbCredentials: {
     url: connectionString,
   },

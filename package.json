@@ -9,7 +9,8 @@
     "start": "next start",
     "lint": "next lint",
     "format": "prettier --write \"app\"",
-    "env": "sync-dotenv --sample .env.dev"
+    "env": "sync-dotenv --sample .env.dev",
+    "clean": "rm -rf .next node_modules drizzle"
   },
   "engines": {
     "node": ">=18"
