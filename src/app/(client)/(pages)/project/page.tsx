@@ -43,7 +43,7 @@ export default async function ProjectsPage({
 
       <div className="mb-8 flex justify-center">
         <SearchInput
-          className="md:w-4/5"
+          className="max-w-3xl w-full"
           route="project"
           tags={CATEGORIES}
           initialTags={tags}
