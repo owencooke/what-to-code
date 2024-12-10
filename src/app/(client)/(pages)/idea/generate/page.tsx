@@ -9,10 +9,16 @@ import {
   IdeaCard,
   IdeaSkeletonCard,
 } from "@/app/(client)/components/cards/IdeaCard";
+import { IdeaRefinement } from "./IdeaRefinement";
 
 export default function IdeaPage() {
   const [idea, setIdea] = useState<Idea | NewIdea>();
   const [isIdeaLoading, setIsIdeaLoading] = useState(false);
+
+  const handleNewIdea = (newIdea: Idea | NewIdea) => {
+    setIdea(newIdea);
+    setIsIdeaLoading(false);
+  };
 
   return (
     <motion.div
@@ -39,11 +45,10 @@ export default function IdeaPage() {
           onClick={() => {
             setIsIdeaLoading(true);
           }}
-          onSubmit={(idea) => {
-            setIdea(idea);
-            setIsIdeaLoading(false);
-          }}
+          onSubmit={handleNewIdea}
+          //   idea={idea}
         />
+        {idea && <IdeaRefinement idea={idea} onRefine={handleNewIdea} />}
       </motion.div>
       <motion.div
         initial={{ opacity: 0, x: 20 }}
