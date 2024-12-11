@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/app/(client)/components/ui/button";
-import { RefreshCw, ArrowRight } from "lucide-react";
+import { RefreshCw, ArrowRight, CircleCheckBig } from "lucide-react";
 import { Textarea } from "@/app/(client)/components/ui/textarea";
 import { Idea, NewIdea } from "@/types/idea";
 import ky from "ky";
@@ -67,8 +67,6 @@ export function IdeaRefinement() {
     }
   };
 
-  const isRefining = !!idea;
-
   return (
     <div className="max-w-full lg:w-full overflow-x-hidden mx-auto mt-6">
       <motion.h1
@@ -80,18 +78,20 @@ export function IdeaRefinement() {
         refine your idea
       </motion.h1>
       <div className="grid grid-cols-2 gap-2 mb-4">
-        {refinementOptions.map((option) => (
-          <Button
-            key={option.value}
-            variant={
-              selectedRefinements.includes(option.value) ? "default" : "outline"
-            }
-            className="w-full justify-start whitespace-normal text-left px-3 py-3 md:py-2 min-h-[3rem]"
-            onClick={() => toggleRefinement(option.value)}
-          >
-            <span className="text-sm leading-tight">{option.label}</span>
-          </Button>
-        ))}
+        {refinementOptions.map((option) => {
+          const isSelected = selectedRefinements.includes(option.value);
+          return (
+            <Button
+              key={option.value}
+              variant={isSelected ? "secondary" : "outline"}
+              className="w-full whitespace-normal text-left px-3 py-3 md:py-2 min-h-[3rem] flex justify-between"
+              onClick={() => toggleRefinement(option.value)}
+            >
+              <span className="text-sm leading-tight">{option.label}</span>
+              {isSelected && <CircleCheckBig className="h-4 w-4" />}
+            </Button>
+          );
+        })}
       </div>
       <Textarea
         placeholder="Any specific feedback or things you want to change?"
@@ -101,22 +101,11 @@ export function IdeaRefinement() {
       />
       <Button
         onClick={handleRefinement}
-        disabled={
-          (selectedRefinements.length === 0 && !customFeedback) || isRefining
-        }
+        disabled={selectedRefinements.length === 0 && !customFeedback}
         className="w-full"
       >
-        {isRefining ? (
-          <>
-            <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-            Refining...
-          </>
-        ) : (
-          <>
-            Refine Idea
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </>
-        )}
+        Refine Idea
+        <ArrowRight className="ml-2 h-4 w-4" />
       </Button>
     </div>
   );
