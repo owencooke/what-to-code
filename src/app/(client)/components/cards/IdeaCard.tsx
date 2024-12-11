@@ -15,6 +15,7 @@ import { useCreateProjectStore } from "../../stores/useCreateProjectStore";
 type IdeaCardProps = {
   idea: Idea | NewIdea;
   showInterestButton?: boolean;
+  showRefineButton?: boolean;
   bare?: boolean;
 };
 
@@ -22,6 +23,7 @@ export function IdeaCard({
   idea,
   showInterestButton = false,
   bare = false,
+  showRefineButton = true,
 }: IdeaCardProps) {
   const router = useRouter();
   const { setIdea } = useCreateProjectStore();
@@ -70,7 +72,7 @@ export function IdeaCard({
       {showInterestButton && (
         <CardFooter
           className={cn(
-            "flex justify-center gap-4 md:gap-8 md:px-16",
+            "flex justify-center gap-4 md:gap-8 md:px-8",
             bare && "p-0 mt-4",
           )}
         >
@@ -81,13 +83,15 @@ export function IdeaCard({
           >
             Use this idea
           </ButtonWithLoading>
-          <Button
-            className="flex-1 min-w-[140px]"
-            variant="secondary"
-            onClick={handleRefineClick}
-          >
-            Refine it first
-          </Button>
+          {showRefineButton && (
+            <Button
+              className="flex-1 min-w-[140px]"
+              variant="secondary"
+              onClick={handleRefineClick}
+            >
+              Refine it first
+            </Button>
+          )}
         </CardFooter>
       )}
     </IdeaBaseCard>

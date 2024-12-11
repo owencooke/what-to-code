@@ -70,7 +70,7 @@ export function IdeaRefinement() {
   const isRefining = !!idea;
 
   return (
-    <div className="w-full mx-auto mt-6">
+    <div className="max-w-full lg:w-full overflow-x-hidden mx-auto mt-6">
       <motion.h1
         className="text-4xl lg:text-5xl mb-6 text-center"
         initial={{ scale: 0.9 }}

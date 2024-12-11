@@ -34,7 +34,11 @@ export default function IdeaPage() {
         className="w-full flex justify-center flex-col items-center"
       >
         {idea ? (
-          <IdeaCard idea={idea} showInterestButton></IdeaCard>
+          <IdeaCard
+            idea={idea}
+            showInterestButton
+            showRefineButton={false}
+          ></IdeaCard>
         ) : (
           <IdeaSkeletonCard />
         )}
