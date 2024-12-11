@@ -10,6 +10,8 @@ import {
 import { Textarea } from "@/app/(client)/components/ui/textarea";
 import { Idea, NewIdea } from "@/types/idea";
 import ky from "ky";
+import { useCreateProjectStore } from "@/app/(client)/stores/useCreateProjectStore";
+import { motion } from "framer-motion";
 
 const refinementOptions = [
   { label: "Make it more innovative", value: "innovative" },
@@ -20,12 +22,12 @@ const refinementOptions = [
   { label: "Incorporate AI/ML", value: "ai" },
 ];
 
-interface IdeaRefinementProps {
-  idea: Idea | NewIdea;
-  onRefine: (refinedIdea: Idea | NewIdea) => void;
-}
-
-export function IdeaRefinement({ idea, onRefine }: IdeaRefinementProps) {
+// TODO:
+// - this should be its own page, accessible from any other idea source
+// - this should allow idea to go to expand page next
+// - hackathon prize tracks? improved refinement options? better chat interface?
+export function IdeaRefinement() {
+  const { idea, setIdea } = useCreateProjectStore();
   const [selectedRefinements, setSelectedRefinements] = useState<string[]>([]);
   const [customFeedback, setCustomFeedback] = useState("");
   const [isRefining, setIsRefining] = useState(false);
@@ -40,6 +42,7 @@ export function IdeaRefinement({ idea, onRefine }: IdeaRefinementProps) {
 
   const handleRefinement = async () => {
     if (selectedRefinements.length === 0 && !customFeedback) return;
+    setIdea(null);
 
     setIsRefining(true);
     const params = new URLSearchParams();
@@ -57,7 +60,7 @@ export function IdeaRefinement({ idea, onRefine }: IdeaRefinementProps) {
         throw new Error("Failed to refine idea");
       }
       const refinedIdea = await response.json<Idea | NewIdea>();
-      onRefine(refinedIdea);
+      setIdea(refinedIdea);
     } catch (error) {
       console.error("Failed to refine idea:", error);
     } finally {
@@ -69,7 +72,14 @@ export function IdeaRefinement({ idea, onRefine }: IdeaRefinementProps) {
 
   return (
     <div className="w-full max-w-md mx-auto mt-6">
-      <h3 className="text-lg font-semibold mb-2">Refine Your Idea</h3>
+      <motion.h1
+        className="text-4xl lg:text-5xl mb-6 text-center"
+        initial={{ scale: 0.9 }}
+        animate={{ scale: 1 }}
+        transition={{ delay: 0.4, duration: 0.5 }}
+      >
+        refine your idea
+      </motion.h1>
       <div className="grid grid-cols-2 gap-2 mb-4">
         {refinementOptions.map((option) => (
           <TooltipProvider key={option.value}>
@@ -98,7 +108,7 @@ export function IdeaRefinement({ idea, onRefine }: IdeaRefinementProps) {
         placeholder="Any specific feedback or ideas for refinement?"
         value={customFeedback}
         onChange={(e) => setCustomFeedback(e.target.value)}
-        className="mb-4"
+        className="mb-4 h-32"
       />
       <Button
         onClick={handleRefinement}
