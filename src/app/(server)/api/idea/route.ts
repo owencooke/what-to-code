@@ -64,6 +64,8 @@ export async function GET(req: NextRequest) {
       console.time("generate-idea");
       const generatedIdea = await generateIdea(topic, recentIdeas);
       console.timeEnd("generate-idea");
+
+      // TODO: may want to remove this if idea explore page getting ovewhelmed
       // Save to DB and mark as seen
       console.time("save-idea");
       idea = await createIdeaAndMarkAsSeen(generatedIdea, userId);

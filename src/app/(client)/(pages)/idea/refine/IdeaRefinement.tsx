@@ -7,8 +7,8 @@ import ky from "ky";
 import { useCreateProjectStore } from "@/app/(client)/stores/useCreateProjectStore";
 import { motion } from "framer-motion";
 
-// Label: what the user sees
-// Value: piece of a prompt sent to the server
+// label: what the user sees
+// value: piece of a prompt sent to the server
 const refinementOptions = [
   { label: "Make it more innovative", value: "Make it more innovative" },
   {
@@ -22,9 +22,9 @@ const refinementOptions = [
 ];
 
 // TODO:
-// - this should be its own page, accessible from any other idea source
-// - this should allow idea to go to expand page next
 // - hackathon prize tracks? improved refinement options? better chat interface?
+// - add more refinement options, only display a few (3-6) and
+//   randomly select or allow thme to refresh options
 export function IdeaRefinement() {
   const { idea, setIdea } = useCreateProjectStore();
   const [selectedRefinements, setSelectedRefinements] = useState<string[]>([]);
