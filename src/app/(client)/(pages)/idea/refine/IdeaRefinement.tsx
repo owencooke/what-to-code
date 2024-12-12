@@ -1,4 +1,6 @@
-import { useState } from "react";
+"use client";
+
+import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/app/(client)/components/ui/button";
 import { RefreshCw, ArrowRight, CircleCheckBig } from "lucide-react";
 import { Textarea } from "@/app/(client)/components/ui/textarea";
@@ -6,29 +8,33 @@ import { Idea, NewIdea } from "@/types/idea";
 import ky from "ky";
 import { useCreateProjectStore } from "@/app/(client)/stores/useCreateProjectStore";
 import { motion } from "framer-motion";
+import { shuffleArray } from "@/lib/utils";
+import { refinementOptions } from "@/lib/constants/refinementOptions";
 
-// label: what the user sees
-// value: piece of a prompt sent to the server
-const refinementOptions = [
-  { label: "Make it more innovative", value: "Make it more innovative" },
-  {
-    label: "Simplify the concept",
-    value: "Simplify it, easier for a beginner",
-  },
-  { label: "Add a unique twist", value: "Add a unique twist" },
-  { label: "Focus on sustainability", value: "Focus on sustainablility" },
-  { label: "Enhance user experience", value: "Enhance user experience" },
-  { label: "Incorporate AI/ML", value: "Incorporate more AI/ML" },
-];
-
-// TODO:
-// - hackathon prize tracks? improved refinement options? better chat interface?
-// - add more refinement options, only display a few (3-6) and
-//   randomly select or allow thme to refresh options
 export function IdeaRefinement() {
   const { idea, setIdea } = useCreateProjectStore();
   const [selectedRefinements, setSelectedRefinements] = useState<string[]>([]);
   const [customFeedback, setCustomFeedback] = useState("");
+  const [displayedOptions, setDisplayedOptions] = useState<
+    typeof refinementOptions
+  >([]);
+
+  const getRandomOptions = useCallback(() => {
+    const shuffled = shuffleArray(refinementOptions);
+    return shuffled.slice(0, 4);
+  }, []);
+
+  useEffect(() => {
+    setDisplayedOptions(getRandomOptions());
+  }, [getRandomOptions]);
+
+  const refreshOptions = () => {
+    const newOptions = getRandomOptions();
+    setDisplayedOptions(newOptions);
+    setSelectedRefinements((prev) =>
+      prev.filter((item) => newOptions.some((option) => option.value === item)),
+    );
+  };
 
   const toggleRefinement = (value: string) => {
     setSelectedRefinements((prev) =>
@@ -42,18 +48,14 @@ export function IdeaRefinement() {
     if (selectedRefinements.length === 0 && !customFeedback) return;
     setIdea(null);
 
-    // Combine refinements and feedback into single prompt
     const refinePrompt = [...selectedRefinements, customFeedback]
       .filter(Boolean)
       .join(". ");
 
-    // Create request body
     const json = {
       idea,
       refinePrompt,
     };
-
-    console.log("Refining idea with:", json);
 
     try {
       const refinedIdea = await ky
@@ -68,7 +70,7 @@ export function IdeaRefinement() {
   };
 
   return (
-    <div className="max-w-full lg:w-full overflow-x-hidden mx-auto mt-6">
+    <div className="max-w-full lg:w-full mx-auto mt-6">
       <motion.h1
         className="text-4xl lg:text-5xl mb-6 text-center"
         initial={{ scale: 0.9 }}
@@ -78,7 +80,17 @@ export function IdeaRefinement() {
         refine your idea
       </motion.h1>
       <div className="grid grid-cols-2 gap-2 mb-4">
-        {refinementOptions.map((option) => {
+        <Button
+          onClick={refreshOptions}
+          variant="ghost"
+          size="sm"
+          className="col-span-2 w-fit justify-self-center flex items-center justify-center gap-2"
+          aria-label="Refresh options"
+        >
+          <RefreshCw className="h-4 w-4" />
+          {/* <span>Refresh options</span> */}
+        </Button>
+        {displayedOptions.map((option) => {
           const isSelected = selectedRefinements.includes(option.value);
           return (
             <Button
