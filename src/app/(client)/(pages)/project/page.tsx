@@ -8,9 +8,9 @@ import {
   AlertDescription,
 } from "@/app/(client)/components/ui/alert";
 import dynamic from "next/dynamic";
-import ProjectsGrid from "./ProjectsGrid";
 import { searchProjects } from "@/app/(server)/db/query/project";
 import { CATEGORIES } from "@/lib/constants/categories";
+import { ProjectCard } from "../../components/cards/ProjectCard";
 
 // Dynamically import client side SearchInput component
 const SearchInput = dynamic(
@@ -59,7 +59,11 @@ export default async function ProjectsPage({
       )}
 
       <Suspense fallback={<ProjectsGridSkeleton />}>
-        <ProjectsGrid projects={projects} />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {projects.map((project, idx) => (
+            <ProjectCard key={idx} project={project} />
+          ))}
+        </div>
       </Suspense>
     </div>
   );
