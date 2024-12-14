@@ -14,13 +14,12 @@ export default function DashboardContent({
   user,
   projects,
 }: DashboardContentProps) {
-  console.log({ user });
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex items-center mb-8">
         <GitHubAvatar className="w-16 h-16 mr-4" />
         <h1 className="text-3xl font-bold">
-          Hey there, {user?.name || "User"}!
+          Hey there, {user?.name?.split(" ")[0] || user.name || "User"}!
         </h1>
       </div>
 
