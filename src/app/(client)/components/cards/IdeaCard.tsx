@@ -11,6 +11,7 @@ import { cn } from "@/app/(client)/components/ui/utils";
 import ky from "ky";
 import { ProgrammingCodeIdeaIcon } from "../landing/Icons";
 import { useCreateProjectStore } from "../../stores/useCreateProjectStore";
+import featureFlags from "@/lib/featureFlags";
 
 type IdeaCardProps = {
   idea: Idea | NewIdea;
@@ -83,7 +84,7 @@ export function IdeaCard({
           >
             Use this idea
           </ButtonWithLoading>
-          {showRefineButton && (
+          {featureFlags.refineIdea && showRefineButton && (
             <Button
               className="flex-1 min-w-[140px]"
               variant="secondary"
