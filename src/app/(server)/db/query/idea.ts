@@ -154,11 +154,17 @@ async function createIdeaAndMarkAsSeen(
       });
     }
 
-    // Create the user-idea view record
-    await tx.insert(userIdeaViews).values({
-      user_id: userId,
-      idea_id: newIdea.id,
-    });
+    // Create or update the user-idea view record
+    await tx
+      .insert(userIdeaViews)
+      .values({
+        user_id: userId,
+        idea_id: newIdea.id,
+      })
+      .onConflictDoUpdate({
+        target: [userIdeaViews.user_id, userIdeaViews.idea_id],
+        set: { viewed_at: new Date() },
+      });
 
     return newIdea;
   });

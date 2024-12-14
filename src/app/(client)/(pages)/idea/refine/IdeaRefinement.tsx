@@ -31,9 +31,7 @@ export function IdeaRefinement() {
   const refreshOptions = () => {
     const newOptions = getRandomOptions();
     setDisplayedOptions(newOptions);
-    setSelectedRefinements((prev) =>
-      prev.filter((item) => newOptions.some((option) => option.value === item)),
-    );
+    setSelectedRefinements([]);
   };
 
   const toggleRefinement = (value: string) => {
@@ -87,7 +85,7 @@ export function IdeaRefinement() {
           className="col-span-2 w-fit justify-self-center flex items-center justify-center gap-2"
           aria-label="Refresh options"
         >
-          <RefreshCw className="h-4 w-4" />
+          <RefreshCw className="h-4 w-4 hover:animate-spin" />
           {/* <span>Refresh options</span> */}
         </Button>
         {displayedOptions.map((option) => {
