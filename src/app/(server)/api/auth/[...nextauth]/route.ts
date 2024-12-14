@@ -1,19 +1,17 @@
-import NextAuth, { NextAuthOptions, DefaultSession } from "next-auth";
+import NextAuth, { getServerSession, NextAuthOptions } from "next-auth";
 import GithubProvider from "next-auth/providers/github";
 import { getUser } from "@/app/(server)/integration/github/user";
 import { createUserIfNotExist } from "@/app/(server)/db/query/user";
 import { sendWelcomeEmail } from "@/app/(server)/integration/email/welcome";
+import { UserSession } from "@/types/auth";
 
 declare module "next-auth" {
   interface Session {
-    user: {
-      id: string;
-      username: string;
-    } & DefaultSession["user"];
+    user: UserSession["user"];
   }
 }
 
-const authOptions: NextAuthOptions = {
+export const nextAuthOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
   },
@@ -30,11 +28,13 @@ const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, account }) {
+    async jwt({ token, account, user }) {
       if (account) {
+        console.log({ token, account });
         // This only runs on initial sign in
         token.sub = account.providerAccountId;
         token.accessToken = account.access_token;
+        token.id = user?.id;
 
         // Fetch GitHub username
         const { login: username } = await getUser(token.accessToken as string);
@@ -64,5 +64,5 @@ const authOptions: NextAuthOptions = {
   },
 };
 
-const handler = NextAuth(authOptions);
+const handler = NextAuth(nextAuthOptions);
 export { handler as GET, handler as POST };

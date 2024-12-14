@@ -1,23 +1,26 @@
 "use client";
 
-import { useSession } from "next-auth/react";
 import GitHubAvatar from "@/app/(client)/components/github/Avatar";
 import { ProjectCard } from "@/app/(client)/components/cards/ProjectCard";
 import { Project } from "@/types/project";
+import { UserSession } from "@/types/auth";
 
 interface DashboardContentProps {
+  user: UserSession["user"];
   projects: Project[];
 }
 
-export default function DashboardContent({ projects }: DashboardContentProps) {
-  const { data: session } = useSession();
-
+export default function DashboardContent({
+  user,
+  projects,
+}: DashboardContentProps) {
+  console.log({ user });
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex items-center mb-8">
         <GitHubAvatar className="w-16 h-16 mr-4" />
         <h1 className="text-3xl font-bold">
-          Welcome, {session?.user?.username || "User"}!
+          Hey there, {user?.name || "User"}!
         </h1>
       </div>
 
