@@ -21,15 +21,8 @@ export async function GET(req: NextRequest) {
       return NextResponse.json(mockIdea);
     }
 
-    // Parse request parameters
     let topic = req.nextUrl.searchParams.get("topic");
-
-    // Get auth info
-    console.time("auth-check");
     const { userId } = await getAuthInfo(req);
-    console.timeEnd("auth-check");
-
-    console.log({ userId });
     if (!userId) {
       // User not logged in, fetch a random existing idea from DB
       console.time("get-random-idea");
@@ -39,39 +32,32 @@ export async function GET(req: NextRequest) {
       return NextResponse.json(idea);
     }
 
-    // Check for unseen ideas
+    // Check for unseen existing idea
     console.time("get-unseen-idea");
     let idea = await getUnseenIdeaWithTopic(userId, topic);
     console.timeEnd("get-unseen-idea");
-    console.log({ idea });
-
-    if (!idea) {
-      // Select random topic if none provided
-      console.time("topic-selection");
-      if (!topic) {
-        topic = selectRandom(CATEGORIES);
-      }
-      console.timeEnd("topic-selection");
-      // Get recent ideas for context
-      console.time("get-recent-ideas");
-      const recentIdeas = await getLastSeenIdeasForUserAndTopic(
-        userId,
-        topic,
-        6,
-      );
-      console.timeEnd("get-recent-ideas");
-      // Generate new idea
-      console.time("generate-idea");
-      const generatedIdea = await generateIdea(topic, recentIdeas);
-      console.timeEnd("generate-idea");
-      // Save to DB and mark as seen
-      console.time("save-idea");
-      idea = await createIdeaAndMarkAsSeen(generatedIdea, userId);
-      console.timeEnd("save-idea");
+    if (idea) {
+      console.timeEnd("total-request");
+      return NextResponse.json(idea);
     }
 
+    // Otherwise, generate a new idea
+    if (!topic) {
+      topic = selectRandom(CATEGORIES);
+    }
+
+    // Get recent ideas for context
+    console.time("get-recent-ideas");
+    const recentIdeas = await getLastSeenIdeasForUserAndTopic(userId, topic, 6);
+    console.timeEnd("get-recent-ideas");
+
+    // Generate new idea
+    console.time("generate-idea");
+    const newIdea = await generateIdea(topic, recentIdeas);
+    console.timeEnd("generate-idea");
+
     console.timeEnd("total-request");
-    return NextResponse.json(idea);
+    return NextResponse.json(newIdea);
   } catch (e: any) {
     console.timeEnd("total-request");
     console.error("Error fetching idea:", e);

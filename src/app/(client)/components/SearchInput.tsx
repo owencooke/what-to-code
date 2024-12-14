@@ -95,7 +95,7 @@ export default function SearchInput({
         <Input
           type="text"
           placeholder={placeholder}
-          className="pl-10 pr-20 w-full"
+          className="pl-10 pr-20 w-full bg-card/75"
           onChange={(e) => handleSearch(e.target.value)}
           defaultValue={initialSearchQuery}
         />

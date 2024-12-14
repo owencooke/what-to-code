@@ -10,10 +10,13 @@ import { useRouter } from "next/navigation";
 import { cn } from "@/app/(client)/components/ui/utils";
 import ky from "ky";
 import { ProgrammingCodeIdeaIcon } from "../landing/Icons";
+import { useCreateProjectStore } from "../../stores/useCreateProjectStore";
+import featureFlags from "@/lib/featureFlags";
 
 type IdeaCardProps = {
   idea: Idea | NewIdea;
   showInterestButton?: boolean;
+  showRefineButton?: boolean;
   bare?: boolean;
 };
 
@@ -21,8 +24,10 @@ export function IdeaCard({
   idea,
   showInterestButton = false,
   bare = false,
+  showRefineButton = true,
 }: IdeaCardProps) {
   const router = useRouter();
+  const { setIdea } = useCreateProjectStore();
 
   const handleExpandClick = async () => {
     if ("id" in idea) {
@@ -38,6 +43,11 @@ export function IdeaCard({
         console.error("Failed to create new idea:", error);
       }
     }
+  };
+
+  const handleRefineClick = async () => {
+    setIdea(idea);
+    router.push("/idea/refine");
   };
 
   return (
@@ -61,11 +71,28 @@ export function IdeaCard({
         </ul>
       </CardContent>
       {showInterestButton && (
-        <CardFooter className={cn("flex justify-center", bare && "p-0 mt-4")}>
+        <CardFooter
+          className={cn(
+            "flex justify-center gap-4 md:gap-8 md:px-8",
+            bare && "p-0 mt-4",
+          )}
+        >
           <ButtonWithLoading
+            className="flex-1 min-w-[140px]"
             loadingText="Creating your idea..."
             onClick={handleExpandClick}
-          >{`Expand this idea`}</ButtonWithLoading>
+          >
+            Use this idea
+          </ButtonWithLoading>
+          {featureFlags.refineIdea && showRefineButton && (
+            <Button
+              className="flex-1 min-w-[140px]"
+              variant="secondary"
+              onClick={handleRefineClick}
+            >
+              Refine it first
+            </Button>
+          )}
         </CardFooter>
       )}
     </IdeaBaseCard>

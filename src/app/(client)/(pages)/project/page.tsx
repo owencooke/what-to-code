@@ -41,8 +41,9 @@ export default async function ProjectsPage({
         Explore Projects
       </h1>
 
-      <div className="mb-8">
+      <div className="mb-8 flex justify-center">
         <SearchInput
+          className="max-w-3xl w-full"
           route="project"
           tags={CATEGORIES}
           initialTags={tags}

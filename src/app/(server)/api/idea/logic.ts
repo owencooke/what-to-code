@@ -4,6 +4,17 @@ import { IDEA_PROMPT, FEATURES_PROMPT, FRAMEWORK_PROMPT } from "./prompts";
 import { generateZodSchemaFromPrompt } from "@/app/(server)/integration/llm/utils";
 import { z } from "zod";
 
+export const IdeaOutputSchema = IdeaSchema.pick({
+  title: true,
+}).extend({
+  description: z
+    .string()
+    .describe("Short, but catchy selling point of the software project"),
+  features: z
+    .array(FeatureSchema.pick({ title: true }))
+    .describe("Key aspects of the software project"),
+});
+
 // Generate Title and Description of Idea
 export const generateIdea = async (
   topic: string,
@@ -27,19 +38,7 @@ export const generateIdea = async (
     features, such as: ${recentIdeasDetails}`
   }`;
 
-  const outputSchema = IdeaSchema.pick({
-    title: true,
-  }).extend({
-    description: z
-      .string()
-      .max(200)
-      .describe("Catchy selling point of the software project"),
-    features: z
-      .array(FeatureSchema.pick({ title: true }))
-      .describe("Key aspects of the software project"),
-  });
-
-  return generateZodSchemaFromPrompt(outputSchema, prompt, {
+  return generateZodSchemaFromPrompt(IdeaOutputSchema, prompt, {
     topic,
   });
 };

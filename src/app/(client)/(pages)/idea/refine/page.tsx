@@ -1,23 +1,16 @@
 "use client";
 
-import { useState } from "react";
 import { motion } from "framer-motion";
-import { IdeaForm } from "./form";
-import { NewIdea, Idea } from "@/types/idea";
 import {
   EmptyIdeaCard,
   IdeaCard,
   IdeaSkeletonCard,
 } from "@/app/(client)/components/cards/IdeaCard";
+import { IdeaRefinement } from "../refine/IdeaRefinement";
+import { useCreateProjectStore } from "@/app/(client)/stores/useCreateProjectStore";
 
 export default function IdeaPage() {
-  const [idea, setIdea] = useState<Idea | NewIdea>();
-  const [isIdeaLoading, setIsIdeaLoading] = useState(false);
-
-  const handleNewIdea = (newIdea: Idea | NewIdea) => {
-    setIdea(newIdea);
-    setIsIdeaLoading(false);
-  };
+  const { idea } = useCreateProjectStore();
 
   return (
     <motion.div
@@ -32,20 +25,7 @@ export default function IdeaPage() {
         animate={{ y: 0 }}
         transition={{ delay: 0.2, duration: 0.5 }}
       >
-        <motion.h1
-          className="text-5xl lg:text-6xl mb-6 text-center"
-          initial={{ scale: 0.9 }}
-          animate={{ scale: 1 }}
-          transition={{ delay: 0.4, duration: 0.5 }}
-        >
-          hmm, what to code?
-        </motion.h1>
-        <IdeaForm
-          onClick={() => {
-            setIsIdeaLoading(true);
-          }}
-          onSubmit={handleNewIdea}
-        />
+        <IdeaRefinement />
       </motion.div>
       <motion.div
         initial={{ opacity: 0, x: 20 }}
@@ -53,12 +33,14 @@ export default function IdeaPage() {
         transition={{ delay: 0.6, duration: 0.5 }}
         className="w-full flex justify-center flex-col items-center"
       >
-        {isIdeaLoading ? (
-          <IdeaSkeletonCard />
-        ) : idea ? (
-          <IdeaCard idea={idea} showInterestButton></IdeaCard>
+        {idea ? (
+          <IdeaCard
+            idea={idea}
+            showInterestButton
+            showRefineButton={false}
+          ></IdeaCard>
         ) : (
-          <EmptyIdeaCard />
+          <IdeaSkeletonCard />
         )}
       </motion.div>
     </motion.div>

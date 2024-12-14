@@ -88,6 +88,7 @@ export default function Home() {
 
   const handleSelectFramework = (framework: Framework) => {
     form.setValue("framework", framework);
+    form.resetField("starterRepo");
   };
 
   const handleUpdateFramework = (updatedFramework: Framework) => {
@@ -244,11 +245,13 @@ export default function Home() {
                 )}
               />
               <Modal
-                title="Create project?"
-                description="
-                    This will create a new GitHub repository
-                    using code from the kickstarter template, if selected.
-                    GitHub issues will be used to track the features to be developed."
+                title="Are you sure you want to create this project?"
+                description={`
+                    This will create a new GitHub repository${
+                      form.getValues().starterRepo
+                        ? " using code from the kickstarter template"
+                        : ""
+                    }. GitHub issues will be used to track the features to be developed.`}
                 renderTrigger={() => (
                   <Button type="button" disabled={!session}>
                     create project

@@ -117,7 +117,7 @@ export function IdeaForm({ onSubmit, onClick }: IdeaFormProps) {
                   label={null}
                   placeholder="start brainstorming here..."
                   maxLength={50}
-                  className="!w-[92vw] sm:w-full max-w-xl"
+                  className="!w-[92vw] sm:w-full max-w-xl bg-card/75"
                 />
                 <Carousel
                   className="w-[50vw] max-w-xl"

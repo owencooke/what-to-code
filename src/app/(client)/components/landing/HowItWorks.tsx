@@ -105,7 +105,7 @@ export const HowItWorks = () => {
       >
         {features.map(({ icon, title, description }: FeatureProps) => (
           <motion.div key={title} variants={cardAnimation}>
-            <Card className="bg-muted/50">
+            <Card>
               <CardHeader>
                 <CardTitle className="grid gap-4 place-items-center">
                   {icon}
