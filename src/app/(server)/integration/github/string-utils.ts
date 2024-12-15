@@ -11,8 +11,12 @@ const extractDetailsFromRepoUrl = (repoUrl: string) => {
 const getRepoFromProjectTitle = (title: string) =>
   title.toLowerCase().replace(/\s/g, "-");
 
+const getUrlFromOwnerAndTitle = (owner: string, title: string) =>
+  `https://github.com/${owner}/${getRepoFromProjectTitle(title)}`;
+
 export {
   getAvatarUrlForUser,
   extractDetailsFromRepoUrl,
   getRepoFromProjectTitle,
+  getUrlFromOwnerAndTitle,
 };

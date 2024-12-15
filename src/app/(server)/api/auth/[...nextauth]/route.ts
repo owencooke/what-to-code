@@ -59,6 +59,7 @@ export const nextAuthOptions: NextAuthOptions = {
       // Pass relevant token data to session
       session.user.username = token.username as string;
       session.user.id = token.sub as string;
+      session.user.accessToken = token.accessToken as string;
       return session;
     },
   },
