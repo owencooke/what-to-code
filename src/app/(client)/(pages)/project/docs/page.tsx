@@ -1,33 +1,87 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Button } from "@/app/(client)/components/ui/button";
+import { Button, ButtonWithLoading } from "@/app/(client)/components/ui/button";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from "@/app/(client)/components/ui/card";
-import { Mic, Upload, Loader2 } from "lucide-react";
+import { Mic, Upload } from "lucide-react";
 import Image from "next/image";
 import { fileTypes } from "./fileTypes";
+import { Textarea } from "@/app/(client)/components/ui/textarea";
 
 export default function DocumentationGenerator() {
   const [isRecording, setIsRecording] = useState(false);
   const [description, setDescription] = useState("");
+  const [interimTranscript, setInterimTranscript] = useState("");
   const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
   const [photos, setPhotos] = useState<string[]>([]);
-  const [isGenerating, setIsGenerating] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
 
   useEffect(() => {
+    const setupSpeechRecognition = () => {
+      try {
+        const SpeechRecognition =
+          window.SpeechRecognition || window.webkitSpeechRecognition;
+        const recognition = new SpeechRecognition();
+        recognition.continuous = true;
+        recognition.interimResults = true;
+
+        recognition.onresult = (event) => {
+          let interimTranscript = "";
+          let finalTranscript = "";
+
+          for (let i = event.resultIndex; i < event.results.length; ++i) {
+            if (event.results[i].isFinal) {
+              finalTranscript += event.results[i][0].transcript;
+            } else {
+              interimTranscript += event.results[i][0].transcript;
+            }
+          }
+
+          if (finalTranscript) {
+            setDescription((prev) => prev + finalTranscript + " ");
+            setInterimTranscript("");
+          } else {
+            setInterimTranscript(interimTranscript);
+          }
+        };
+
+        recognition.onend = () => {
+          setIsRecording(false);
+        };
+
+        recognitionRef.current = recognition;
+      } catch (error) {
+        console.error("Error setting up speech recognition:", error);
+      }
+    };
+
+    setupSpeechRecognition();
+
     return () => {
       if (recognitionRef.current) {
         recognitionRef.current.stop();
       }
     };
   }, []);
+
+  const toggleRecording = async () => {
+    if (isRecording) {
+      recognitionRef.current?.stop();
+    } else {
+      try {
+        await recognitionRef.current?.start();
+        setIsRecording(true);
+      } catch (error) {
+        console.error("Error starting speech recognition:", error);
+      }
+    }
+  };
 
   const handlePhotoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -39,44 +93,8 @@ export default function DocumentationGenerator() {
     }
   };
 
-  const toggleRecording = async () => {
-    if (isRecording) {
-      recognitionRef.current?.stop();
-    } else {
-      try {
-        const SpeechRecognition =
-          window.SpeechRecognition || window.webkitSpeechRecognition;
-        const recognition = new SpeechRecognition();
-        recognition.continuous = true;
-        recognition.interimResults = true;
-
-        recognition.onresult = (event) => {
-          const transcript = Array.from(event.results)
-            .map((result) => result[0])
-            .map((result) => result.transcript)
-            .join("");
-          setDescription((prev) => prev + " " + transcript);
-        };
-
-        recognition.onend = () => {
-          setIsRecording(false);
-        };
-
-        recognition.start();
-        recognitionRef.current = recognition;
-        setIsRecording(true);
-      } catch (error) {
-        console.error("Error accessing microphone:", error);
-      }
-    }
-  };
-
   const handleGenerate = async () => {
-    setIsGenerating(true);
-    // Simulate file generation
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    setIsGenerating(false);
-    // Here you would implement the actual file generation logic
+    // TODO: Implement generation logic
   };
 
   return (
@@ -141,12 +159,19 @@ export default function DocumentationGenerator() {
                 {isRecording ? "Stop Recording" : "Start Recording"}
               </Button>
             </div>
-            <textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Describe your project: what you did, how it went, key features, challenges overcome..."
-              className="w-full min-h-[150px] p-3 rounded-md border border-input bg-background"
-            />
+            <div className="relative">
+              <Textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Describe your project: what you did, how it went, key features, challenges overcome..."
+                className="w-full min-h-[150px] p-3 rounded-md border border-input"
+              />
+              {interimTranscript && (
+                <div className="absolute bottom-0 left-0 right-0 p-2 bg-gray-100 text-gray-600 rounded-b-md">
+                  {interimTranscript}
+                </div>
+              )}
+            </div>
           </div>
 
           {/* File Selection */}
@@ -182,20 +207,14 @@ export default function DocumentationGenerator() {
           </div>
 
           {/* Generate Button */}
-          <Button
+          <ButtonWithLoading
             className="w-full"
+            loadingText="Crafting Your documentation..."
             onClick={handleGenerate}
-            disabled={isGenerating || selectedFiles.length === 0}
+            disabled={selectedFiles.length === 0}
           >
-            {isGenerating ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Crafting Your Documentation...
-              </>
-            ) : (
-              "Generate Documentation"
-            )}
-          </Button>
+            Generate Documentation
+          </ButtonWithLoading>
         </CardContent>
       </Card>
     </div>
