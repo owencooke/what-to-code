@@ -19,17 +19,17 @@ export default async function Page({ params }: { params: { id: string } }) {
   const repoInfo = await getGitHubRepoDetails(repoUrl).catch(() => null);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4">
-      <div className="md:col-span-2">
+    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4">
+      <div className="md:col-span-2 xl:col-span-3">
         <ProjectTitleWidget project={project} />
       </div>
-      <div>
+      <div className="md:col-span-2 xl:col-span-1">
         <GitHubWidget repoInfo={repoInfo} />
       </div>
       <div>
         <ToolsWidget framework={project.framework} />
       </div>
-      <div className="md:col-span-2">
+      <div className="md:col-span-3">
         <FeaturesWidget features={project.features} />
       </div>
     </div>

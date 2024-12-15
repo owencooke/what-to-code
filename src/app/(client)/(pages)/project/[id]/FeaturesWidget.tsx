@@ -23,7 +23,7 @@ export default function FeaturesWidget({
 
   return (
     <Card className="h-full">
-      <CardHeader>
+      <CardHeader className="pb-1">
         <h2 className="text-xl font-semibold">Product Features</h2>
       </CardHeader>
       <CardContent>
@@ -44,10 +44,10 @@ export default function FeaturesWidget({
                 </span>
               </AccordionTrigger>
               <AccordionContent>
-                <span className="italic font-mono font-light">
+                <span className=" font-mono font-light">
                   {feature.userStory}
                 </span>
-                <ul className="list-disc pl-4 text-sm">
+                <ul className="list-disc pl-4 text-xs font-light text-foreground/95">
                   {feature.acceptanceCriteria.map((criteria, idx) => (
                     <li key={idx}>{criteria}</li>
                   ))}
