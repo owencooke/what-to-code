@@ -17,7 +17,7 @@ import {
   SheetTrigger,
 } from "@/app/(client)/components/ui/sheet";
 import { Button, buttonVariants } from "@/app/(client)/components/ui/button";
-import { Menu } from "lucide-react";
+import { Menu, SquareUserRound } from "lucide-react";
 import { useMemo } from "react";
 import {
   DropdownMenu,
@@ -34,6 +34,7 @@ import GitHubAvatar from "@/app/(client)/components/github/Avatar";
 import React from "react";
 import Logo from "./Logo";
 import { ModeToggle } from "../ThemeToggle";
+import { useRouter } from "next/navigation";
 
 interface RouteProps {
   href: string;
@@ -79,6 +80,7 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const { data: session } = useSession();
   const isSignedIn = useMemo(() => !!session, [session]);
+  const router = useRouter();
 
   const handleAuthAction = () => {
     if (session) {
@@ -153,11 +155,20 @@ export default function Navbar() {
       }
     });
 
+  const handleDashboardClick = () => {
+    router.push("/dashboard");
+    setIsOpen(false);
+  };
+
   const authMenuItem = (
     <MenuItem
       logo={isSignedIn ? <LogOut /> : <LogIn />}
       text={isSignedIn ? "Sign Out" : "Sign In"}
     />
+  );
+
+  const dashboardMenuItem = (
+    <MenuItem logo={<SquareUserRound />} text="Dashboard" />
   );
 
   return (
@@ -192,12 +203,25 @@ export default function Navbar() {
                 <div className="absolute bottom-8 left-4 right-4">
                   <div className="flex flex-col gap-4">
                     {isSignedIn && (
-                      <div className="flex gap-2 items-center justify-center">
-                        <GitHubAvatar />
-                        <span className="font-medium">{greetUser()}</span>
-                      </div>
+                      <>
+                        <div className="flex gap-2 items-center justify-center">
+                          <GitHubAvatar />
+                          <span className="font-medium">{greetUser()}</span>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={handleDashboardClick}
+                        >
+                          {dashboardMenuItem}
+                        </Button>
+                      </>
                     )}
-                    <Button variant="ghost" onClick={handleAuthAction}>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleAuthAction}
+                    >
                       {authMenuItem}
                     </Button>
                   </div>
@@ -221,6 +245,10 @@ export default function Navbar() {
                 {isSignedIn && (
                   <>
                     <DropdownMenuLabel>{greetUser()}</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={handleDashboardClick}>
+                      {dashboardMenuItem}
+                    </DropdownMenuItem>
                     <DropdownMenuSeparator />
                   </>
                 )}

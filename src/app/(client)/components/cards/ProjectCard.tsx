@@ -7,7 +7,12 @@ import Repo from "@/app/(client)/components/github/Repo";
 import { getRepoFromProjectTitle } from "@/app/(server)/integration/github/string-utils";
 import { useRouter } from "next/navigation";
 
-export function ProjectCard({ project }: { project: Project }) {
+interface ProjectCardProps {
+  project: Project;
+  showRepo?: boolean;
+}
+
+export function ProjectCard({ project, showRepo = false }: ProjectCardProps) {
   const router = useRouter();
 
   return (
@@ -26,11 +31,13 @@ export function ProjectCard({ project }: { project: Project }) {
           {project.description}
         </span>
         <div className="flex flex-col-reverse gap-4 md:flex-row items-center justify-start md:justify-between text-xs text-muted-foreground">
-          <Repo
-            className="w-fit hidden md:block"
-            repoName={getRepoFromProjectTitle(project.title)}
-            username={project.github_user}
-          />
+          {showRepo && (
+            <Repo
+              className="w-fit hidden md:block"
+              repoName={getRepoFromProjectTitle(project.title)}
+              username={project.github_user}
+            />
+          )}
           <div className="flex md:justify-end flex-wrap gap-1">
             {project.framework.tools.slice(0, 3).map((tech, idx) => (
               <Badge key={idx} variant="secondary">

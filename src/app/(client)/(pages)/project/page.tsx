@@ -61,7 +61,7 @@ export default async function ProjectsPage({
       <Suspense fallback={<ProjectsGridSkeleton />}>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {projects.map((project, idx) => (
-            <ProjectCard key={idx} project={project} />
+            <ProjectCard key={idx} project={project} showRepo />
           ))}
         </div>
       </Suspense>
