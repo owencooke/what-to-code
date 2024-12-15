@@ -44,7 +44,7 @@ export default function DocumentationGenerator() {
           }
 
           if (finalTranscript) {
-            setDescription((prev) => prev + finalTranscript + " ");
+            setDescription((prev) => prev + finalTranscript);
             setInterimTranscript("");
           } else {
             setInterimTranscript(interimTranscript);
@@ -150,7 +150,11 @@ export default function DocumentationGenerator() {
             <div className="flex gap-4">
               <Button
                 variant="outline"
-                className={isRecording ? "bg-red-100 hover:bg-red-200" : ""}
+                className={
+                  isRecording
+                    ? "bg-red-100 hover:bg-red-200 dark:text-background"
+                    : ""
+                }
                 onClick={toggleRecording}
               >
                 <Mic
@@ -161,16 +165,11 @@ export default function DocumentationGenerator() {
             </div>
             <div className="relative">
               <Textarea
-                value={description}
+                value={description + interimTranscript}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Describe your project: what you did, how it went, key features, challenges overcome..."
                 className="w-full min-h-[150px] p-3 rounded-md border border-input"
               />
-              {interimTranscript && (
-                <div className="absolute bottom-0 left-0 right-0 p-2 bg-gray-100 text-gray-600 rounded-b-md">
-                  {interimTranscript}
-                </div>
-              )}
             </div>
           </div>
 
