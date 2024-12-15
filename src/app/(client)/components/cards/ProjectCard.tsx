@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/app/(client)/components/ui/card";
 import Repo from "@/app/(client)/components/github/Repo";
 import { getRepoFromProjectTitle } from "@/app/(server)/integration/github/string-utils";
 import { useRouter } from "next/navigation";
+import { TechIcon } from "../TechIcon";
 
 interface ProjectCardProps {
   project: Project;
@@ -41,6 +42,7 @@ export function ProjectCard({ project, showRepo = false }: ProjectCardProps) {
           <div className="flex md:justify-end flex-wrap gap-1">
             {project.framework.tools.slice(0, 3).map((tech, idx) => (
               <Badge key={idx} variant="secondary">
+                <TechIcon className="mr-1" tool={tech} />
                 {tech}
               </Badge>
             ))}

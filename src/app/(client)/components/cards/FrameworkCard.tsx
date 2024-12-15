@@ -5,6 +5,7 @@ import { TOOLS } from "@/lib/constants/tools";
 import { useForm } from "react-hook-form";
 import FormInput from "@/app/(client)/components/FormInput";
 import { useEffect } from "react";
+import { TechIcon } from "@/app/(client)/components/TechIcon";
 
 type FrameworkCardProps = {
   className?: string;
@@ -56,9 +57,7 @@ export default function FrameworkCard({
               return (
                 <span key={`tool-${j}`} className="font-semibold">
                   {punctuation ? word.slice(0, -punctuation.length) : word}
-                  <i
-                    className={`ml-2 devicon-${tool}-original ml-2 devicon-${tool}-plain colored`}
-                  ></i>
+                  <TechIcon className="ml-2" tool={tool} />
                   {punctuation + " "}
                 </span>
               );
