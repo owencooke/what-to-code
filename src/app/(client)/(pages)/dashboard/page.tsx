@@ -2,7 +2,7 @@ import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
 import DashboardContent from "./content";
 import { getProjectsByUserId } from "@/app/(server)/db/query/project";
-import { nextAuthOptions } from "@/app/(server)/api/auth/[...nextauth]/route";
+import { nextAuthOptions } from "@/app/(server)/integration/auth/config";
 
 export default async function DashboardPage() {
   const session = await getServerSession(nextAuthOptions);
