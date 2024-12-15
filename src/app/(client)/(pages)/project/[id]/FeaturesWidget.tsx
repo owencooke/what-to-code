@@ -24,7 +24,7 @@ export default function FeaturesWidget({
   return (
     <Card className="h-full">
       <CardHeader>
-        <h2 className="text-xl font-semibold">Features</h2>
+        <h2 className="text-xl font-semibold">Product Features</h2>
       </CardHeader>
       <CardContent>
         <Accordion type="single" collapsible>
@@ -39,10 +39,15 @@ export default function FeaturesWidget({
                   )
                 }
               >
-                {feature.title}
+                <span className="text-left text-base font-medium">
+                  {feature.title}
+                </span>
               </AccordionTrigger>
               <AccordionContent>
-                <ul className="list-disc pl-4">
+                <span className="italic font-mono font-light">
+                  {feature.userStory}
+                </span>
+                <ul className="list-disc pl-4 text-sm">
                   {feature.acceptanceCriteria.map((criteria, idx) => (
                     <li key={idx}>{criteria}</li>
                   ))}
