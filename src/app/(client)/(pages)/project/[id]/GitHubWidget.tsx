@@ -1,16 +1,20 @@
+"use client";
+
 import {
   Card,
   CardHeader,
   CardContent,
 } from "@/app/(client)/components/ui/card";
 import { GitHubRepo } from "@/types/github";
-import { GitBranchIcon, StarIcon, LockIcon } from "lucide-react";
+import { GitBranchIcon, StarIcon } from "lucide-react";
+import Repo from "@/app/(client)/components/github/Repo";
 
 export default function GitHubWidget({
   repoInfo,
 }: {
   repoInfo: GitHubRepo | null;
 }) {
+  console.log(repoInfo);
   return (
     <Card className="h-full">
       <CardHeader>
@@ -18,26 +22,26 @@ export default function GitHubWidget({
       </CardHeader>
       <CardContent>
         {repoInfo ? (
-          <>
-            <a
-              href={repoInfo.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-500 hover:underline"
-            >
-              {repoInfo.name}
-            </a>
-            <div className="flex items-center mt-2">
-              <StarIcon className="mr-1" />
-              <span>{repoInfo.stars}</span>
-              <GitBranchIcon className="ml-4 mr-1" />
-              <span>{repoInfo.forks}</span>
+          <div className="space-y-4">
+            <Repo
+              repoName={repoInfo.url.split("/")[4]}
+              username={repoInfo.url.split("/")[3]}
+              isClickable={true}
+            />
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center">
+                <StarIcon className="mr-1 h-4 w-4" />
+                <span>{repoInfo.stars}</span>
+              </div>
+              <div className="flex items-center">
+                <GitBranchIcon className="mr-1 h-4 w-4" />
+                <span>{repoInfo.forks}</span>
+              </div>
             </div>
-          </>
+          </div>
         ) : (
-          <div className="flex flex-col items-center text-muted-foreground">
-            <LockIcon className="mb-2 h-5 w-5" />
-            <p>Sign in to view repository details</p>
+          <div className="flex flex-col items-center space-y-4 text-muted-foreground">
+            <p>Repository not found</p>
           </div>
         )}
       </CardContent>

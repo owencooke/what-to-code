@@ -6,8 +6,6 @@ import ToolsWidget from "./ToolsWidget";
 import FeaturesWidget from "./FeaturesWidget";
 import { redirect } from "next/navigation";
 import { getUrlFromOwnerAndTitle } from "@/app/(server)/integration/github/string-utils";
-import { getServerSession } from "next-auth";
-import { nextAuthOptions } from "@/app/(server)/api/auth/[...nextauth]/route";
 
 export default async function Page({ params }: { params: { id: string } }) {
   // Get project details
@@ -17,17 +15,8 @@ export default async function Page({ params }: { params: { id: string } }) {
   }
 
   // Get GitHub repo info
-  const session = await getServerSession(nextAuthOptions);
   const repoUrl = getUrlFromOwnerAndTitle(project.github_user, project.title);
-  let repoInfo = null;
-  try {
-    repoInfo = await getGitHubRepoDetails(
-      repoUrl,
-      session?.user.accessToken as string,
-    );
-  } catch (error) {
-    console.error("Failed to fetch GitHub repo info", error);
-  }
+  const repoInfo = await getGitHubRepoDetails(repoUrl).catch(() => null);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4">

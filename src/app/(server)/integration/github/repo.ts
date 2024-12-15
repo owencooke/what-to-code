@@ -73,21 +73,14 @@ async function createRepoFromTemplate(
  * @returns {Promise<GitHubRepo>} - A promise that resolves to the GitHub repository details.
  * @throws {Error} - Throws an error if the fetch fails.
  */
-async function getGitHubRepoDetails(
-  url: string,
-  accessToken: string,
-): Promise<GitHubRepo> {
+async function getGitHubRepoDetails(url: string): Promise<GitHubRepo> {
   const urlParts = new URL(url);
   const [owner, repoName] = urlParts.pathname.split("/").slice(1, 3);
 
   try {
     // Fetch repo details from GitHub API
     const repo: any = await ky
-      .get(`https://api.github.com/repos/${owner}/${repoName}`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      })
+      .get(`https://api.github.com/repos/${owner}/${repoName}`)
       .json();
 
     // Return the GitHub repo info for matching template
@@ -103,7 +96,7 @@ async function getGitHubRepoDetails(
     };
   } catch (error) {
     console.error(`Error fetching GitHub data for ${url}:`, error);
-    throw new Error(`Failed to fetch GitHub data for ${url}`);
+    throw error;
   }
 }
 export { createRepoFromTemplate, getGitHubRepoDetails };
