@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { Button, ButtonWithLoading } from "@/app/(client)/components/ui/button";
 import {
   Card,
@@ -21,6 +21,7 @@ import {
 } from "@/app/(client)/components/ui/select";
 import { Project } from "@/types/project";
 import { Label } from "@/app/(client)/components/ui/label";
+import { useSpeechRecognition } from "@/app/(client)/hooks/useSpeechRecognition";
 
 interface DocumentationGeneratorProps {
   projects: Project[];
@@ -29,75 +30,14 @@ interface DocumentationGeneratorProps {
 export default function DocumentationGenerator({
   projects,
 }: DocumentationGeneratorProps) {
-  const [isRecording, setIsRecording] = useState(false);
   const [description, setDescription] = useState("");
-  const [interimTranscript, setInterimTranscript] = useState("");
   const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
   const [photos, setPhotos] = useState<string[]>([]);
   const [selectedProject, setSelectedProject] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const recognitionRef = useRef<SpeechRecognition | null>(null);
 
-  useEffect(() => {
-    const setupSpeechRecognition = () => {
-      try {
-        const SpeechRecognition =
-          window.SpeechRecognition || window.webkitSpeechRecognition;
-        const recognition = new SpeechRecognition();
-        recognition.continuous = true;
-        recognition.interimResults = true;
-
-        recognition.onresult = (event) => {
-          let interimTranscript = "";
-          let finalTranscript = "";
-
-          for (let i = event.resultIndex; i < event.results.length; ++i) {
-            if (event.results[i].isFinal) {
-              finalTranscript += event.results[i][0].transcript;
-            } else {
-              interimTranscript += event.results[i][0].transcript;
-            }
-          }
-
-          if (finalTranscript) {
-            setDescription((prev) => prev + finalTranscript);
-            setInterimTranscript("");
-          } else {
-            setInterimTranscript(interimTranscript);
-          }
-        };
-
-        recognition.onend = () => {
-          setIsRecording(false);
-        };
-
-        recognitionRef.current = recognition;
-      } catch (error) {
-        console.error("Error setting up speech recognition:", error);
-      }
-    };
-
-    setupSpeechRecognition();
-
-    return () => {
-      if (recognitionRef.current) {
-        recognitionRef.current.stop();
-      }
-    };
-  }, []);
-
-  const toggleRecording = async () => {
-    if (isRecording) {
-      recognitionRef.current?.stop();
-    } else {
-      try {
-        await recognitionRef.current?.start();
-        setIsRecording(true);
-      } catch (error) {
-        console.error("Error starting speech recognition:", error);
-      }
-    }
-  };
+  const { isRecording, transcript, interimTranscript, toggleRecording } =
+    useSpeechRecognition();
 
   const handlePhotoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -122,7 +62,7 @@ export default function DocumentationGenerator({
       <Card className="w-full max-w-5xl">
         <CardHeader>
           <CardTitle className="text-3xl font-bold text-center">
-            Ready to Demo?
+            Ready to Showcase your Project?
           </CardTitle>
           <p className="text-center text-muted-foreground !mt-6">
             Auto-generate READMEs, Devpost docs, and pitch decks for your
@@ -167,7 +107,7 @@ export default function DocumentationGenerator({
             </div>
             <div className="relative">
               <Textarea
-                value={description + interimTranscript}
+                value={description + transcript + interimTranscript}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="ex: what you did, how it went, key features, challenges overcome..."
                 className="w-full min-h-[150px] p-3 rounded-md border border-input"
