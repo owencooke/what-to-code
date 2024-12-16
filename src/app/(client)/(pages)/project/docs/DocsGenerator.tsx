@@ -22,6 +22,8 @@ import {
 import { Project } from "@/types/project";
 import { Label } from "@/app/(client)/components/ui/label";
 import { useSpeechRecognition } from "@/app/(client)/hooks/useSpeechRecognition";
+import { toast } from "@/app/(client)/components/ui/use-toast";
+import ky from "ky";
 
 interface DocumentationGeneratorProps {
   projects: Project[];
@@ -39,7 +41,7 @@ export default function DocumentationGenerator({
   const { isRecording, transcript, interimTranscript, toggleRecording } =
     useSpeechRecognition();
 
-  const handlePhotoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAddPhoto = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (files) {
       const newPhotos = Array.from(files).map((file) =>
@@ -53,8 +55,37 @@ export default function DocumentationGenerator({
     setPhotos((prev) => prev.filter((_, i) => i !== index));
   };
 
+  const uploadPhotos = async () => {
+    const formData = new FormData();
+    Array.from(fileInputRef.current?.files || []).forEach((file) => {
+      formData.append("files", file);
+    });
+
+    try {
+      await ky
+        .post(`/api/project/${selectedProject}/docs/images`, {
+          body: formData,
+        })
+        .json();
+      setPhotos([]);
+    } catch (error) {
+      console.error("Error uploading photos:", error);
+      toast({
+        title: "Error",
+        description: "Failed to upload photos. Please try again.",
+        variant: "destructive",
+      });
+      throw error;
+    }
+  };
+
   const handleGenerate = async () => {
-    // TODO: Implement generation logic
+    // First, upload any photos
+    if (photos.length > 0) {
+      await uploadPhotos();
+    }
+
+    // TODO: Implement the rest of the generation logic
   };
 
   return (
@@ -123,7 +154,7 @@ export default function DocumentationGenerator({
               className="hidden"
               accept="image/*"
               multiple
-              onChange={handlePhotoUpload}
+              onChange={handleAddPhoto}
             />
             <Button
               variant="outline"
@@ -146,7 +177,7 @@ export default function DocumentationGenerator({
                     <Button
                       variant="destructive"
                       size="icon"
-                      className="absolute top-2 right-2"
+                      className="absolute top-2 right-2 opacity-85"
                       onClick={() => handleRemovePhoto(index)}
                     >
                       <X className="h-4 w-4" />
