@@ -104,15 +104,43 @@ export default function DocumentationGenerator() {
           <CardTitle className="text-3xl font-bold text-center">
             Ready to Showcase your Project?
           </CardTitle>
-          <p className="text-center text-muted-foreground mt-2">
+          <p className="text-center text-muted-foreground !mt-6">
             Auto-generate READMEs, Devpost docs, and pitch decks for your
             project — tailored to impress judges, investors, your friends, and
             more! Focus on coding, while we craft your story.
           </p>
         </CardHeader>
         <CardContent className="space-y-8">
-          {/* Photo Upload Section */}
+          {/* Voice Input Section */}
           <div className="space-y-4">
+            <div className="flex gap-4">
+              <Button
+                variant="outline"
+                className={
+                  isRecording
+                    ? "bg-red-100 hover:bg-red-200 dark:text-background"
+                    : ""
+                }
+                onClick={toggleRecording}
+              >
+                <Mic
+                  className={`w-4 h-4 ${isRecording ? "text-red-500" : ""} mr-2`}
+                />
+                {isRecording ? "Stop Recording" : "Describe Your Project"}
+              </Button>
+            </div>
+            <div className="relative">
+              <Textarea
+                value={description + interimTranscript}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="ex: what you did, how it went, key features, challenges overcome..."
+                className="w-full min-h-[150px] p-3 rounded-md border border-input"
+              />
+            </div>
+          </div>
+
+          {/* Photo Upload Section */}
+          <div className="mb=4">
             <input
               type="file"
               ref={fileInputRef}
@@ -130,7 +158,7 @@ export default function DocumentationGenerator() {
               Add Photos
             </Button>
             {photos.length > 0 && (
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-3 gap-4 mt-4">
                 {photos.map((photo, index) => (
                   <div key={index} className="relative aspect-video">
                     <Image
@@ -145,37 +173,11 @@ export default function DocumentationGenerator() {
             )}
           </div>
 
-          {/* Voice Input Section */}
-          <div className="space-y-4">
-            <div className="flex gap-4">
-              <Button
-                variant="outline"
-                className={
-                  isRecording
-                    ? "bg-red-100 hover:bg-red-200 dark:text-background"
-                    : ""
-                }
-                onClick={toggleRecording}
-              >
-                <Mic
-                  className={`w-4 h-4 ${isRecording ? "text-red-500" : ""} mr-2`}
-                />
-                {isRecording ? "Stop Recording" : "Start Recording"}
-              </Button>
-            </div>
-            <div className="relative">
-              <Textarea
-                value={description + interimTranscript}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="Describe your project: what you did, how it went, key features, challenges overcome..."
-                className="w-full min-h-[150px] p-3 rounded-md border border-input"
-              />
-            </div>
-          </div>
-
           {/* File Selection */}
           <div className="space-y-4">
-            <h3 className="font-medium text-lg">Choose Your Documentation:</h3>
+            <h3 className="font-medium text-lg">
+              Which Docs Should Be Generated?
+            </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {fileTypes.map((file) => (
                 <Card
@@ -195,8 +197,8 @@ export default function DocumentationGenerator() {
                 >
                   <CardContent className="p-4 flex flex-col items-center text-center">
                     {file.icon}
-                    <h4 className="font-semibold mt-2">{file.label}</h4>
-                    <p className="text-sm text-muted-foreground mt-1">
+                    <h4 className="font-semibold my-2">{file.label}</h4>
+                    <p className="text-sm text-muted-foreground !mt-0">
                       {file.description}
                     </p>
                   </CardContent>

@@ -60,6 +60,10 @@ const routeList: RouteProps[] = [
         href: "/project",
         label: "Explore",
       },
+      {
+        href: "/project/docs",
+        label: "Generate Docs",
+      },
     ],
   },
 ];
