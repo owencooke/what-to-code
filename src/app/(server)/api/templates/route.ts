@@ -4,14 +4,12 @@ import { matchTemplates } from "@/app/(server)/db/query/templates";
 import { getGitHubRepoDetails } from "@/app/(server)/integration/github/repo";
 import { TemplateMatch } from "@/types/templates";
 import { GitHubRepo } from "@/types/github";
-import { getAuthInfo } from "@/app/(server)/integration/auth/user";
 
 export const runtime = "edge";
 const SIMILARITY_THRESHOLD = 0.4;
 
 export async function GET(req: NextRequest) {
   const techDescription = req.nextUrl.searchParams.get("techDescription");
-  const { accessToken } = await getAuthInfo(req);
 
   if (!techDescription) {
     return NextResponse.json(
@@ -20,14 +18,12 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  const query = techDescription as string;
-
   try {
     // Generate an embedding for the description
     const embeddings = new OpenAIEmbeddings({
       modelName: process.env.EMBEDDING_MODEL,
     });
-    const embedding = await embeddings.embedQuery(query);
+    const embedding = await embeddings.embedQuery(techDescription as string);
 
     // Use vector search to find the 3 most similar templates to the description
     let templateDocuments;
@@ -47,9 +43,7 @@ export async function GET(req: NextRequest) {
           (template: TemplateMatch) =>
             template.similarity >= SIMILARITY_THRESHOLD,
         )
-        .map((template: TemplateMatch) =>
-          getGitHubRepoDetails(template.url, accessToken),
-        ),
+        .map((template: TemplateMatch) => getGitHubRepoDetails(template.url)),
     );
 
     return NextResponse.json(repoTemplates);
