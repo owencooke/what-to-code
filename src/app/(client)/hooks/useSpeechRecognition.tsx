@@ -69,8 +69,8 @@ export function useSpeechRecognition() {
 
   return {
     isRecording,
-    transcript,
-    interimTranscript,
+    transcript: transcript + interimTranscript,
     toggleRecording,
+    setTranscript,
   };
 }

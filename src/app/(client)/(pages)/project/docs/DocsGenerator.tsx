@@ -32,14 +32,17 @@ interface DocumentationGeneratorProps {
 export default function DocumentationGenerator({
   projects,
 }: DocumentationGeneratorProps) {
-  const [description, setDescription] = useState("");
   const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
   const [photos, setPhotos] = useState<string[]>([]);
   const [selectedProject, setSelectedProject] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const { isRecording, transcript, interimTranscript, toggleRecording } =
-    useSpeechRecognition();
+  const {
+    isRecording,
+    transcript: description,
+    toggleRecording,
+    setTranscript: setDescription,
+  } = useSpeechRecognition();
 
   const handleAddPhoto = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -138,7 +141,7 @@ export default function DocumentationGenerator({
             </div>
             <div className="relative">
               <Textarea
-                value={description + transcript + interimTranscript}
+                value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="ex: what you did, how it went, key features, challenges overcome..."
                 className="w-full min-h-[150px] p-3 rounded-md border border-input"
@@ -227,7 +230,9 @@ export default function DocumentationGenerator({
             className="w-full"
             loadingText="Crafting Your documentation..."
             onClick={handleGenerate}
-            disabled={selectedFiles.length === 0 || !selectedProject}
+            disabled={
+              selectedFiles.length === 0 || !selectedProject || !description
+            }
           >
             Generate Documentation
           </ButtonWithLoading>
