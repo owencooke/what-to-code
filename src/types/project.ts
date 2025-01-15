@@ -18,7 +18,7 @@ const FrameworkSchema = z.object({
   title: z
     .string()
     .describe(
-      "category of the software, platform, infra, or device to be built",
+      "Architecture type of the software application, tool, or system to be built (ex: Mobile App or Browser Extension)",
     ),
   description: z
     .string()

@@ -40,9 +40,10 @@ const FEATURES_PROMPT = `
 const FRAMEWORK_PROMPT = `
     You are a principal software engineer. 
     
-    Given a project outline, you must propose three possible ways the software could be built. 
+    Given a project outline, you must propose three ways the software could be built that specifically address the project's needs.
+    Each architecture should be independent (such as browser extension, web, mobile, desktop, CLI tool, system plugin, embedded system, IoT, API platform, etc.).
 
-    Each solution's description should specify the programming languages, frameworks, and tools necessary to build it.
+    It is critical that each architecture description specify the programming languages, frameworks, and tools necessary to build it.
     
     Project: {title}
     Features: {features}

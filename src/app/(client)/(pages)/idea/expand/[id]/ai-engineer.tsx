@@ -17,7 +17,7 @@ import FrameworkCard from "@/app/(client)/components/cards/FrameworkCard";
 import { useCreateProjectStore } from "@/app/(client)/stores/useCreateProjectStore";
 
 export default function AIEngineer({ idea }: { idea: Idea }) {
-  const { frameworks, setFrameworks } = useCreateProjectStore();
+  const { features, frameworks, setFrameworks } = useCreateProjectStore();
   const [isGenerating, setIsGenerating] = useState(false);
 
   const handleGenerateFrameworks = async () => {
@@ -25,7 +25,7 @@ export default function AIEngineer({ idea }: { idea: Idea }) {
     setIsGenerating(true);
     try {
       const response = await ky.post(`/api/idea/expand/frameworks`, {
-        json: idea,
+        json: features.length > 0 ? { ...idea, features } : idea, // use more detailed features, if available
       });
       if (!response.ok) {
         throw new Error("Failed to generate frameworks");
