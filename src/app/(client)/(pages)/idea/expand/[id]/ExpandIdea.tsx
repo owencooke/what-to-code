@@ -97,10 +97,6 @@ export default function ExpandIdea({ idea }: ExpandIdeaProps) {
           transition={{ delay: 1.6, duration: 0.5 }}
           className="flex flex-col items-center"
         >
-          <p className="mb-4 text-sm text-gray-600 dark:text-gray-400 text-center max-w-md">
-            You can use these ideas as starting points for your next project.
-            Ready to bring your project to life?
-          </p>
           <Button
             size="lg"
             disabled={!(frameworks.length && features.length)}
