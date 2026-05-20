@@ -161,120 +161,116 @@ export default function Home() {
         <h1 className="text-5xl lg:text-6xl my-6 text-center">
           kickstart your idea
         </h1>
-        {idea && (
-          <Card className="mt-6 w-full max-w-6xl">
-            <CardHeader className="gap-4">
-              {session && title ? (
-                <Repo repoName={getRepoFromProjectTitle(title)} />
-              ) : (
-                <Button
-                  className="w-fit"
-                  type="button"
-                  onClick={() => !session && signIn("github")}
-                >
-                  <Github className="mr-2 h-4 w-4" /> Sign in with GitHub
+        <Card className="mt-6 w-full max-w-6xl">
+          <CardHeader className="gap-4">
+            {session && title ? (
+              <Repo repoName={getRepoFromProjectTitle(title)} />
+            ) : (
+              <Button
+                className="w-fit"
+                type="button"
+                onClick={() => !session && signIn("github")}
+              >
+                <Github className="mr-2 h-4 w-4" /> Sign in with GitHub
+              </Button>
+            )}
+            {/* TODO: AI generated unique name button */}
+            <FormInput
+              className="flex-grow"
+              form={form}
+              name="title"
+              label="Project Name"
+              placeholder="insert cool name here"
+            />
+            <FormInput
+              className="max-h-32"
+              type="area"
+              form={form}
+              name="description"
+              label="Description"
+              placeholder="what is your project and what does it do"
+            />
+            <FormInput
+              form={form}
+              name="features"
+              label="What To Develop"
+              description={`${selectedFeatures?.length || 0}/${features?.length
+                } features selected`}
+              type={() => (
+                <CardScrollArea>
+                  {features?.map((feature) => (
+                    <FeatureCard
+                      key={feature.id}
+                      feature={feature}
+                      onClick={() => handleToggleFeature(feature)}
+                      selected={selectedFeatures
+                        ?.map((f) => f.id)
+                        .includes(feature.id)}
+                      onSubmit={handleUpdateFeature}
+                    />
+                  ))}
+                </CardScrollArea>
+              )}
+            />
+            <FormInput
+              form={form}
+              name="framework"
+              label="How to Build It"
+              description="choose the type of platform to build and tech stack to use"
+              type={() => (
+                <CardScrollArea>
+                  {frameworks?.map((framework) => (
+                    <FrameworkCard
+                      key={framework.id}
+                      framework={framework}
+                      onClick={() => handleSelectFramework(framework)}
+                      selected={selectedFramework?.id === framework.id}
+                      onSubmit={handleUpdateFramework}
+                    />
+                  ))}
+                </CardScrollArea>
+              )}
+            />
+            <FormInput
+              form={form}
+              name="starterRepo"
+              label="Recommended GitHub Repos"
+              description="skip the boilerplate code and start with a template"
+              type={() => (
+                <CardScrollArea>
+                  <MatchedRepos form={form} />
+                </CardScrollArea>
+              )}
+            />
+            <Modal
+              title="Are you sure you want to create this project?"
+              description={`
+                    This will create a new GitHub repository${form.getValues().starterRepo
+                  ? " using code from the kickstarter template"
+                  : ""
+                }. GitHub issues will be used to track the features to be developed.`}
+              renderTrigger={() => (
+                <Button type="button" disabled={!session}>
+                  create project
                 </Button>
               )}
-              {/* TODO: AI generated unique name button */}
-              <FormInput
-                className="flex-grow"
-                form={form}
-                name="title"
-                label="Project Name"
-                placeholder="insert cool name here"
-              />
-              <FormInput
-                className="max-h-32"
-                type="area"
-                form={form}
-                name="description"
-                label="Description"
-                placeholder="what is your project and what does it do"
-              />
-              <FormInput
-                form={form}
-                name="features"
-                label="What To Develop"
-                description={`${selectedFeatures?.length || 0}/${
-                  features?.length
-                } features selected`}
-                type={() => (
-                  <CardScrollArea>
-                    {features?.map((feature) => (
-                      <FeatureCard
-                        key={feature.id}
-                        feature={feature}
-                        onClick={() => handleToggleFeature(feature)}
-                        selected={selectedFeatures
-                          ?.map((f) => f.id)
-                          .includes(feature.id)}
-                        onSubmit={handleUpdateFeature}
-                      />
-                    ))}
-                  </CardScrollArea>
-                )}
-              />
-              <FormInput
-                form={form}
-                name="framework"
-                label="How to Build It"
-                description="choose the type of platform to build and tech stack to use"
-                type={() => (
-                  <CardScrollArea>
-                    {frameworks?.map((framework) => (
-                      <FrameworkCard
-                        key={framework.id}
-                        framework={framework}
-                        onClick={() => handleSelectFramework(framework)}
-                        selected={selectedFramework?.id === framework.id}
-                        onSubmit={handleUpdateFramework}
-                      />
-                    ))}
-                  </CardScrollArea>
-                )}
-              />
-              <FormInput
-                form={form}
-                name="starterRepo"
-                label="Recommended GitHub Repos"
-                description="skip the boilerplate code and start with a template"
-                type={() => (
-                  <CardScrollArea>
-                    <MatchedRepos form={form} />
-                  </CardScrollArea>
-                )}
-              />
-              <Modal
-                title="Are you sure you want to create this project?"
-                description={`
-                    This will create a new GitHub repository${
-                      form.getValues().starterRepo
-                        ? " using code from the kickstarter template"
-                        : ""
-                    }. GitHub issues will be used to track the features to be developed.`}
-                renderTrigger={() => (
-                  <Button type="button" disabled={!session}>
-                    create project
-                  </Button>
-                )}
-                // FIXME: would be better to add a LoadingButton state to Modal submit
-                onSubmit={
-                  submitEnabled
-                    ? form.handleSubmit(onSubmit, onError)
-                    : () => {}
-                }
-                actionText="Create"
-              >
-                {title && (
-                  <Repo
-                    className="py-4"
-                    repoName={getRepoFromProjectTitle(title)}
-                  />
-                )}
-              </Modal>
-            </CardHeader>
-          </Card>
-        )}
+              // FIXME: would be better to add a LoadingButton state to Modal submit
+              onSubmit={
+                submitEnabled
+                  ? form.handleSubmit(onSubmit, onError)
+                  : () => { }
+              }
+              actionText="Create"
+            >
+              {title && (
+                <Repo
+                  className="py-4"
+                  repoName={getRepoFromProjectTitle(title)}
+                />
+              )}
+            </Modal>
+          </CardHeader>
+        </Card>
       </form>
     </Form>
   );

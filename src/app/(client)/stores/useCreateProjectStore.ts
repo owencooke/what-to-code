@@ -67,12 +67,9 @@ export const useCreateProjectStore = create<CreateProjectState>()(
       setStarterRepo: (url) => set({ starterRepo: url }),
       resetState: () => set(initialState),
       resetWithIdea: (idea: Idea) => {
-        set((state) => {
-          if (state.idea && "id" in state.idea && idea.id !== state.idea?.id) {
-            return { ...initialState, idea };
-          }
-          return state;
-        });
+        // Reset to initial state and set the provided idea so downstream pages
+        // (like project/create) can rely on the store being populated.
+        set({ ...initialState, idea });
       },
 
       // helpers
