@@ -16,6 +16,7 @@
     "node": ">=18"
   },
   "dependencies": {
+    "@google/genai": "^2.4.0",
     "@hookform/resolvers": "^3.6.0",
     "@langchain/core": "^0.3.3",
     "@langchain/google-genai": "^0.1.0",
