@@ -1,4 +1,4 @@
-import { resend } from "@/app/(server)/integration/email/config";
+// import { resend } from "@/app/(server)/integration/email/config";
 
 /**
  * Sends a welcome email to a new user.
@@ -9,7 +9,10 @@ import { resend } from "@/app/(server)/integration/email/config";
  * @throws {Error} - Throws an error if the email sending fails.
  */
 const sendWelcomeEmail = async (email: string, name: string): Promise<void> => {
-  const { error } = await resend.emails.send({
+  // TODO: Re-enable Resend email sending when domain is verified
+  console.log(`[DISABLED] Welcome email would be sent to ${email}`);
+  return;
+  /* const { error } = await resend.emails.send({
     from: "What to Code <noreply@updates.what-to-code.dev>",
     to: [email],
     subject: "One step closer to the next Facebook! 🚀",
@@ -42,6 +45,7 @@ const sendWelcomeEmail = async (email: string, name: string): Promise<void> => {
   if (error) {
     throw new Error(error.message);
   }
+  */
 };
 
 export { sendWelcomeEmail };
