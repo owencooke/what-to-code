@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { resend, audienceId } from "@/app/(server)/integration/email/config";
+// import { resend, audienceId } from "@/app/(server)/integration/email/config";
 
 export async function POST(req: NextRequest) {
   try {
@@ -14,34 +14,37 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // TODO: Re-enable Resend when domain is verified
     // Create contact in Resend
-    const response = await resend.contacts.create({
-      audienceId,
-      email,
-      firstName,
-      lastName,
-      unsubscribed: false,
-    });
+    // const response = await resend.contacts.create({
+    //   audienceId,
+    //   email,
+    //   firstName,
+    //   lastName,
+    //   unsubscribed: false,
+    // });
+
+    console.log(`[DISABLED] Would subscribe ${firstName} ${lastName} (${email}) to newsletter`);
 
     // Return success response
     return NextResponse.json(
       {
         message: "Successfully subscribed",
-        data: response,
+        // data: response,
       },
       { status: 200 },
     );
   } catch (error: any) {
     // Handle specific Resend errors
-    if (error.statusCode === 409) {
-      return NextResponse.json(
-        { error: "Email already subscribed" },
-        { status: 409 },
-      );
-    }
+    // if (error.statusCode === 409) {
+    //   return NextResponse.json(
+    //     { error: "Email already subscribed" },
+    //     { status: 409 },
+    //   );
+    // }
 
     // Handle other errors
     console.error("Subscription error:", error);
-    return NextResponse.json({ error: "Failed to subscribe" }, { status: 500 });
+    return NextResponse.json({ error: "Validation error" }, { status: 400 });
   }
 }

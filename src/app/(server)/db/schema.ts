@@ -76,7 +76,7 @@ export const templates = pgTable(
   {
     url: text("url"),
     id: serial("id").primaryKey(),
-    embedding: vector("embedding", { dimensions: 1536 }),
+    embedding: vector("embedding", { dimensions: 3072 }),
   },
   (table) => ({
     embeddingIndex: index("embeddingIndex").using(
